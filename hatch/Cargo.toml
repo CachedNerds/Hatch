@@ -1,0 +1,6 @@
+[package]
+name = "hatch"
+version = "0.1.0"
+authors = ["technetos <mrgould93@gmail.com>"]
+
+[dependencies]
