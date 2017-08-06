@@ -36,12 +36,12 @@ mod node {
       }
     }
     
-    pub fn add_file(&mut self, key: &str) {
-      self.contents.push(NodeType::leaf(file::new(key)));
+    pub fn add_file(&mut self, file_name: &str) {
+      self.contents.push(NodeType::leaf(file::new(file_name)));
     }
 
-    pub fn add_dir(&mut self, key: &str) {
-      self.contents.push(NodeType::node(dir::new(key)));
+    pub fn add_dir(&mut self, dir_name: &str) {
+      self.contents.push(NodeType::node(dir::new(dir_name)));
     }
   }
 
