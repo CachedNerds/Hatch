@@ -62,5 +62,6 @@ mod tests {
       let mut root = dir::new("project_root");
 
       root.add_file("README.md");
+      root.add_dir("src");
     }
 }
