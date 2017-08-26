@@ -3,7 +3,8 @@ use clap::{Arg, App, SubCommand};
 
 pub fn build_cli() -> App<'static, 'static> {
   let new_command = SubCommand::with_name("new")
-    .about("Creates a new project")
+    .about("Creates a new project.
+           \nWithout any extra parameters hatch generates a shared library.")
     
     .arg(Arg::with_name("PROJECT_NAME")
          .help("Name of the project to generate")
@@ -11,7 +12,7 @@ pub fn build_cli() -> App<'static, 'static> {
          .takes_value(true))
     
     .arg(Arg::with_name("bin")
-         .help("Generates a binary project")
+         .help("Generate a binary project")
          .long("bin")
          .short("b")
          .required(false))
@@ -19,14 +20,8 @@ pub fn build_cli() -> App<'static, 'static> {
     .arg(Arg::with_name("static")
          .help("Generate a static library")
          .long("static")
-         .required_unless_one(&["bin", "shared"])
-         .conflicts_with_all(&["bin", "shared"]))
-
-    .arg(Arg::with_name("shared")
-         .help("Generate a shared library")
-         .long("shared")
-         .required_unless_one(&["bin", "static"])
-         .conflicts_with_all(&["bin", "static"]));
+         .short("s")
+         .conflicts_with("bin"));
 
     App::new("hatch")
       .subcommand(new_command)

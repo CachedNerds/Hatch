@@ -2,18 +2,15 @@
 extern crate clap;
 
 mod cli;
+mod project;
+
+use project::Project;
 
 fn main() {
+  let project: Project;
+
   match cli::build_cli().get_matches().subcommand() {
-    ("new", Some(args)) => {
-      println!("Project Name: {}", value_t!(args, "PROJECT_NAME", String).unwrap());
-      
-      if args.is_present("bin") {
-        println!("Generating binary project");
-      } else {
-        println!("Generating library project");
-      }
-    },
-    _                   => println!("under construction"),
+    ("new", Some(args)) => project = Project::new_project(args),
+    _ => println!("under construction"),
   }
 }
