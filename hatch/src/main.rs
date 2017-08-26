@@ -14,6 +14,6 @@ fn main() {
         println!("Generating library project");
       }
     },
-    _                   => unreachable!("The parser prevents reaching here"),
+    _                   => println!("under construction"),
   }
 }
