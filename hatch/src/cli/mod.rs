@@ -19,13 +19,13 @@ pub fn build_cli() -> App<'static, 'static> {
     .arg(Arg::with_name("static")
          .help("Generate a static library")
          .long("static")
-         .required_unless("bin")
+         .required_unless_one(&["bin", "shared"])
          .conflicts_with_all(&["bin", "shared"]))
 
     .arg(Arg::with_name("shared")
          .help("Generate a shared library")
          .long("shared")
-         .required_unless("bin")
+         .required_unless_one(&["bin", "static"])
          .conflicts_with_all(&["bin", "static"]));
 
     App::new("hatch")
