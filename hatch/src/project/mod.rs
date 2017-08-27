@@ -2,8 +2,8 @@ extern crate clap;
 use clap::{Arg, App, SubCommand};
 
 pub struct Project {
-  name: String,
-  project_type: ProjectType,
+  pub name: String,
+  pub project_type: ProjectType,
 }
 
 pub enum LibraryType {
@@ -23,11 +23,11 @@ impl Project {
     let project_type = if args.is_present("bin") {
       ProjectType::Binary
     } else {
-      ProjectType::Library(if let Some(t) = args.value_of("static") {
-        LibraryType::Static
+      if args.is_present("static") {
+        ProjectType::Library(LibraryType::Static)
       } else {
-        LibraryType::Shared
-      })
+        ProjectType::Library(LibraryType::Shared)
+      }
     };
 
     Project {

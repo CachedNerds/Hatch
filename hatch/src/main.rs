@@ -5,12 +5,20 @@ mod cli;
 mod project;
 
 use project::Project;
+use project::ProjectType;
+use project::LibraryType;
 
 fn main() {
-  let project: Project;
-
   match cli::build_cli().get_matches().subcommand() {
-    ("new", Some(args)) => project = Project::new_project(args),
+    ("new", Some(args)) => create_new_project(Project::new_project(args)),
     _ => println!("under construction"),
+  }
+}
+
+fn create_new_project(project: Project) {
+  match project.project_type {
+    ProjectType::Binary => println!("binary"),
+    ProjectType::Library(LibraryType::Shared) => println!("lib shared"),
+    ProjectType::Library(LibraryType::Static) => println!("lib static"),
   }
 }
