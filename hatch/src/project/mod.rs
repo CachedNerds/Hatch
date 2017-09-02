@@ -1,11 +1,11 @@
 extern crate clap;
-use clap::{Arg, App, SubCommand};
 
 pub struct Project {
-  pub name: String,
+  pub project_name: String,
   pub project_type: ProjectType,
 }
 
+#[derive(Debug)]
 pub enum LibraryType {
   Shared,
   Static,
@@ -31,8 +31,13 @@ impl Project {
     };
 
     Project {
-      name: project_name,
+      project_name,
       project_type,
     }
   }
 }
+
+// TODO:
+// Implement trait that ProjectType & LibraryType conform to
+// such that we can act upon any kind of project be it a
+// binary or a library shared or static

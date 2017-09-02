@@ -18,7 +18,6 @@ fn main() {
 fn create_new_project(project: Project) {
   match project.project_type {
     ProjectType::Binary => println!("binary"),
-    ProjectType::Library(LibraryType::Shared) => println!("lib shared"),
-    ProjectType::Library(LibraryType::Static) => println!("lib static"),
+    ProjectType::Library(lib_type) => println!("{:?}", lib_type),
   }
 }
