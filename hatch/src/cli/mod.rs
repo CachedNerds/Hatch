@@ -23,6 +23,10 @@ pub fn build_cli() -> App<'static, 'static> {
          .short("s")
          .conflicts_with("bin"));
 
-    App::new("hatch")
-      .subcommand(new_command)
+  let update_command = SubCommand::with_name("update")
+    .about("Updates an existing project");
+
+  App::new("hatch")
+    .subcommand(new_command)
+    .subcommand(update_command)
 }
