@@ -10,17 +10,19 @@ use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
 
 fn main() {
-  let project = match cli::build_cli()
+  let result = match cli::build_cli()
     .get_matches()
     .subcommand() {
 
       ("new", Some(args)) => create_new_project(args),
+      ("update", Some(args)) => update_existing_project(args),
+
       _ => help(),
     };
 
 
-  match project {
-    Ok(p) => println!("{:?}", p),
+  match result {
+    Ok(project) => println!("{:?}", project),
     Err(e) => println!("{}", e),
   }
 }
@@ -41,4 +43,11 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
     };
 
   Ok(Project { project_name, project_type })
+}
+
+fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
+  // read in existing fs structure
+  // create project instance to reflect existing project
+  // return project
+  Ok(Project { project_name: "foo".to_string(), project_type: Binary })
 }
