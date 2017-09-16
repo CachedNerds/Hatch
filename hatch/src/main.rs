@@ -1,3 +1,5 @@
+use std::fs;
+
 #[macro_use]
 extern crate clap;
 use clap::ArgMatches;
@@ -41,13 +43,24 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
         false => Library(Shared),
       }
     };
+  let project_version = (0, 0, 1);
 
-  Ok(Project { project_name, project_type })
+  Ok(Project {
+    project_name,
+    project_type,
+    project_version })
 }
 
 fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
+  let paths = fs::read_dir("./").unwrap();
+  for path in paths {
+    println!("{}", path.unwrap().path().display());
+  }
   // read in existing fs structure
   // create project instance to reflect existing project
   // return project
-  Ok(Project { project_name: "foo".to_string(), project_type: Binary })
+  Ok(Project {
+    project_name: "foo".to_string(),
+    project_type: Binary,
+    project_version: (0, 0, 1) })
 }
