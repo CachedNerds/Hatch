@@ -18,6 +18,7 @@ fn main() {
 
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
+      // We will never execute this branch
       _ => Err("")
     };
 
