@@ -18,8 +18,8 @@ fn main() {
 
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
-
-      _ => help(),
+      // We will never execute this branch
+      _ => Err("")
     };
 
 
@@ -27,10 +27,6 @@ fn main() {
     Ok(project) => println!("{:?}", project),
     Err(e) => println!("{}", e),
   }
-}
-
-fn help<'a>() -> Result<Project, &'a str> {
-  Err("No arguments were given")
 }
 
 fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {

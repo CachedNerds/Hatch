@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{Arg, App, SubCommand};
+use clap::{ Arg, App, SubCommand, AppSettings };
 
 pub fn build_cli() -> App<'static, 'static> {
   let new_command = SubCommand::with_name("new")
@@ -29,4 +29,5 @@ pub fn build_cli() -> App<'static, 'static> {
   App::new("hatch")
     .subcommand(new_command)
     .subcommand(update_command)
+    .setting(AppSettings::SubcommandRequiredElseHelp)
 }
