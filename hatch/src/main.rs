@@ -47,11 +47,21 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
     project_version })
 }
 
+fn entries_in_cwd() -> std::io::Result<fs::ReadDir> {
+  fs::read_dir("./")
+}
+
 fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
-  let paths = fs::read_dir("./").unwrap();
-  for path in paths {
-    println!("{}", path.unwrap().path().display());
-  }
+  let files = entries_in_cwd()
+    .unwrap()
+    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_file());
+ 
+  // search for tupfiles in the files and handle appropriately
+
+  let dirs = entries_in_cwd()
+    .unwrap()
+    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_dir());
+
   // read in existing fs structure
   // create project instance to reflect existing project
   // return project
