@@ -1,6 +1,10 @@
-<p align = "center">
-<img src="logo/egg.png" />
-</p>
+<p align = "left"><img src="logo/src/egg.png" /></p>
 
 # Hatch
-A Tup hierarchy generation tool
+The project manager for CachedNerds/Toolbox et;al
+
+# Usage
+
+# Technologies
+
+# License
