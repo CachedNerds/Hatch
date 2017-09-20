@@ -1,4 +1,4 @@
-<p align = "left"><img src="logo/src/egg.png" /></p>
+<p align = "left"><img src="logo/egg.png" /></p>
 
 # Hatch
 The project manager for CachedNerds/Toolbox et;al
