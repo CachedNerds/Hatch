@@ -31,7 +31,7 @@ fn main() {
   }
 }
 
-fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
+fn create_new_project(args: &ArgMatches) -> Result<Project, ErrorT> {
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
   
   let project_type = match args.is_present("bin") {
@@ -52,7 +52,7 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
     project_version })
 }
 
-fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
+fn update_existing_project(args: &ArgMatches) -> Result<Project, ErrorT> {
   let paths = fs::read_dir("./")?;
 
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
@@ -65,11 +65,9 @@ fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
       files.push(path.unwrap())
     }
   }
-
+  
   println!("Dirs: {:?}\nFiles: {:?}", dirs, files);
-  // read in existing fs structure
-  // create project instance to reflect existing project
-  // return project
+  
   Ok(Project {
     project_name: "foo".to_string(),
     project_type: Binary,
