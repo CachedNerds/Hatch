@@ -5,13 +5,13 @@ extern crate clap;
 use clap::ArgMatches;
 
 mod cli;
-mod project;
 mod error;
+mod project;
 
+use error::{ ErrorT };
 use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
-use error::{ ErrorT };
 
 fn main() {
   let result = match cli::build_cli()
