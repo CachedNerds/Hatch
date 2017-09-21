@@ -16,3 +16,13 @@ pub enum LibraryType {
   Shared,
   Static,
 }
+
+pub trait Command {
+  fn execute(&self);
+}
+
+impl Command for Project {
+  fn execute(&self) {
+    println!("{:?}", self);
+  }
+}

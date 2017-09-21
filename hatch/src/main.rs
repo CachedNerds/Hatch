@@ -7,9 +7,26 @@ use clap::ArgMatches;
 mod cli;
 mod project;
 
-use project::Project;
+use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
+
+enum ErrorT {
+  IOError(std::io::Error),
+  ClapError(clap::Error),
+}
+
+impl From<std::io::Error> for ErrorT {
+  fn from(error: std::io::Error) -> Self {
+    ErrorT::IOError(error)
+  }
+}
+
+impl From<clap::Error> for ErrorT {
+  fn from(error: clap::Error) -> Self {
+    ErrorT::ClapError(error)
+  }
+}
 
 fn main() {
   let result = match cli::build_cli()
@@ -19,18 +36,18 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err("")
+      _ => Err(""),
     };
 
 
   match result {
-    Ok(project) => println!("{:?}", project),
+    Ok(project) => project.execute(),
     Err(e) => println!("{}", e),
   }
 }
 
-fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
-  let project_name = value_t!(args, "PROJECT_NAME", String).unwrap();
+fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
+  let project_name = value_t!(args, "PROJECT_NAME", String)?;
   let project_type =  
     if args.is_present("bin") { Binary }
     else {
@@ -47,19 +64,13 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
     project_version })
 }
 
-fn entries_in_cwd() -> std::io::Result<fs::ReadDir> {
-  fs::read_dir("./")
-}
-
-fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, &'a str> {
-  let files = entries_in_cwd()
-    .unwrap()
+fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
+  let files = fs::read_dir("./")?
     .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_file());
  
   // search for tupfiles in the files and handle appropriately
 
-  let dirs = entries_in_cwd()
-    .unwrap()
+  let dirs = fs::read_dir("./")?
     .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_dir());
 
   // read in existing fs structure
