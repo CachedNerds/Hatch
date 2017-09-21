@@ -6,27 +6,12 @@ use clap::ArgMatches;
 
 mod cli;
 mod project;
+mod error;
 
 use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
-
-enum ErrorT {
-  IOError(std::io::Error),
-  ClapError(clap::Error),
-}
-
-impl From<std::io::Error> for ErrorT {
-  fn from(error: std::io::Error) -> Self {
-    ErrorT::IOError(error)
-  }
-}
-
-impl From<clap::Error> for ErrorT {
-  fn from(error: clap::Error) -> Self {
-    ErrorT::ClapError(error)
-  }
-}
+use error::{ ErrorT };
 
 fn main() {
   let result = match cli::build_cli()
@@ -36,13 +21,13 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err(""),
+      _ => Err(ErrorT::NullError),
     };
 
 
   match result {
     Ok(project) => project.execute(),
-    Err(e) => println!("{}", e),
+    Err(e) => println!("{:?}", e),
   }
 }
 
@@ -66,8 +51,7 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
 
 fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
   let files = fs::read_dir("./")?
-    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_file());
- 
+    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_file()); 
   // search for tupfiles in the files and handle appropriately
 
   let dirs = fs::read_dir("./")?
