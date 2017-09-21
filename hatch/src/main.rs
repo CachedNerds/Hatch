@@ -33,14 +33,17 @@ fn main() {
 
 fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
-  let project_type =  
-    if args.is_present("bin") { Binary }
-    else {
+  
+  let project_type = match args.is_present("bin") {
+    true  => Binary,
+    false => {
       match args.is_present("static") {
-        true => Library(Static),
+        true  => Library(Static),
         false => Library(Shared),
       }
-    };
+    }
+  };
+  
   let project_version = (0, 0, 1);
 
   Ok(Project {
@@ -50,13 +53,20 @@ fn create_new_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
 }
 
 fn update_existing_project<'a>(args: &ArgMatches) -> Result<Project, ErrorT> {
-  let files = fs::read_dir("./")?
-    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_file()); 
-  // search for tupfiles in the files and handle appropriately
+  let paths = fs::read_dir("./")?;
 
-  let dirs = fs::read_dir("./")?
-    .filter(|x| x.as_ref().unwrap().metadata().unwrap().is_dir());
+  let mut dirs: Vec<fs::DirEntry> = Vec::new();
+  let mut files: Vec<fs::DirEntry> = Vec::new();
 
+  for path in paths {
+    if path.as_ref().unwrap().file_type().unwrap().is_dir() {
+      dirs.push(path.unwrap())
+    } else {
+      files.push(path.unwrap())
+    }
+  }
+
+  println!("Dirs: {:?}\nFiles: {:?}", dirs, files);
   // read in existing fs structure
   // create project instance to reflect existing project
   // return project
