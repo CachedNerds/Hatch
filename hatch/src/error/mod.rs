@@ -3,20 +3,20 @@ use std::io;
 extern crate clap;
 
 #[derive(Debug)]
-pub enum ErrorT {
+pub enum Error {
   IOError(io::Error),
   ClapError(clap::Error),
   NullError,
 }
 
-impl From<io::Error> for ErrorT {
+impl From<io::Error> for Error {
   fn from(error: io::Error) -> Self {
-    ErrorT::IOError(error)
+    Error::IOError(error)
   }
 }
 
-impl From<clap::Error> for ErrorT {
+impl From<clap::Error> for Error {
   fn from(error: clap::Error) -> Self {
-    ErrorT::ClapError(error)
+    Error::ClapError(error)
   }
 }

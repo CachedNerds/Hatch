@@ -8,7 +8,7 @@ mod cli;
 mod error;
 mod project;
 
-use error::{ ErrorT };
+use error::{ Error };
 use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
@@ -21,7 +21,7 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err(ErrorT::NullError),
+      _ => Err(Error::NullError),
     };
 
 
@@ -31,7 +31,7 @@ fn main() {
   }
 }
 
-fn create_new_project(args: &ArgMatches) -> Result<Project, ErrorT> {
+fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
   
   let project_type = match args.is_present("bin") {
@@ -52,7 +52,7 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, ErrorT> {
     project_version })
 }
 
-fn update_existing_project(args: &ArgMatches) -> Result<Project, ErrorT> {
+fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
   let paths = fs::read_dir("./")?;
 
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
