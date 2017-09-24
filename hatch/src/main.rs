@@ -53,19 +53,17 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
 }
 
 fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
-  let paths = fs::read_dir("./")?;
-
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
   let mut files: Vec<fs::DirEntry> = Vec::new();
 
-  for path in paths {
-    if path.as_ref().unwrap().file_type().unwrap().is_dir() {
+  for path in fs::read_dir("./")? {
+    if path.as_ref().unwrap().file_type()?.is_dir() {
       dirs.push(path.unwrap())
     } else {
       files.push(path.unwrap())
     }
   }
-  
+
   println!("Dirs: {:?}\nFiles: {:?}", dirs, files);
   
   Ok(Project {
