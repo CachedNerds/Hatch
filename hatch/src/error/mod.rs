@@ -10,13 +10,13 @@ pub enum Error {
 }
 
 impl From<io::Error> for Error {
-  fn from(error: io::Error) -> Self {
-    Error::IOError(error)
+  fn from(e: io::Error) -> Self {
+    Error::IOError(e)
   }
 }
 
 impl From<clap::Error> for Error {
-  fn from(error: clap::Error) -> Self {
-    Error::ClapError(error)
+  fn from(e: clap::Error) -> Self {
+    Error::ClapError(e)
   }
 }

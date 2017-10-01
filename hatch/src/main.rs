@@ -34,14 +34,12 @@ fn main() {
 fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
   
-  let project_type = match args.is_present("bin") {
-    true  => Binary,
-    false => {
-      match args.is_present("static") {
-        true  => Library(Static),
-        false => Library(Shared),
-      }
-    }
+  let project_type = if args.is_present("bin") {
+    Binary
+  } else if args.is_present("static") {
+    Library(Static)
+  } else {
+    Library(Shared)
   };
   
   let project_version = (0, 0, 1);
@@ -56,11 +54,12 @@ fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
   let mut files: Vec<fs::DirEntry> = Vec::new();
 
+  // cause error to be thrown here by passing in path from args
   for path in fs::read_dir("./")? {
     if path.as_ref().unwrap().file_type()?.is_dir() {
-      dirs.push(path.unwrap())
+      dirs.push(path?)
     } else {
-      files.push(path.unwrap())
+      files.push(path?)
     }
   }
 
