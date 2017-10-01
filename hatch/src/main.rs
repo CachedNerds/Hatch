@@ -54,7 +54,6 @@ fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
   let mut files: Vec<fs::DirEntry> = Vec::new();
 
-  // cause error to be thrown here by passing in path from args
   for path in fs::read_dir("./")? {
     if path.as_ref().unwrap().file_type()?.is_dir() {
       dirs.push(path?)
