@@ -29,18 +29,15 @@ pub fn build_cli() -> App<'static, 'static> {
   let update_command = SubCommand::with_name("update")
     .about("Updates an existing project")
 
-    .arg(Arg::with_name("VERSION")
-         .help("Set the version of the project")
-         .required(false)
-         .takes_value(true))
-
-    .arg(Arg::with_name("PATH")
-         .help("Specify the location of a project")
-         .required(false)
-         .takes_value(true))
-
     .arg(Arg::with_name("PROJECT_NAME")
-         .help("Explicitly define the project name instead of pulling it from its path")
+         .help("Name of the project to update")
+         .required(true)
+         .takes_value(true))
+
+    .arg(Arg::with_name("TOOLBOX_PATH")
+         .help("Path to Toolbox.  (Default = cwd)")
+         .long("path")
+         .short("p")
          .required(false)
          .takes_value(true));
 

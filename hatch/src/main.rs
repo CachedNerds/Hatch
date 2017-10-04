@@ -1,4 +1,5 @@
 use std::fs;
+use std::path::{ PathBuf };
 
 #[macro_use]
 extern crate clap;
@@ -27,11 +28,25 @@ fn main() {
 
   match result {
     Ok(project) => project.execute(),
-    Err(e) => println!("{:?}", e),
+    Err(e) => println!("Error: {}", e),
   }
 }
 
+fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, Error> {
+  let mut path = PathBuf::new();
+  
+  if args.is_present("TOOLBOX_PATH") {
+    path.push(value_t!(args, "TOOLBOX_PATH", String)?);
+  } else {
+    path.push("./");
+  }
+
+  Ok(path)
+}
+
 fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
+  let project_path = toolbox_path(args)?;
+
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
   
   let project_type = if args.is_present("bin") {
@@ -47,25 +62,35 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
   Ok(Project {
     project_name,
     project_type,
-    project_version })
+    project_version,
+    project_path })
 }
 
 fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
+  let mut project_path = toolbox_path(args)?;
+
+  let project_name = value_t!(args, "PROJECT_NAME", String)?;
+
+  project_path.push("C++/libs");
+  project_path.push(project_name.clone());
+
   let mut dirs: Vec<fs::DirEntry> = Vec::new();
   let mut files: Vec<fs::DirEntry> = Vec::new();
 
-  for path in fs::read_dir("./")? {
+  // search for `config.tup`
+  //  find it ? read contents : throw error
+
+  for path in fs::read_dir(&project_path)? {
     if path.as_ref().unwrap().file_type()?.is_dir() {
       dirs.push(path?)
     } else {
       files.push(path?)
     }
   }
-
-  println!("Dirs: {:?}\nFiles: {:?}", dirs, files);
   
   Ok(Project {
-    project_name: "foo".to_string(),
+    project_name,
     project_type: Binary,
-    project_version: (0, 0, 1) })
+    project_version: (0, 0, 1),
+    project_path })
 }
