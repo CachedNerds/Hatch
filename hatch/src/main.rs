@@ -6,10 +6,9 @@ extern crate clap;
 use clap::ArgMatches;
 
 mod cli;
-mod error;
 mod project;
+mod error;
 
-use error::{ Error };
 use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
@@ -22,7 +21,7 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err(Error::NullError),
+      _ => Err(error::Error::from("Invalid version")),
     };
 
 
@@ -32,7 +31,7 @@ fn main() {
   }
 }
 
-fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, Error> {
+fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, error::Error> {
   let mut path = PathBuf::new();
   
   if args.is_present("TOOLBOX_PATH") {
@@ -44,7 +43,19 @@ fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, Error> {
   Ok(path)
 }
 
-fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
+fn get_version(args: &ArgMatches) -> Result<(u16, u16, u16), error::Error> {
+  match values_t!(args, "PROJECT_VERSION", u16) {
+    Ok(v) => {
+      if v.iter().count() == 3 { Ok((v[0], v[1], v[2])) }
+      else {
+        Err(error::Error::from("Invalid version"))
+      }
+    },
+    Err(_) => Ok((0, 0, 1))
+  }
+}
+
+fn create_new_project(args: &ArgMatches) -> Result<Project, error::Error> {
   let project_path = toolbox_path(args)?;
 
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
@@ -56,8 +67,8 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
   } else {
     Library(Shared)
   };
-  
-  let project_version = (0, 0, 1);
+
+  let project_version = get_version(args)?;
 
   Ok(Project {
     project_name,
@@ -66,7 +77,7 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, Error> {
     project_path })
 }
 
-fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
+fn update_existing_project(args: &ArgMatches) -> Result<Project, error::Error> {
   let mut project_path = toolbox_path(args)?;
 
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
