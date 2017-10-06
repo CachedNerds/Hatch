@@ -22,7 +22,7 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err(error::Error::from("Invalid version")),
+      _ => Err(error::Error::NullError),
     };
 
 
@@ -106,9 +106,11 @@ fn update_existing_project(args: &ArgMatches) -> Result<Project, error::Error> {
     _         => Binary,
   };
 
+  let project_version = get_version(args)?;
+
   Ok(Project {
     project_name,
     project_type,
-    project_version: (0, 0, 1),
+    project_version,
     project_path })
 }
