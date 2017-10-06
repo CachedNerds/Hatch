@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::{ PathBuf };
+use std::io::{ Read };
 
 #[macro_use]
 extern crate clap;
@@ -85,23 +86,29 @@ fn update_existing_project(args: &ArgMatches) -> Result<Project, error::Error> {
   project_path.push("C++/libs");
   project_path.push(project_name.clone());
 
-  let mut dirs: Vec<fs::DirEntry> = Vec::new();
-  let mut files: Vec<fs::DirEntry> = Vec::new();
+  let mut _project_type = String::new();
 
-  // search for `config.tup`
-  //  find it ? read contents : throw error
+  project_path.push("config.tup");
 
-  for path in fs::read_dir(&project_path)? {
-    if path.as_ref().unwrap().file_type()?.is_dir() {
-      dirs.push(path?)
-    } else {
-      files.push(path?)
-    }
-  }
+  let _ = fs::File::open(&project_path)
+    .and_then(|mut file| file.read_to_string(&mut _project_type))?;
+
+  let _ = project_path.pop();
+
+  _project_type = _project_type
+    .lines()
+    .filter(|line| line.contains("LIB_TYPE"))
+    .collect();
   
+  let project_type = match _project_type.split_whitespace().last().unwrap_or("") {
+    "static"  => Library(Static), 
+    "shared"  => Library(Shared),
+    _         => Binary,
+  };
+
   Ok(Project {
     project_name,
-    project_type: Binary,
+    project_type,
     project_version: (0, 0, 1),
     project_path })
 }
