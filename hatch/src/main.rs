@@ -89,7 +89,7 @@ fn update_existing_project(args: &ArgMatches) -> Result<Project, Error> {
     .filter(|line| line.contains("LIB_TYPE"))
     .collect();
   
-  let project_type = match _project_type.split_whitespace().last().unwrap_or("binary") {
+  let project_type = match _project_type.split_whitespace().last().unwrap_or("") {
     "static"  => Library(Static), 
     "shared"  => Library(Shared),
     _         => Binary,
