@@ -8,7 +8,7 @@ use clap::ArgMatches;
 
 mod cli;
 mod project;
-mod error;
+mod errors;
 
 use project::{ Project, Command };
 use project::ProjectType::{ Binary, Library };
@@ -22,7 +22,7 @@ fn main() {
       ("new", Some(args)) => create_new_project(args),
       ("update", Some(args)) => update_existing_project(args),
       // We will never execute this branch
-      _ => Err(error::Error::NullError),
+      _ => Err(errors::Error::NullError),
     };
 
 
@@ -32,7 +32,23 @@ fn main() {
   }
 }
 
-fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, error::Error> {
+fn get_project_name(args: &ArgMatches) -> Result<String, errors::Error> {
+  Ok(value_t!(args, "PROJECT_NAME", String)?)
+}
+
+fn get_version(args: &ArgMatches) -> Result<(u16, u16, u16), errors::Error> {
+  match values_t!(args, "PROJECT_VERSION", u16) {
+    Ok(v) => {
+      if v.iter().count() == 3 { Ok((v[0], v[1], v[2])) }
+      else {
+        Err(errors::Error::from("Invalid version"))
+      }
+    },
+    Err(_) => Ok((0, 0, 1))
+  }
+}
+
+fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, errors::Error> {
   let mut path = PathBuf::new();
   
   if args.is_present("TOOLBOX_PATH") {
@@ -44,22 +60,18 @@ fn toolbox_path(args: &ArgMatches) -> Result<PathBuf, error::Error> {
   Ok(path)
 }
 
-fn get_version(args: &ArgMatches) -> Result<(u16, u16, u16), error::Error> {
-  match values_t!(args, "PROJECT_VERSION", u16) {
-    Ok(v) => {
-      if v.iter().count() == 3 { Ok((v[0], v[1], v[2])) }
-      else {
-        Err(error::Error::from("Invalid version"))
-      }
-    },
-    Err(_) => Ok((0, 0, 1))
-  }
+fn get_project_path(args: &ArgMatches) -> Result<PathBuf, errors::Error> {
+  let mut project_path = toolbox_path(args)?;
+  project_path.push("C++/libs");
+  Ok(project_path)
 }
 
-fn create_new_project(args: &ArgMatches) -> Result<Project, error::Error> {
-  let project_path = toolbox_path(args)?;
+fn create_new_project(args: &ArgMatches) -> Result<Project, errors::Error> {
+  let mut project_path = get_project_path(args)?;
 
   let project_name = value_t!(args, "PROJECT_NAME", String)?;
+  
+  project_path.push(project_name.clone());
   
   let project_type = if args.is_present("bin") {
     Binary
@@ -78,32 +90,29 @@ fn create_new_project(args: &ArgMatches) -> Result<Project, error::Error> {
     project_path })
 }
 
-fn update_existing_project(args: &ArgMatches) -> Result<Project, error::Error> {
-  let mut project_path = toolbox_path(args)?;
+fn update_existing_project(args: &ArgMatches) -> Result<Project, errors::Error> {
+  let mut project_path = get_project_path(args)?;
 
-  let project_name = value_t!(args, "PROJECT_NAME", String)?;
+  let project_name = get_project_name(args)?;
+  let mut project_type = String::new();
 
-  project_path.push("C++/libs");
   project_path.push(project_name.clone());
-
-  let mut _project_type = String::new();
-
   project_path.push("config.tup");
 
   let _ = fs::File::open(&project_path)
-    .and_then(|mut file| file.read_to_string(&mut _project_type))?;
+    .and_then(|mut file| file.read_to_string(&mut project_type))?;
 
   let _ = project_path.pop();
 
-  _project_type = _project_type
+  project_type = project_type
     .lines()
     .filter(|line| line.contains("LIB_TYPE"))
     .collect();
   
-  let project_type = match _project_type.split_whitespace().last().unwrap_or("") {
-    "static"  => Library(Static), 
-    "shared"  => Library(Shared),
-    _         => Binary,
+  let project_type = match &*project_type {
+    "LIB_TYPE = static"  => Library(Static), 
+    "LIB_TYPE = shared"  => Library(Shared),
+    _                    => Binary,
   };
 
   let project_version = get_version(args)?;
