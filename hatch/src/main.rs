@@ -1,18 +1,15 @@
 use std::fs;
-use std::path::{ PathBuf };
+use std::path;
 use std::io::{ Read, ErrorKind };
+
+use tup::{ Project, LibraryKind, ProjectKind };
 
 #[macro_use]
 extern crate clap;
 
 mod cli;
-mod project;
+mod tup;
 mod errors;
-
-use project::{ Project, RunKind };
-use project::ProjectType::{ Binary, Library };
-use project::LibraryType::{ Shared, Static };
-use project::metadata::{ Metadata };
 
 fn main() {
   let result = match cli::build_cli()
@@ -26,14 +23,24 @@ fn main() {
     };
 
   match result {
-    Ok(project) =>
-      if let Err(e) = project.manage_files() {
-        println!("Error: {}", e);
-      },
-    Err(e) =>
-      println!("Error: {}", e),
+    Ok(project) => println!("{:?}", project),
+    Err(e) => println!("Error: {}", e),
   }
 
+}
+
+fn get_path(args: &clap::ArgMatches) -> Result<path::PathBuf, errors::Error> {
+  let mut path = path::PathBuf::new();
+
+  if args.is_present("TOOLBOX_PATH") {
+    path.push(value_t!(args, "TOOLBOX_PATH", String)?);
+  } else {
+    path.push("./");
+  }
+
+  path.push("C++/libs");
+
+  Ok(path)
 }
 
 fn get_name(args: &clap::ArgMatches) -> Result<String, errors::Error> {
@@ -42,44 +49,39 @@ fn get_name(args: &clap::ArgMatches) -> Result<String, errors::Error> {
 
 fn create_new_project(args: &clap::ArgMatches) -> Result<Project, errors::Error> {
   let name = get_name(&args)?;
-  let mut metadata = Metadata::new(&args)?; 
   
-  metadata.path.push(name.clone());
+  let mut path = get_path(&args).and_then(|mut p| { p.push(name.clone()); Ok(p) })?;
 
   let build_type = if args.is_present("bin") {
-    Binary
+    ProjectKind::Binary
   } else if args.is_present("static") {
-    Library(Static)
+    ProjectKind::Library(LibraryKind::Static)
   } else {
-    Library(Shared)
+    ProjectKind::Library(LibraryKind::Shared)
   };
 
-  Ok(Project { name, build_type, metadata, run_type: RunKind::Create })
+  Ok(Project::new(name, build_type, path))
 }
 
 fn update_existing_project(args: &clap::ArgMatches) -> Result<Project, errors::Error> {
   let name = get_name(args)?;
-  let mut metadata = Metadata::new(&args)?; 
+
+  let mut path = get_path(&args)
+    .and_then(|mut p| { p.push(name.clone()); p.push("config.tup"); Ok(p) })?;
+
   let mut build_type = String::new();
 
-  metadata.path.push(name.clone());
-  metadata.path.push("config.tup");
-
-  let _ = fs::File::open(&metadata.path)
+  let _ = fs::File::open(&path)
     .and_then(|mut file| file.read_to_string(&mut build_type))?;
 
-  let _ = metadata.path.pop();
+  let _ = path.pop();
 
   build_type = build_type
     .lines()
     .filter(|line| line.contains("LIB_TYPE"))
     .collect();
-  
-  let build_type = match &*build_type {
-    "LIB_TYPE = static"  => Library(Static), 
-    "LIB_TYPE = shared"  => Library(Shared),
-    _                    => Binary,
-  };
 
-  Ok(Project { name, build_type, metadata, run_type: RunKind::Update })
+  let build_type = ProjectKind::from_str(build_type.split(' ').last().unwrap_or(""));
+  
+  Ok(Project::new(name, build_type, path))
 }
