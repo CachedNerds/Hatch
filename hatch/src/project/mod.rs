@@ -5,10 +5,17 @@ use super::fs;
 use super::errors;
 
 #[derive(Debug)]
+pub enum RunKind {
+  Create,
+  Update,
+}
+
+#[derive(Debug)]
 pub struct Project {
   pub name: String,
   pub build_type: ProjectType,
   pub metadata: metadata::Metadata,
+  pub run_type: RunKind,
 }
 
 #[derive(Debug)]
@@ -24,22 +31,24 @@ pub enum LibraryType {
 }
 
 impl Project {
-  pub fn create_project_files(&self) -> Result<(), errors::Error> {
-    match fs::create_dir(&self.metadata.path) {
-      Ok(a) => {
-        println!("New project generated");
+  pub fn manage_files(&self) -> Result<(), errors::Error> {
+    match &self.run_type {
+      &RunKind::Create => {
+        match fs::create_dir(&self.metadata.path) {
+          Ok(_) => { println!("New project generated"); Ok(()) },
+          Err(e) => match e.kind() {
+            ErrorKind::AlreadyExists =>
+              Err(errors::Error::from("Project exists")),
+            ErrorKind::NotFound =>
+              Err(errors::Error::from("Invalid toolbox path")),
+            _ => 
+              Err(errors::Error::from("An error occured")),
+          },
+        }
+      },
+      &RunKind::Update => {
         Ok(())
-      }
-      Err(e) => match e.kind() {
-        ErrorKind::AlreadyExists => {
-          println!("{:?}", fs::read_dir(&self.metadata.path));
-          Ok(())
-        },
-        ErrorKind::NotFound =>
-          Err(errors::Error::from("Invalid toolbox path")),
-        _ =>
-          Err(errors::Error::from("An error occured")),
-      }
+      },
     }
   }
 }

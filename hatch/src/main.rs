@@ -9,7 +9,7 @@ mod cli;
 mod project;
 mod errors;
 
-use project::{ Project };
+use project::{ Project, RunKind };
 use project::ProjectType::{ Binary, Library };
 use project::LibraryType::{ Shared, Static };
 use project::metadata::{ Metadata };
@@ -27,7 +27,7 @@ fn main() {
 
   match result {
     Ok(project) =>
-      if let Err(e) = project.create_project_files() {
+      if let Err(e) = project.manage_files() {
         println!("Error: {}", e);
       },
     Err(e) =>
@@ -45,7 +45,7 @@ fn create_new_project(args: &clap::ArgMatches) -> Result<Project, errors::Error>
   let mut metadata = Metadata::new(&args)?; 
   
   metadata.path.push(name.clone());
-  
+
   let build_type = if args.is_present("bin") {
     Binary
   } else if args.is_present("static") {
@@ -54,7 +54,7 @@ fn create_new_project(args: &clap::ArgMatches) -> Result<Project, errors::Error>
     Library(Shared)
   };
 
-  Ok(Project { name, build_type, metadata })
+  Ok(Project { name, build_type, metadata, run_type: RunKind::Create })
 }
 
 fn update_existing_project(args: &clap::ArgMatches) -> Result<Project, errors::Error> {
@@ -81,5 +81,5 @@ fn update_existing_project(args: &clap::ArgMatches) -> Result<Project, errors::E
     _                    => Binary,
   };
 
-  Ok(Project { name, build_type, metadata })
+  Ok(Project { name, build_type, metadata, run_type: RunKind::Update })
 }
