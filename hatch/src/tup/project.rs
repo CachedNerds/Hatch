@@ -40,4 +40,8 @@ impl Project {
   pub fn new(name: String, build_type: ProjectKind, path: PathBuf) -> Project {
     Project { name, build_type, path }
   }
+
+  pub fn get_path(&mut self) -> &mut PathBuf {
+    &mut self.path
+  }
 }

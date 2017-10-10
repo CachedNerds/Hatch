@@ -1,6 +1,6 @@
 pub use self::library::{ LibraryKind };
 pub use self::project::{ Project, ProjectKind };
-pub use self::manifest::{ Manifest, ProjectManifest };
+pub use self::manifest::{ Manifest, ProjectManifest, TestManifest };
 pub use self::platform::{ PlatformKind };
 //pub use version::{ Version };
 

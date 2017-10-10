@@ -2,7 +2,7 @@ use std::fs;
 use std::path;
 use std::io::{ Read, ErrorKind };
 
-use tup::{ Project, LibraryKind, ProjectKind };
+use tup::{ Project, LibraryKind, ProjectKind, Manifest, ProjectManifest, TestManifest };
 
 #[macro_use]
 extern crate clap;
@@ -23,7 +23,9 @@ fn main() {
     };
 
   match result {
-    Ok(project) => println!("{:?}", project),
+    Ok(mut project) => {
+      let manifest = Manifest::new(project.get_path());
+    },
     Err(e) => println!("Error: {}", e),
   }
 
