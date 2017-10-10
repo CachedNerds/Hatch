@@ -21,14 +21,6 @@ pub fn build_cli() -> App<'static, 'static> {
          .required(true)
          .takes_value(true))
 
-    .arg(Arg::with_name("PROJECT_VERSION")
-         .help("Project version")
-         .long("version")
-         .short("v")
-         .multiple(true)
-         .required(false)
-         .takes_value(true))
-    
     .arg(Arg::with_name("bin")
          .help("Generate a binary project")
          .long("bin")

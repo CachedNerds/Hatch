@@ -25,6 +25,7 @@ fn main() {
   match result {
     Ok(mut project) => {
       let manifest = Manifest::new(project.get_path());
+      println!("\n\n{:?}", manifest);
     },
     Err(e) => println!("Error: {}", e),
   }

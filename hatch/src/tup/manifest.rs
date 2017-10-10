@@ -71,6 +71,7 @@ impl TestManifest {
     path.set_file_name("Tupfile");
     let tupfile = read_file(&mut path);
 
+    let _ = path.pop();
     TestManifest { tupfile }
   }
 }
