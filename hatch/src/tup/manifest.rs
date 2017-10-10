@@ -1,6 +1,6 @@
 use std::fs;
 use std::path;
-use std::io::Read;
+use std::io::{ Read, Write };
 
 use tup::{ PlatformKind };
 
@@ -33,6 +33,28 @@ impl Manifest {
 
   pub fn get_project_manifest(&self) -> &ProjectManifest {
     &self.project_manifest
+  }
+
+  pub fn create_platform_files(&self, mut path: &mut path::PathBuf) {
+    path.set_file_name("linux.tup");
+    write!(fs::File::create(&path).unwrap(),
+"STATIC = a
+SHARED = so");
+    path.set_file_name("macosx.tup");
+    write!(fs::File::create(&path).unwrap(),
+"STATIC = a
+SHARED = so");
+    path.set_file_name("win32.tup");
+    write!(fs::File::create(&path).unwrap(),
+"STATIC = lib
+SHARED = dll
+
+# Use clang for front-end
+CC = clang++.exe
+
+# Use llvm-lib for static libraries
+!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>");
+    let _ = path.pop();
   }
 }
 
