@@ -1,7 +1,20 @@
 use std::fmt;
 use std::path::{ PathBuf };
 
-use tup::{ LibraryKind };
+#[derive(Debug)]
+pub enum LibraryKind {
+  Shared,
+  Static,
+}
+
+impl fmt::Display for LibraryKind {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    match &self {
+      &Shared => write!(f, "shared"),
+      &Static => write!(f, "static"),
+    }
+  }
+}
 
 #[derive(Debug)]
 pub enum ProjectKind {
