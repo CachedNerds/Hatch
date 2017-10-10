@@ -3,6 +3,7 @@ use std::path;
 use std::io::{ Read, Write };
 
 use tup::{ PlatformKind };
+use tup::assets::{ PlatformAssets, BuildAssets };
 
 fn read_file(path: &mut path::PathBuf) -> Option<String>{
   let mut file = String::new();
@@ -37,79 +38,17 @@ impl Manifest {
 
   pub fn create_tuprules(&self, mut path: &mut path::PathBuf) {
     path.set_file_name("Tuprules.tup");
-    write!(fs::File::create(&path).unwrap(),
-".gitignore
-CC = g++
-
-# Uncomment to build with debug symbols
-#CFLAGS += -g
-
-ARCH = -m64
-#ARCH = -m32
-
-CFLAGS += $(ARCH)
-
-CFLAGS += -std=c++1z
-CFLAGS += -c
-CFLAGS += -I ../../
-
-LINKFLAGS += $(ARCH)
-LINKFLAGS += -static
-LINKFLAGS += -v
-
-SOURCE = src
-SOURCE_OUT = build
-SOURCE_FILES = $(SOURCE)/*.cpp
-SOURCE_OBJ_FILES = $(SOURCE_OUT)/*.o
-
-TEST = test
-TEST_OUT = $(TEST)/build
-TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
-TEST_OBJ_FILES = $(TEST_OUT)/*.o
-
-# macros
-!compile = |> $(CC) $(CFLAGS) %f -o %o |>
-!archive = |> ar crs %o %f |>
-!link = |> $(CC) $(LINKFLAGS) %f -o %o |>
-
-# includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup
-
-ifeq ($(LIB_TYPE),static)
-  EXTENSION = $(STATIC)
-else
-  ifeq ($(LIB_TYPE),shared)
-    EXTENSION = $(SHARED)
-  else
-    ifeq ($(LIB_TYPE),both)
-      EXTENSION = both
-    endif
-  endif
-endif
-
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
+    write!(fs::File::create(&path).unwrap(), "{}", BuildAssets::tuprules());
     let _ = path.pop();
   }
 
   pub fn create_platform_files(&self, mut path: &mut path::PathBuf) {
     path.set_file_name("linux.tup");
-    write!(fs::File::create(&path).unwrap(),
-"STATIC = a
-SHARED = so");
+    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::linux());
     path.set_file_name("macosx.tup");
-    write!(fs::File::create(&path).unwrap(),
-"STATIC = a
-SHARED = so");
+    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::darwin());
     path.set_file_name("win32.tup");
-    write!(fs::File::create(&path).unwrap(),
-"STATIC = lib
-SHARED = dll
-
-# Use clang for front-end
-CC = clang++.exe
-
-# Use llvm-lib for static libraries
-!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>");
+    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::win32());
     let _ = path.pop();
   }
 }

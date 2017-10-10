@@ -5,3 +5,4 @@ pub use self::platform::{ PlatformKind };
 pub mod project;
 pub mod manifest;
 pub mod platform;
+pub mod assets;
