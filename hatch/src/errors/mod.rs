@@ -6,6 +6,7 @@ extern crate clap;
 pub enum Error {
   IOError(io::Error),
   ClapError(clap::Error),
+  E(&'static str),
   NullError,
 }
 
@@ -21,11 +22,18 @@ impl From<clap::Error> for Error {
   }
 }
 
+impl From<&'static str> for Error {
+  fn from(e: &'static str) -> Self {
+    Error::E(e)
+  }
+}
+
 impl fmt::Display for Error {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match self {
-      &Error::IOError(ref e) => write!(f, "{}", e),
-      &Error::ClapError(ref e) => write!(f, "{}", e),
+      &Error::IOError(ref e) => e.fmt(f),
+      &Error::ClapError(ref e) => e.fmt(f),
+      &Error::E(ref e) => write!(f, "{}", e),
       &Error::NullError => write!(f, "{}", "An error occured"),
     }
   }
