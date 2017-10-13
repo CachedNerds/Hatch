@@ -38,11 +38,11 @@ impl fmt::Display for ProjectKind {
 pub struct Project {
   name: String,
   build_type: ProjectKind,
-  path: PathBuf,
+  path: String,
 }
 
 impl Project {
-  pub fn new(name: String, build_type: ProjectKind, mut path: PathBuf) -> Project {
+  pub fn new(name: String, build_type: ProjectKind, path: String) -> Project {
     Project { name, build_type, path }
   }
 
@@ -51,7 +51,7 @@ impl Project {
   }
 
   pub fn path(&self) -> &str {
-    &self.path.as_path().to_str().unwrap()
+    &self.path.as_str()
   }
 
   pub fn build_type(&self) -> &ProjectKind {

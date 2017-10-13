@@ -26,6 +26,8 @@ fn main() {
   match &result {
     &Ok(ref project) => {
       println!("{:?}", project);
+      let manifest = Manifest::new(project.path(), project.name());
+      println!("{:?}", manifest.project_manifest());
 
     },
     &Err(ref e) => println!("Error: {}", e),
@@ -53,10 +55,7 @@ fn name(args: &clap::ArgMatches) -> Result<String, errors::Error> {
 fn create_new_project(args: &clap::ArgMatches) -> Result<Project, errors::Error> {
   let name = name(&args)?;
   
-  let path = path(&args).and_then(|mut p| {
-    p.push(name.clone());
-    Ok(p)
-  })?;
+  let path = path(&args)?.into_os_string().into_string().unwrap();
 
   let build_type = if args.is_present("bin") {
     ProjectKind::Binary
@@ -74,24 +73,21 @@ fn update_existing_project(args: &clap::ArgMatches) -> Result<Project, errors::E
 
   let mut build_type = String::new();
   
-  let path = path(&args).and_then(|mut p| {
-    p.push(name.clone());
-    p.push("config.tup");
-    
-    let _ = fs::File::open(&p)
-      .and_then(|mut file| file.read_to_string(&mut build_type))?;
+  let path = path(&args)?.into_os_string().into_string().unwrap();
+  
+ // let build_type_path = path + name.as_str() + "/config.tup";
 
-    let _ = p.pop();
+  let _ = fs::File::open(path.clone() + "/" + name.as_str() + "/config.tup")
+    .and_then(|mut file| file.read_to_string(&mut build_type))?;
 
-    Ok(p)
-  })?;
+  let build_type = ProjectKind::from_str(build_type
+                                         .lines()
+                                         .filter(|line| line.contains("LIB_TYPE"))
+                                         .collect::<String>()
+                                         .split(' ')
+                                         .last()
+                                         .unwrap_or(""));
 
-  build_type = build_type
-    .lines()
-    .filter(|line| line.contains("LIB_TYPE"))
-    .collect();
-
-  let build_type = ProjectKind::from_str(build_type.split(' ').last().unwrap_or(""));
   
   Ok(Project::new(name, build_type, path))
 }

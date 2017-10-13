@@ -13,21 +13,20 @@ fn read_file(path: String) -> Option<String>{
   }
 }
 
-fn write_file<T: Assets>(asset: T) {
+fn write_file<T: Assets>(asset: &T) {
   let _ = write!(fs::File::create(&asset.path()).unwrap(), "{}", &asset.contents());
 }
 
-
 #[derive(Debug)]
 pub struct Manifest {
-  platform: PlatformKind,
+  platform: Option<PlatformKind>,
   tup_rules: Option<String>,
   project_manifest: ProjectManifest,
 }
 
 impl Manifest {
   pub fn new(path: &str, name: &str) -> Manifest {
-    let platform = PlatformKind::Linux;
+    let platform = Some(PlatformKind::Linux);
 
     let tup_rules = read_file(path.to_string() + "/Tuprules.tup");
 
@@ -41,23 +40,27 @@ impl Manifest {
   }
   
   // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
-  pub fn gen_tuprules(&self, path: &str) {
-    write_file(BuildAssets::tuprules(&path));
-  }
-  
-  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
-  pub fn gen_linux_platform(&self, path: &str) {
-    write_file(PlatformAssets::linux(&path));
+  pub fn create_tuprules(&self, path: &str) {
+    let tuprules = BuildAssets::tuprules(&path);
+    write_file(&tuprules);
   }
 
   // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
-  pub fn gen_darwin_platform(&self, path: &str) {
-    write_file(PlatformAssets::darwin(&path));
+  pub fn create_linux_platform(&self, path: &str) {
+    let linux = PlatformAssets::linux(&path);
+    write_file(&linux);
   }
 
   // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
-  pub fn gen_win32_platform(&self, path: &str) {
-    write_file(PlatformAssets::win32(&path));
+  pub fn create_darwin_platform(&self, path: &str) {
+    let darwin = PlatformAssets::darwin(&path);
+    write_file(&darwin);
+  }
+
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn create_win32_platform(&self, path: &str) {
+    let win32 = PlatformAssets::win32(&path);
+    write_file(&win32);
   }
 }
 
@@ -83,12 +86,14 @@ impl ProjectManifest {
     &self.test_manifest
   }
 
-  pub fn gen_config(path: &str, name: &str, kind: &ProjectKind) {
-    write_file(ProjectAssets::config(&path, &name, &kind));
+  pub fn create_config(path: &str, name: &str, kind: &ProjectKind) {
+    let config = ProjectAssets::config(&path, &name, &kind);
+    write_file(&config);
   }
 
-  pub fn gen_tupfile(path: &str, name: &str) {
-    write_file(ProjectAssets::tupfile(&path, &name));
+  pub fn create_tupfile(path: &str, name: &str) {
+    let tupfile = ProjectAssets::tupfile(&path, &name);
+    write_file(&tupfile);
   }
 }
 
@@ -104,7 +109,8 @@ impl TestManifest {
     TestManifest { tupfile }
   }
 
-  pub fn gen_tupfile(path: &str, name: &str) {
-    write_file(TestAssets::tupfile(&path, &name));
+  pub fn create_tupfile(path: &str, name: &str) {
+    let tupfile = TestAssets::tupfile(&path, &name);
+    write_file(&tupfile);
   }
 }
