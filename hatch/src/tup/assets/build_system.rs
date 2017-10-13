@@ -1,7 +1,24 @@
-pub struct BuildAssets {}
+use tup::assets::{ Assets };
+
+pub struct BuildAssets {
+  file_path: String,
+  file_contents: String,
+}
+
+impl Assets for BuildAssets {
+  fn path(&self) -> &str {
+    &self.file_path.as_str()
+  }
+
+  fn contents(&self) -> &str {
+    &self.file_contents.as_str()
+  }
+}
 
 impl BuildAssets {
-  pub fn tuprules() -> String {
+  pub fn tuprules(path: &str) -> BuildAssets {
+    let file_path = path.to_string() + "/Tuprules.tup";
+    let file_contents = 
 ".gitignore
 CC = g++
 
@@ -51,7 +68,8 @@ else
   endif
 endif
 
-PROJECT_LIB = $(PROJECT).$(EXTENSION)".to_string()
+PROJECT_LIB = $(PROJECT).$(EXTENSION)".to_string();
+    BuildAssets { file_path, file_contents }
   }
 }
 

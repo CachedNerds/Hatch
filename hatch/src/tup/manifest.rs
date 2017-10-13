@@ -2,16 +2,21 @@ use std::fs;
 use std::path;
 use std::io::{ Read, Write };
 
-use tup::{ PlatformKind };
-use tup::assets::{ PlatformAssets, BuildAssets };
+use tup::{ PlatformKind, ProjectKind };
+use tup::assets::{ PlatformAssets, BuildAssets, ProjectAssets, TestAssets, Assets };
 
-fn read_file(path: &mut path::PathBuf) -> Option<String>{
+fn read_file(path: String) -> Option<String>{
   let mut file = String::new();
   match fs::File::open(&path).and_then(|mut f| f.read_to_string(&mut file)) {
     Ok(_) => Some(file),
     Err(_) => None,
   }
 }
+
+fn write_file<T: Assets>(asset: T) {
+  let _ = write!(fs::File::create(&asset.path()).unwrap(), "{}", &asset.contents());
+}
+
 
 #[derive(Debug)]
 pub struct Manifest {
@@ -21,35 +26,38 @@ pub struct Manifest {
 }
 
 impl Manifest {
-  pub fn new(mut path: &mut path::PathBuf) -> Manifest {
+  pub fn new(path: &str, name: &str) -> Manifest {
     let platform = PlatformKind::Linux;
 
-    path.push("Tuprules.tup");
-    let tup_rules = read_file(&mut path);
+    let tup_rules = read_file(path.to_string() + "/Tuprules.tup");
 
-    let project_manifest = ProjectManifest::new(&mut path);
+    let project_manifest = ProjectManifest::new(&path, &name);
 
     Manifest { platform, tup_rules, project_manifest }
   }
 
-  pub fn get_project_manifest(&self) -> &ProjectManifest {
+  pub fn project_manifest(&self) -> &ProjectManifest {
     &self.project_manifest
   }
-
-  pub fn create_tuprules(&self, mut path: &mut path::PathBuf) {
-    path.set_file_name("Tuprules.tup");
-    write!(fs::File::create(&path).unwrap(), "{}", BuildAssets::tuprules());
-    let _ = path.pop();
+  
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn gen_tuprules(&self, path: &str) {
+    write_file(BuildAssets::tuprules(&path));
+  }
+  
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn gen_linux_platform(&self, path: &str) {
+    write_file(PlatformAssets::linux(&path));
   }
 
-  pub fn create_platform_files(&self, mut path: &mut path::PathBuf) {
-    path.set_file_name("linux.tup");
-    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::linux());
-    path.set_file_name("macosx.tup");
-    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::darwin());
-    path.set_file_name("win32.tup");
-    write!(fs::File::create(&path).unwrap(), "{}", PlatformAssets::win32());
-    let _ = path.pop();
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn gen_darwin_platform(&self, path: &str) {
+    write_file(PlatformAssets::darwin(&path));
+  }
+
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn gen_win32_platform(&self, path: &str) {
+    write_file(PlatformAssets::win32(&path));
   }
 }
 
@@ -61,20 +69,26 @@ pub struct ProjectManifest {
 }
 
 impl ProjectManifest {
-  pub fn new(mut path: &mut path::PathBuf) -> ProjectManifest {
-    path.set_file_name("config.tup");
-    let config = read_file(&mut path);
+  // Expects path to be /xxxx/xxxx/Toolbox/C++/libs
+  pub fn new(path: &str, name: &str) -> ProjectManifest {
+    let config = read_file(path.to_string() + "/" + name + "/config.tup");
+    let tupfile = read_file(path.to_string() + "/" + name + "/Tupfile");
 
-    path.set_file_name("Tupfile");
-    let tupfile = read_file(&mut path);
-
-    let test_manifest = TestManifest::new(&mut path);
+    let test_manifest = TestManifest::new(&path, &name);
 
     ProjectManifest { config, tupfile, test_manifest }
   }
 
-  pub fn get_test_manifest(&self) -> &TestManifest {
+  pub fn test_manifest(&self) -> &TestManifest {
     &self.test_manifest
+  }
+
+  pub fn gen_config(path: &str, name: &str, kind: &ProjectKind) {
+    write_file(ProjectAssets::config(&path, &name, &kind));
+  }
+
+  pub fn gen_tupfile(path: &str, name: &str) {
+    write_file(ProjectAssets::tupfile(&path, &name));
   }
 }
 
@@ -84,11 +98,13 @@ pub struct TestManifest {
 }
 
 impl TestManifest {
-  pub fn new(mut path: &mut path::PathBuf) -> TestManifest {
-    path.set_file_name("Tupfile");
-    let tupfile = read_file(&mut path);
+  pub fn new(path: &str, name: &str) -> TestManifest {
+    let tupfile = read_file(path.to_string() + "/" + name + "/test/Tupfile");
 
-    let _ = path.pop();
     TestManifest { tupfile }
+  }
+
+  pub fn gen_tupfile(path: &str, name: &str) {
+    write_file(TestAssets::tupfile(&path, &name));
   }
 }

@@ -1,32 +1,24 @@
 use std::fmt;
 use std::path::{ PathBuf };
+use tup::{ Manifest };
 
 #[derive(Debug)]
 pub enum LibraryKind {
-  Shared,
-  Static,
-}
-
-impl fmt::Display for LibraryKind {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    match &self {
-      &Shared => write!(f, "shared"),
-      &Static => write!(f, "static"),
-    }
-  }
+  SharedLib,
+  StaticLib,
 }
 
 #[derive(Debug)]
 pub enum ProjectKind {
   Binary,
-  Library(LibraryKind),
+  Library(LibraryKind), 
 }
 
 impl ProjectKind {
   pub fn from_str(string: &str) -> ProjectKind {
     match string {
-      "shared" => ProjectKind::Library(LibraryKind::Shared),
-      "static" => ProjectKind::Library(LibraryKind::Static),
+      "shared" => ProjectKind::Library(LibraryKind::SharedLib),
+      "static" => ProjectKind::Library(LibraryKind::StaticLib),
       _ => ProjectKind::Binary,
     }
   }
@@ -35,9 +27,9 @@ impl ProjectKind {
 impl fmt::Display for ProjectKind {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match self {
-      &ProjectKind::Binary => write!(f, "Binary"),
-      &ProjectKind::Library(LibraryKind::Shared) => write!(f, "Shared"),
-      &ProjectKind::Library(LibraryKind::Static) => write!(f, "Static"),
+      &ProjectKind::Library(LibraryKind::SharedLib) => write!(f, "shared"),
+      &ProjectKind::Library(LibraryKind::StaticLib) => write!(f, "static"),
+      &ProjectKind::Binary => write!(f, "binary"),
     }
   }
 }
@@ -50,11 +42,19 @@ pub struct Project {
 }
 
 impl Project {
-  pub fn new(name: String, build_type: ProjectKind, path: PathBuf) -> Project {
+  pub fn new(name: String, build_type: ProjectKind, mut path: PathBuf) -> Project {
     Project { name, build_type, path }
   }
 
-  pub fn get_path(&mut self) -> &mut PathBuf {
-    &mut self.path
+  pub fn name(&self) -> &str {
+    &self.name.as_str()
+  }
+
+  pub fn path(&self) -> &str {
+    &self.path.as_path().to_str().unwrap()
+  }
+
+  pub fn build_type(&self) -> &ProjectKind {
+    &self.build_type
   }
 }
