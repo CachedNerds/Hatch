@@ -1,7 +1,5 @@
-
 #[macro_use]
-extern crate clap;
-pub use self::clap::*;
+pub extern crate clap;
 
 pub mod project;
 pub mod cli;
