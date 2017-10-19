@@ -1,35 +1,50 @@
-pub struct AssetOptions {
-  input_file: String,
-  read: bool,
-  write: bool,
-  output_file: Option<String>,
+use command::{ Command };
+
+#[derive(Debug)]
+pub enum TupKind {
+  Tuprules,
+  Tupfile,
+  ProjectConfig,
+  ProjectTupfile,
+  ProjectTestTupfile,
 }
 
-impl AssetOptions {
-  pub fn new() -> AssetOptions {
-    AssetOptions {
-      input_file: String::new(),
-      read: false,
-      write: false,
-      output_file: None,
+#[derive(Debug)]
+pub enum PlatformKind {
+  Linux,
+  Darwin,
+  Win32,
+}
+
+impl Command for AssetKind {
+  fn execute(&self) {
+    println!("{:?}", self);
+  }
+}
+
+#[derive(Debug)]
+pub enum AssetKind {
+  Os(PlatformKind),
+  Tup(TupKind),
+}
+
+#[derive(Debug)]
+pub struct AssetBuilder {
+  name: String,
+  path: String,
+  assets: Vec<AssetKind>,
+}
+
+impl AssetBuilder {
+  pub fn new() -> AssetBuilder {
+    AssetBuilder {
+      name: String::new(),
+      path: String::new(),
+      assets: Vec::new(),
     }
   }
 
-  pub fn input_file(&mut self, file_name: &str) {
-    self.input_file.push_str(file_name);
-  }
-
-  pub fn read(&mut self, read: bool) {
-    self.read = read;
-  }
-
-  pub fn write(&mut self, write: bool) {
-    self.write = write;
-  }
-
-  pub fn output_file(&mut self, file_name: Option<&str>) {
-    if let Some(s) = file_name {
-      self.output_file = Some(String::from(s));
-    }
+  pub fn build_tuprules(&mut self) {
+    self.assets.push(AssetKind::Tup(TupKind::Tuprules));
   }
 }
