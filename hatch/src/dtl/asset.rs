@@ -30,21 +30,49 @@ pub enum AssetKind {
 
 #[derive(Debug)]
 pub struct AssetBuilder {
-  name: String,
-  path: String,
   assets: Vec<AssetKind>,
 }
 
 impl AssetBuilder {
   pub fn new() -> AssetBuilder {
     AssetBuilder {
-      name: String::new(),
-      path: String::new(),
       assets: Vec::new(),
     }
   }
 
+  pub fn paths() -> &'static str {
+    "/C++/libs\n/C++/Toolbox\n/test"
+  }
+
   pub fn build_tuprules(&mut self) {
     self.assets.push(AssetKind::Tup(TupKind::Tuprules));
+  }
+
+  pub fn build_tupfile(&mut self) {
+    self.assets.push(AssetKind::Tup(TupKind::Tupfile));
+  }
+
+  pub fn build_project_config(&mut self) {
+    self.assets.push(AssetKind::Tup(TupKind::ProjectConfig));
+  }
+
+  pub fn build_project_tupfile(&mut self) {
+    self.assets.push(AssetKind::Tup(TupKind::ProjectTupfile));
+  }
+
+  pub fn build_project_test_tupfile(&mut self) {
+    self.assets.push(AssetKind::Tup(TupKind::ProjectTestTupfile));
+  }
+
+  pub fn build_linux_platform(&mut self) {
+    self.assets.push(AssetKind::Os(PlatformKind::Linux));
+  }
+
+  pub fn build_darwin_platform(&mut self) {
+    self.assets.push(AssetKind::Os(PlatformKind::Darwin));
+  }
+
+  pub fn build_win32_platform(&mut self) {
+    self.assets.push(AssetKind::Os(PlatformKind::Win32));
   }
 }
