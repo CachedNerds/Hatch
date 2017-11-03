@@ -1,7 +1,7 @@
 use dtl::tup::{ Assets };
 
 pub struct TestAssets {
-  sile_path: String,
+  file_path: String,
   file_contents: String,
 }
 

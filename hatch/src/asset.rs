@@ -8,13 +8,9 @@ impl Asset {
   pub fn new() -> Asset {
     Asset(asset_imp::AssetBuilder::new())
   }
-
+  
   pub fn build_tuprules(&mut self) -> &mut Asset {
     self.0.build_tuprules(); self
-  }
-
-  pub fn build_tupfile(&mut self) -> &mut Asset {
-    self.0.build_tupfile(); self
   }
 
   pub fn build_project_config(&mut self) -> &mut Asset {

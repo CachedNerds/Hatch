@@ -8,15 +8,15 @@ impl<'cli>Cli<'cli> {
     Cli(cli_imp::Cli::new())
   }
   
-  pub fn build_type(&mut self) -> ProjectKind {
+  pub fn build_type(&self) -> ProjectKind {
     self.0.build_type()
   }
 
-  pub fn name(&mut self) -> String {
+  pub fn name(&self) -> String {
     self.0.name()
   }
 
-  pub fn path(&mut self) -> String {
+  pub fn path(&self) -> String {
     self.0.path()
   }
 }

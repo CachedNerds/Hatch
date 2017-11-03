@@ -5,17 +5,8 @@ use dtl::tup::test::{ TestAssets };
 
 use dtl::tup::{ Assets };
 
-use command::{ Command };
-
-impl Command<Assets> for TupKind {
-  fn execute(&self) -> Assets {
-    match self {
-      Tuprules => BuildAssets::tuprules(),
-      ProjectConfig => ProjectAssets::config(),
-      ProjectTupfile => ProjectAssets::tupfile(),
-      ProjectTestTupfile => TestAssets::tupfile(),
-    }
-  }
+pub fn create_file<T>(asset: T) where T: Assets {
+  println!("{}", asset.path());
 }
 
 #[derive(Debug)]
@@ -26,30 +17,11 @@ pub enum TupKind {
   ProjectTestTupfile,
 }
 
-impl Command<Assets> for PlatformKind {
-  fn execute(&self) -> Assets {
-    match self {
-      Linux => PlatformAssets::linux(),
-      Darwin => PlatformAssets::darwin(),
-      Win32 => PlatformKind::win32(),
-    }
-  }
-}
-
 #[derive(Debug)]
 pub enum PlatformKind {
   Linux,
   Darwin,
   Win32,
-}
-
-impl Command<Assets> for AssetKind {
-  fn execute(&self) -> Assets {
-    match self {
-      AssetKind::Os(ref platform) => platform.execute(),
-      AssetKind::Tup(ref tup) => tup.execute(),
-    }
-  }
 }
 
 #[derive(Debug)]
@@ -70,16 +42,16 @@ impl AssetBuilder {
     }
   }
 
+  pub fn assets(&mut self) -> &Vec<AssetKind> {
+    &self.assets.as_ref()
+  }
+
   pub fn paths() -> &'static str {
     "/C++/libs\n/C++/Toolbox\n/test"
   }
 
   pub fn build_tuprules(&mut self) {
     self.assets.push(AssetKind::Tup(TupKind::Tuprules));
-  }
-
-  pub fn build_tupfile(&mut self) {
-    self.assets.push(AssetKind::Tup(TupKind::Tupfile));
   }
 
   pub fn build_project_config(&mut self) {

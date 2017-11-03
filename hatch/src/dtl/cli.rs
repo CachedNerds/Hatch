@@ -8,7 +8,7 @@ impl<'cli> Cli<'cli> {
     Cli(build_cli())
   }
 
-  pub fn build_type(&mut self) -> ProjectKind {
+  pub fn build_type(&self) -> ProjectKind {
     let arg = self.0.subcommand_matches("new").unwrap();
 
     if arg.is_present("bin") {
@@ -20,13 +20,13 @@ impl<'cli> Cli<'cli> {
     }
   }
 
-  pub fn name(&mut self) -> String {
+  pub fn name(&self) -> String {
     let arg = self.0.subcommand_matches("new").unwrap();
     let name = value_t!(arg, "PROJECT_NAME", String).unwrap();
     name
   }
 
-  pub fn path(&mut self) -> String {
+  pub fn path(&self) -> String {
     let arg = self.0.subcommand_matches("new").unwrap();
     let mut path = String::new();
 
@@ -36,8 +36,13 @@ impl<'cli> Cli<'cli> {
       path.push_str("./");
     }
 
-    path.push_str("C++/libs");
-    path
+    match path.as_str().chars().last().unwrap() {
+      '/' => path,
+      _   => {
+        path.push_str("/");
+        path
+      }
+    }
   }
 }
 

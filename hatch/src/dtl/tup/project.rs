@@ -21,12 +21,12 @@ impl ProjectAssets {
     let file_path = path.to_string() + "/" + name + "/config.tup";
 
     let file_contents = match project_type {
-      &ProjectKind::Library(SharedLib) => format!( // {{{
+      &ProjectKind::Library(ref shared_lib) => format!( // {{{
 "PROJECT = {}
 LIB_TYPE = shared", // }}}
       &name).to_string(),
       
-      &ProjectKind::Library(StaticLib) => format!( // {{{
+      &ProjectKind::Library(ref static_lib) => format!( // {{{
 "PROJECT = {}
 LIB_TYPE = static", // }}}
         &name).to_string(),
