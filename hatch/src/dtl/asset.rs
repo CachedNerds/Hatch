@@ -1,34 +1,27 @@
-use dtl::tup::platform::{ PlatformAssets };
-use dtl::tup::build_system::{ BuildAssets };
-use dtl::tup::project::{ ProjectAssets };
-use dtl::tup::test::{ TestAssets };
-
+use project::Project;
 use dtl::tup::{ Assets };
 
-pub fn create_file<T>(asset: T) where T: Assets {
+use dtl::tup::build_system::BuildAssets;
+use dtl::tup::project::ProjectAssets;
+use dtl::tup::platform::PlatformAssets;
+use dtl::tup::test::TestAssets;
+
+pub fn print_file_path<T>(asset: T) where T: Assets {
+  println!("{}", asset.path());
+}
+
+pub fn print_file_contents<T>(asset: T) where T: Assets {
   println!("{}", asset.path());
 }
 
 #[derive(Debug)]
-pub enum TupKind {
-  Tuprules,
-  ProjectConfig,
-  ProjectTupfile,
-  ProjectTestTupfile,
-}
+pub enum TupKind { Tuprules, ProjectConfig, ProjectTupfile, ProjectTestTupfile }
 
 #[derive(Debug)]
-pub enum PlatformKind {
-  Linux,
-  Darwin,
-  Win32,
-}
+pub enum PlatformKind { Linux, Darwin, Win32 }
 
 #[derive(Debug)]
-pub enum AssetKind {
-  Os(PlatformKind),
-  Tup(TupKind),
-}
+pub enum AssetKind { Os(PlatformKind), Tup(TupKind) }
 
 #[derive(Debug)]
 pub struct AssetBuilder {
@@ -49,32 +42,21 @@ impl AssetBuilder {
   pub fn paths() -> &'static str {
     "/C++/libs\n/C++/Toolbox\n/test"
   }
-
-  pub fn build_tuprules(&mut self) {
-    self.assets.push(AssetKind::Tup(TupKind::Tuprules));
+  
+  fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
+    match asset {
+      Tuprules => print_file_path(BuildAssets::tuprules(&project)),
+      ProjectConfig => print_file_path(ProjectAssets::config(&project)),
+      ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
+      ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
+    }
   }
 
-  pub fn build_project_config(&mut self) {
-    self.assets.push(AssetKind::Tup(TupKind::ProjectConfig));
-  }
-
-  pub fn build_project_tupfile(&mut self) {
-    self.assets.push(AssetKind::Tup(TupKind::ProjectTupfile));
-  }
-
-  pub fn build_project_test_tupfile(&mut self) {
-    self.assets.push(AssetKind::Tup(TupKind::ProjectTestTupfile));
-  }
-
-  pub fn build_linux_platform(&mut self) {
-    self.assets.push(AssetKind::Os(PlatformKind::Linux));
-  }
-
-  pub fn build_darwin_platform(&mut self) {
-    self.assets.push(AssetKind::Os(PlatformKind::Darwin));
-  }
-
-  pub fn build_win32_platform(&mut self) {
-    self.assets.push(AssetKind::Os(PlatformKind::Win32));
+  fn generate_platformkind_assets(&self, asset: &PlatformKind, project: &Project) {
+    match asset {
+      Linux => print_file_path(PlatformAssets::linux(project.path())),
+      Darwin => print_file_path(PlatformAssets::darwin(project.path())),
+      Win32 => print_file_path(PlatformAssets::win32(project.path())),
+    }
   }
 }

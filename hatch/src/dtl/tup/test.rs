@@ -1,3 +1,4 @@
+use project::{ Project };
 use dtl::tup::{ Assets };
 
 pub struct TestAssets {
@@ -16,8 +17,8 @@ impl Assets for TestAssets {
 }
 
 impl TestAssets {
-  pub fn tupfile(path: &str, name: &str) -> TestAssets {
-    let file_path = path.to_string() + "/" + name + "/test/Tupfile";
+  pub fn tupfile(project: &Project) -> TestAssets {
+    let file_path = project.path().to_string() + "/" + project.name() + "/test/Tupfile";
     let file_contents =
 ".gitignore".to_string();
 

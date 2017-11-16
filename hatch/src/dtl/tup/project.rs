@@ -1,5 +1,5 @@
 use dtl::tup::{ Assets };
-use project::{ ProjectKind };
+use project::{ ProjectKind, Project };
 
 pub struct ProjectAssets {
   file_path: String,
@@ -17,30 +17,30 @@ impl Assets for ProjectAssets {
 }
 
 impl ProjectAssets {
-  pub fn config(path: &str, name: &str, project_type: &ProjectKind) -> ProjectAssets {
-    let file_path = path.to_string() + "/" + name + "/config.tup";
+  pub fn config(project: &Project) -> ProjectAssets {
+    let file_path = project.path().to_string() + "/" + project.name() + "/config.tup";
 
-    let file_contents = match project_type {
+    let file_contents = match project.kind() {
       &ProjectKind::Library(ref shared_lib) => format!( // {{{
 "PROJECT = {}
 LIB_TYPE = shared", // }}}
-      &name).to_string(),
+      project.name()).to_string(),
       
       &ProjectKind::Library(ref static_lib) => format!( // {{{
 "PROJECT = {}
 LIB_TYPE = static", // }}}
-        &name).to_string(),
+        project.name()).to_string(),
       
       &ProjectKind::Binary => format!( // {{{
 "PROJECT = {}", // }}}
-        &name).to_string(),
+        project.name()).to_string(),
     };
 
     ProjectAssets { file_path, file_contents }
   }
 
-  pub fn tupfile(path: &str, name: &str) -> ProjectAssets {
-    let file_path = path.to_string() + "/" + name + "/Tupfile";
+  pub fn tupfile(project: &Project) -> ProjectAssets {
+    let file_path = project.path().to_string() + "/" + project.name() + "/Tupfile";
     let file_contents = // {{{
 "# order matters
 include config.tup

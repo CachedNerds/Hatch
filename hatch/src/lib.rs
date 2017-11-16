@@ -6,6 +6,7 @@ pub extern crate clap;
 pub mod project;
 pub mod cli;
 pub mod asset;
+pub mod manifest;
 mod dtl;
 
 #[cfg(test)]

@@ -1,4 +1,5 @@
 use dtl::tup::{ Assets };
+use project::{ Project };
 
 pub struct BuildAssets {
   file_path: String,
@@ -16,8 +17,8 @@ impl Assets for BuildAssets {
 }
 
 impl BuildAssets {
-  pub fn tuprules(path: &str) -> BuildAssets {
-    let file_path = path.to_string() + "/Tuprules.tup";
+  pub fn tuprules(project: &Project) -> BuildAssets {
+    let file_path = project.path().to_string() + "/Tuprules.tup";
     let file_contents = 
 ".gitignore
 CC = g++

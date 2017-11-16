@@ -8,7 +8,7 @@ impl<'cli>Cli<'cli> {
     Cli(cli_imp::Cli::new())
   }
   
-  pub fn build_type(&self) -> ProjectKind {
+  pub fn kind(&self) -> ProjectKind {
     self.0.build_type()
   }
 
