@@ -1,16 +1,19 @@
 use asset::Asset;
 use project::Project;
+use project::ProjectKind;
+use project::LibraryKind;
+use cli::Cli;
 
 pub struct Manifest {
   project: Project,
-  assets: Asset,
+  assets: Asset
 }
 
 impl Manifest {
-  pub fn new() -> Manifest {
+  pub fn new(project: Project) -> Manifest {
     Manifest {
-      project: Project::new(),
-      assets: Asset::new(),
+      project: project,
+      assets: Asset::new()
     }
   }
 }
