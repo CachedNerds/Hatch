@@ -1,11 +1,19 @@
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 
-pub struct New;
+pub struct New {
+  name: &'static str
+}
 
-impl<'new> New {
-  pub fn subcmd() -> App<'new, 'new> {
-    SubCommand::with_name(New::subcmd_name())
+impl New {
+  pub fn new() -> New {
+    New { name: "new" }
+  }
+}
+
+impl<'new> Command<'new> for New {
+  fn cli_subcommand(&self) -> App<'new, 'new> {
+    SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
       .arg(Arg::with_name("TOOLBOX_PATH")
@@ -25,13 +33,11 @@ impl<'new> New {
         .long("static").short("s").conflicts_with("bin").required(false))
   }
 
-  pub fn subcmd_name() -> &'static str {
-    "new"
+  fn subcommand_name(&self) -> &'static str {
+    self.name
   }
-}
 
-impl Command for New {
   fn execute<'a>(&self, args: &ArgMatches<'a>) {
-    println!("{}", New::subcmd_name())
+    println!("{}", &self.name)
   }
 }

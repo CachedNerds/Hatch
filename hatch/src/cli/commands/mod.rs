@@ -1,8 +1,10 @@
 pub mod new;
 pub mod update;
 
-use clap::ArgMatches;
+use clap::{ ArgMatches, App };
 
-pub trait Command {
+pub trait Command<'command> {
+  fn cli_subcommand(&self) -> App<'command, 'command>;
+  fn subcommand_name(&self) -> &'static str;
   fn execute<'a>(&self, args: &ArgMatches<'a>);
 }
