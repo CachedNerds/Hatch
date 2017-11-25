@@ -6,7 +6,10 @@ use hatch::cli::Cli;
 use hatch::cli::commands::Command;
 use hatch::cli::commands::new::New;
 use hatch::cli::commands::update::Update;
-
+//
+//fn call<C>(subcommand: C) where C: Command {
+//  subcommand.execute(
+//
 fn main() {
   // create the subcommand to command map
   let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
@@ -17,14 +20,8 @@ fn main() {
   let update_command = Box::new(Update::new());
   subcommands.insert(update_command.subcommand_name(), update_command);
 
-  // create list of cli subcommand options
-  let mut cli_subcommands = Vec::new();
-  for (_subcommand_name, subcommand) in &subcommands {
-    cli_subcommands.push(subcommand.cli_subcommand());
-  }
-  
-  // initialize cli with the set of subcommands
-  let cli = Cli::new(cli_subcommands);
+  // initialize cli with the set of subcommand
+  let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
 
   // execute selected subcommand
   match cli.subcommand() {
@@ -35,5 +32,4 @@ fn main() {
       }
     },
     _ => {}
-  };
-}
+  };}
