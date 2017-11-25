@@ -13,8 +13,8 @@ impl New {
   }
 }
 
-impl<'new> Command<'new> for New {
-  fn cli_subcommand(&self) -> App<'new, 'new> {
+impl<'command> Command<'command> for New {
+  fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
@@ -39,7 +39,7 @@ impl<'new> Command<'new> for New {
     self.name
   }
 
-  fn execute<'command>(&self, args: &ArgMatches<'command>) {
+  fn execute(&self, args: &ArgMatches<'command>) {
     println!("{:?}", &self.build_type(args))
   }
 }
