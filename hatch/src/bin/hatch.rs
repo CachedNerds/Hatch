@@ -6,10 +6,7 @@ use hatch::cli::Cli;
 use hatch::cli::commands::Command;
 use hatch::cli::commands::new::New;
 use hatch::cli::commands::update::Update;
-//
-//fn call<C>(subcommand: C) where C: Command {
-//  subcommand.execute(
-//
+
 fn main() {
   // create the subcommand to command map
   let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
