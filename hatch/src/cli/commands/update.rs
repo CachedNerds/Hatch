@@ -11,8 +11,8 @@ impl Update {
   }
 }
 
-impl<'update> Command<'update> for Update {
-  fn cli_subcommand(&self) -> App<'update, 'update> {
+impl<'command> Command<'command> for Update {
+  fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
       .about("Updates project dependencies.")
       .version("0.1.0")
@@ -23,7 +23,7 @@ impl<'update> Command<'update> for Update {
     self.name
   }
 
-  fn execute<'a>(&self, args: &ArgMatches<'a>) {
+  fn execute(&self, args: &ArgMatches<'command>) {
     println!("{}", &self.name);
     println!("{}", &self.toolbox_path(args));
   }
