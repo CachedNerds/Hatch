@@ -25,5 +25,6 @@ impl<'update> Command<'update> for Update {
 
   fn execute<'a>(&self, args: &ArgMatches<'a>) {
     println!("{}", &self.name);
+    println!("{}", &self.toolbox_path(args));
   }
 }

@@ -18,9 +18,6 @@ impl<'command> Command<'command> for New {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
-      .arg(Arg::with_name("TOOLBOX_PATH")
-           .help("Path to toolbox. (default = ./)")
-           .long("path").short("p").required(false).takes_value(true))
 
       .arg(Arg::with_name("PROJECT_NAME")
            .help("Name of project")
@@ -40,7 +37,8 @@ impl<'command> Command<'command> for New {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) {
-    println!("{:?}", &self.build_type(args))
+    println!("{:?}", &self.build_type(args));
+    println!("{}", &self.toolbox_path(args));
   }
 }
 
@@ -58,23 +56,5 @@ impl<'new> New {
   fn project_name(&self, args: &ArgMatches<'new>) -> String {
     let name = value_t!(args, "PROJECT_NAME", String).unwrap();
     name
-  }
-
-  fn path(&self, args: &ArgMatches<'new>) -> String {
-    let mut path = String::new();
-
-    if args.is_present("TOOLBOX_PATH") {
-      path.push_str(value_t!(args, "TOOLBOX_PATH", String).unwrap().as_str());
-    } else {
-      path.push_str("./");
-    }
-
-    match path.as_str().chars().last().unwrap() {
-      '/' => path,
-      _   => {
-        path.push_str("/");
-        path
-      }
-    }
   }
 }
