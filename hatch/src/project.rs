@@ -19,9 +19,10 @@ impl Project {
     self.0.path()
   }
 }
-
+#[derive(Debug)]
 pub enum LibraryKind { Shared, Static }
 
+#[derive(Debug)]
 pub enum ProjectKind { Binary, Library(LibraryKind) }
 
 impl AsRef<ProjectKind> for ProjectKind {

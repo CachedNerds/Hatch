@@ -15,16 +15,4 @@ impl<'cli>Cli<'cli> {
   pub fn subcommand(&self) -> (&str, Option<&ArgMatches<'cli>>) {
     self.0.subcommand()
   }
-
-  pub fn kind(&self) -> ProjectKind {
-    self.0.build_type()
-  }
-
-  pub fn name(&self) -> String {
-    self.0.name()
-  }
-
-  pub fn path(&self) -> String {
-    self.0.path()
-  }
 }
