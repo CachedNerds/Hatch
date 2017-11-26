@@ -10,7 +10,9 @@ impl<'cli> Cli<'cli> {
           .subcommands(subcommands.into_iter().map(|s| {
             s.arg(Arg::with_name("TOOLBOX_PATH")
                   .help("Path to toolbox. (default = ./)")
-                  .long("path").short("p").required(false).takes_value(true))
+                  .long("path").short("p")
+                  .required(false)
+                  .takes_value(true))
 
           }).collect::<Vec<_>>())
           .get_matches())
