@@ -8,9 +8,8 @@ pub struct Project {
 }
 
 impl Project {
-  pub fn new() -> Project {
-    let cli = Cli::new();
-    Project { name: cli.name(), kind: cli.kind(), path: cli.path() }
+  pub fn new(name: String, kind: ProjectKind, path: String) -> Project {
+    Project { name: name, kind: kind, path: path}
   }
 
   pub fn name(&self) -> &str {

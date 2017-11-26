@@ -3,8 +3,8 @@ use dtl::project as project_imp;
 pub struct Project (project_imp::Project);
 
 impl Project { 
-  pub fn new() -> Project {
-    Project(project_imp::Project::new())
+  pub fn new(name: String, kind: ProjectKind, path: String) -> Project {
+    Project(project_imp::Project::new(name, kind, path))
   }
 
   pub fn name(&self) -> &str {
@@ -19,9 +19,10 @@ impl Project {
     self.0.path()
   }
 }
-
+#[derive(Debug)]
 pub enum LibraryKind { Shared, Static }
 
+#[derive(Debug)]
 pub enum ProjectKind { Binary, Library(LibraryKind) }
 
 impl AsRef<ProjectKind> for ProjectKind {
