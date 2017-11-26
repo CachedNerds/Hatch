@@ -37,8 +37,9 @@ impl<'command> Command<'command> for New {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) {
-    println!("{:?}", &self.build_type(args));
-    println!("{}", &self.toolbox_path(args));
+    println!("Project Path: {}\nToolbox Path: {}",
+             self.project_name(args).unwrap(),
+             self.toolbox_path(args));
   }
 }
 
@@ -51,10 +52,5 @@ impl<'new> New {
     } else {
       ProjectKind::Library(LibraryKind::Shared)
     }
-  }
-
-  fn project_name(&self, args: &ArgMatches<'new>) -> String {
-    let name = value_t!(args, "PROJECT_NAME", String).unwrap();
-    name
   }
 }
