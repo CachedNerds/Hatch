@@ -17,7 +17,7 @@ impl<'command> Command<'command> for New {
   fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
-
+      .version("0.1.0")
 
       .arg(Arg::with_name("PROJECT_NAME")
            .help("Name of project")
