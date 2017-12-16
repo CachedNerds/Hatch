@@ -7,6 +7,7 @@ pub mod project;
 pub mod cli;
 pub mod asset;
 pub mod manifest;
+pub mod config;
 mod dtl;
 
 #[cfg(test)]
