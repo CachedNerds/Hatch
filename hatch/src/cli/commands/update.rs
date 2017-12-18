@@ -1,6 +1,16 @@
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 
+use std::io::{ Error, Read };
+use std::fs;
+
+use yaml_rust::{ Yaml, YamlLoader };
+use yaml_rust::yaml::Hash;
+use yaml_rust::scanner::{ ScanError };
+
+use project::{ Project, LibraryKind, ProjectKind };
+use config::contexts;
+
 pub struct Update {
   name: &'static str
 }
@@ -29,17 +39,38 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) {
-    let mut project_string = String::from("Project Name: ");
-    let mut toolbox_string = String::from("Toolbox Path: ");
+    match self.parse_hatch_yml(self.toolbox_path(args)) {
+      Some(entry) => {
+        let build = entry["build"].as_str().unwrap();
+        
+        let kind = match build {
+          "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
+          "shared-lib" => ProjectKind::Library(LibraryKind::Static),
+          _ => ProjectKind::Binary
+        };
 
-    if let Some(name) = self.project_name(args) {
-      project_string.push_str(name.as_str());
-    } else {
-      project_string.push_str("Unspecified");
+        let name = entry["name"].as_str().unwrap().to_owned();
+        let version = entry["version"].as_str().unwrap().to_owned();
+
+        let p = Project::new(name, kind, self.toolbox_path(args), version);
+        contexts::update::Update::new(p);
+
+      },
+      None => println!("No Hatch.yml in {}", self.toolbox_path(args).as_str())
     }
+  }
+}
 
-    toolbox_string.push_str(self.toolbox_path(args).as_str());
+impl Update {
+  fn parse_hatch_yml(&self, path: String) -> Option<Yaml> {
+    let parsed = fs::File::open(path + "Hatch.yml").and_then(|mut file| {
+      let mut contents = String::new();
+      file.read_to_string(&mut contents).map(|_| contents)
+    }).map(|mut s| YamlLoader::load_from_str(&mut s));
 
-    println!("{}\n{}", project_string, toolbox_string);
+    match parsed {
+      Err(_) => None,
+      Ok(p) => p.unwrap().into_iter().nth(0)
+    }
   }
 }
