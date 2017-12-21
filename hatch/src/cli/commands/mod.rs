@@ -1,14 +1,16 @@
 pub mod new;
 pub mod update;
 
+use manifest::Manifest;
 use clap::{ ArgMatches, App };
+use hatch_error::HatchError;
 
 pub trait Command<'command> {
   fn cli_subcommand(&self) -> App<'command, 'command>;
   
   fn subcommand_name(&self) -> &'static str;
 
-  fn execute(&self, args: &ArgMatches<'command>);
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError>;
 
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
     if args.is_present("PROJECT_NAME") {

@@ -1,7 +1,14 @@
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 
+use manifest::Manifest;
+
 use project::{ ProjectKind, LibraryKind };
+
+use hatch_error::{
+  HatchError,
+  NullError
+};
 
 pub struct New {
   name: &'static str
@@ -36,10 +43,11 @@ impl<'command> Command<'command> for New {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) {
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError> {
     println!("Project Path: {}\nToolbox Path: {}",
              self.project_name(args).unwrap(),
              self.toolbox_path(args));
+    Err(HatchError::Null(NullError))
   }
 }
 
