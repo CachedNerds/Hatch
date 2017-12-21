@@ -54,7 +54,15 @@ impl Error for HatchError {
 
 impl fmt::Display for HatchError {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "{}", self.description())
+    match *self {
+      HatchError::Io(ref e) => write!(f, "IO error: {}", e),
+      HatchError::Parsing(ref e) => write!(f, "Parsing error: {}", e),
+      HatchError::Null(ref e) => write!(f, "{}", e),
+      HatchError::MissingName(ref e) => write!(f, "Config error: {}", e),
+      HatchError::MissingBuild(ref e) => write!(f, "Config error: {}", e),
+      HatchError::MissingVersion(ref e) => write!(f, "Config error: {}", e),
+      HatchError::EmptyConfig(ref e) => write!(f, "Config error: {}", e)
+    }
   }
 }
 
