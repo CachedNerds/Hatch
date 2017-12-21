@@ -1,15 +1,22 @@
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 
-use std::io::{ Error, Read };
-use std::fs;
+use yaml;
+
+use manifest::Manifest;
 
 use yaml_rust::{ Yaml, YamlLoader };
 use yaml_rust::yaml::Hash;
-use yaml_rust::scanner::{ ScanError };
 
 use project::{ Project, LibraryKind, ProjectKind };
-use config::contexts;
+
+use hatch_error::{
+  HatchError,
+  MissingNameError,
+  MissingBuildError,
+  MissingVersionError,
+  EmptyConfigError
+};
 
 pub struct Update {
   name: &'static str
@@ -26,7 +33,7 @@ impl<'command> Command<'command> for Update {
     SubCommand::with_name(&self.name)
       .about("Updates project dependencies.")
       .version("0.1.0")
-      .author("Mackenzie Clark <mackenzie.a.z.c@gmail.com>")
+      .author("Josh Gould <mrgould93@gmail.com>")
       
       .arg(Arg::with_name("PROJECT_NAME")
            .help("Name of project")
@@ -38,39 +45,46 @@ impl<'command> Command<'command> for Update {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) {
-    match self.parse_hatch_yml(self.toolbox_path(args)) {
-      Some(entry) => {
-        let build = entry["build"].as_str().unwrap();
-        
-        let kind = match build {
-          "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
-          "shared-lib" => ProjectKind::Library(LibraryKind::Static),
-          _ => ProjectKind::Binary
-        };
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError> {
+    match yaml::from_file(self.toolbox_path(args) + "Hatch.yml") {
+      Ok(yml_vec) =>  {
+        if yml_vec.len() == 0 {
+          return Err(HatchError::EmptyConfig(EmptyConfigError));
+        }
 
-        let name = entry["name"].as_str().unwrap().to_owned();
-        let version = entry["version"].as_str().unwrap().to_owned();
+        let name: String;
+        let kind: ProjectKind;
+        let version: String;
 
-        let p = Project::new(name, kind, self.toolbox_path(args), version);
-        contexts::update::Update::new(p);
+        if let Some(n) = yml_vec[0]["name"].as_str() {
+          name = n.to_owned();
+        } else {
+          return Err(HatchError::MissingName(MissingNameError));
+        }
 
+        if let Some(b) = yml_vec[0]["build"].as_str() {
+          kind = match b {
+            "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
+            "shared-lib" => ProjectKind::Library(LibraryKind::Static),
+            _ => ProjectKind::Binary
+          }
+        } else {
+          return Err(HatchError::MissingBuild(MissingBuildError));
+        }
+
+        if let Some(v) = yml_vec[0]["version"].as_str() {
+          version = v.to_owned();
+        } else {
+          return Err(HatchError::MissingVersion(MissingVersionError));
+        }
+
+        let project = Project::new(name, kind, self.toolbox_path(args), version);
+
+        Ok(Manifest::new(project))
       },
-      None => println!("No Hatch.yml in {}", self.toolbox_path(args).as_str())
-    }
-  }
-}
-
-impl Update {
-  fn parse_hatch_yml(&self, path: String) -> Option<Yaml> {
-    let parsed = fs::File::open(path + "Hatch.yml").and_then(|mut file| {
-      let mut contents = String::new();
-      file.read_to_string(&mut contents).map(|_| contents)
-    }).map(|mut s| YamlLoader::load_from_str(&mut s));
-
-    match parsed {
-      Err(_) => None,
-      Ok(p) => p.unwrap().into_iter().nth(0)
+      Err(e) => {
+        Err(HatchError::from(e))
+      }
     }
   }
 }
