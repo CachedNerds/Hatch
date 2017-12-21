@@ -8,6 +8,7 @@ impl<'cli> Cli<'cli> {
       Cli(App::new("hatch")
           .setting(AppSettings::SubcommandRequiredElseHelp)
           .subcommands(subcommands.into_iter().map(|s| {
+
             s.arg(Arg::with_name("TOOLBOX_PATH")
                   .help("Path to toolbox. (default = ./)")
                   .long("path").short("p")
