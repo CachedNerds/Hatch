@@ -9,7 +9,8 @@ pub mod project;
 pub mod cli;
 pub mod asset;
 pub mod manifest;
-pub mod config;
+pub mod hatch_error;
+pub mod yaml;
 mod dtl;
 
 #[cfg(test)]
