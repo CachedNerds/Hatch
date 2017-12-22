@@ -2,9 +2,6 @@ use std::fs;
 use std::io::Read;
 
 use yaml_rust::{ Yaml, YamlLoader };
-use yaml_rust::scanner::{ ScanError };
-
-use std::error;
 
 use hatch_error::HatchError;
 use self::HatchError::{ Io, Parsing };
