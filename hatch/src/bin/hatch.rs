@@ -34,10 +34,7 @@ fn main() {
   };
 
   match result {
+    Err(e) => println!("{}", e),
     Ok(manifest) => {},
-    Err(error) => {
-      println!("{}", error);
-    }
   }
-
 }
