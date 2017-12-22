@@ -9,8 +9,8 @@ impl<'cli> Cli<'cli> {
           .setting(AppSettings::SubcommandRequiredElseHelp)
           .subcommands(subcommands.into_iter().map(|s| {
 
-            s.arg(Arg::with_name("TOOLBOX_PATH")
-                  .help("Path to toolbox. (default = ./)")
+            s.arg(Arg::with_name("PROJECT_PATH")
+                  .help("Path to the project. (default = ./)")
                   .long("path").short("p")
                   .required(false)
                   .takes_value(true))

@@ -20,11 +20,11 @@ pub trait Command<'command> {
     }
   }
   
-  fn toolbox_path(&self, args: &ArgMatches<'command>) -> String {
+  fn project_path(&self, args: &ArgMatches<'command>) -> String {
     let mut path = String::new();
 
-    if args.is_present("TOOLBOX_PATH") {
-      path.push_str(value_t!(args, "TOOLBOX_PATH", String).unwrap().as_str());
+    if args.is_present("PROJECT_PATH") {
+      path.push_str(value_t!(args, "PROJECT_PATH", String).unwrap().as_str());
     } else {
       path.push_str("./");
     }

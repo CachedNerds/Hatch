@@ -46,7 +46,7 @@ impl<'command> Command<'command> for New {
   fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError> {
     println!("Project Path: {}\nToolbox Path: {}",
              self.project_name(args).unwrap(),
-             self.toolbox_path(args));
+             self.project_path(args));
     Err(HatchError::Null(NullError))
   }
 }
