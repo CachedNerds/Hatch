@@ -26,6 +26,42 @@ impl Update {
   pub fn new() -> Update {
     Update { name: "update" }
   }
+
+  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Manifest, HatchError> {
+    if yml_vec.len() == 0 {
+      return Err(HatchError::EmptyConfig(EmptyConfigError));
+    }
+
+    let name: String;
+    let kind: ProjectKind;
+    let version: String;
+
+    if let Some(n) = yml_vec[0]["name"].as_str() {
+      name = n.to_owned();
+    } else {
+      return Err(HatchError::MissingName(MissingNameError));
+    }
+
+    if let Some(b) = yml_vec[0]["build"].as_str() {
+      kind = match b {
+        "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
+        "shared-lib" => ProjectKind::Library(LibraryKind::Static),
+        _ => ProjectKind::Binary
+      }
+    } else {
+      return Err(HatchError::MissingBuild(MissingBuildError));
+    }
+
+    if let Some(v) = yml_vec[0]["version"].as_str() {
+      version = v.to_owned();
+    } else {
+      return Err(HatchError::MissingVersion(MissingVersionError));
+    }
+
+    let project = Project::new(name, kind, path, version);
+
+    Ok(Manifest::new(project))
+  }
 }
 
 impl<'command> Command<'command> for Update {
@@ -33,12 +69,7 @@ impl<'command> Command<'command> for Update {
     SubCommand::with_name(&self.name)
       .about("Updates project dependencies.")
       .version("0.1.0")
-      .author("Josh Gould <mrgould93@gmail.com>")
-      
-      .arg(Arg::with_name("PROJECT_NAME")
-           .help("Name of project")
-           .required(false)
-           .takes_value(true))
+      .author("Josh Gould <mrgould93@gmail.com>") 
   }
 
   fn subcommand_name(&self) -> &'static str {
@@ -46,45 +77,11 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError> {
-    match yaml::from_file(self.toolbox_path(args) + "Hatch.yml") {
-      Ok(yml_vec) =>  {
-        if yml_vec.len() == 0 {
-          return Err(HatchError::EmptyConfig(EmptyConfigError));
-        }
-
-        let name: String;
-        let kind: ProjectKind;
-        let version: String;
-
-        if let Some(n) = yml_vec[0]["name"].as_str() {
-          name = n.to_owned();
-        } else {
-          return Err(HatchError::MissingName(MissingNameError));
-        }
-
-        if let Some(b) = yml_vec[0]["build"].as_str() {
-          kind = match b {
-            "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
-            "shared-lib" => ProjectKind::Library(LibraryKind::Static),
-            _ => ProjectKind::Binary
-          }
-        } else {
-          return Err(HatchError::MissingBuild(MissingBuildError));
-        }
-
-        if let Some(v) = yml_vec[0]["version"].as_str() {
-          version = v.to_owned();
-        } else {
-          return Err(HatchError::MissingVersion(MissingVersionError));
-        }
-
-        let project = Project::new(name, kind, self.toolbox_path(args), version);
-
-        Ok(Manifest::new(project))
+    match yaml::from_file(self.project_path(args) + "Hatch.yml") {
+      Ok(yml_vec) => {
+        self.read_config(yml_vec, self.project_path(args))
       },
-      Err(e) => {
-        Err(HatchError::from(e))
-      }
+      Err(e) => Err(HatchError::from(e)),
     }
   }
 }
