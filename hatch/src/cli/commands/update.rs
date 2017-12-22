@@ -3,10 +3,7 @@ use cli::commands::Command;
 
 use yaml;
 
-use manifest::Manifest;
-
-use yaml_rust::{ Yaml, YamlLoader };
-use yaml_rust::yaml::Hash;
+use yaml_rust::Yaml;
 
 use project::{ Project, LibraryKind, ProjectKind };
 
@@ -27,7 +24,7 @@ impl Update {
     Update { name: "update" }
   }
 
-  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Manifest, HatchError> {
+  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Project, HatchError> {
     if yml_vec.len() == 0 {
       return Err(HatchError::EmptyConfig(EmptyConfigError));
     }
@@ -57,10 +54,8 @@ impl Update {
     } else {
       return Err(HatchError::MissingVersion(MissingVersionError));
     }
-
-    let project = Project::new(name, kind, path, version);
-
-    Ok(Manifest::new(project))
+    
+    Ok(Project::new(name, kind, path, version))
   }
 }
 
@@ -76,12 +71,12 @@ impl<'command> Command<'command> for Update {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Manifest, HatchError> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Project, HatchError> {
     match yaml::from_file(self.project_path(args) + "Hatch.yml") {
+      Err(e) => Err(HatchError::from(e)),
       Ok(yml_vec) => {
         self.read_config(yml_vec, self.project_path(args))
-      },
-      Err(e) => Err(HatchError::from(e)),
+      }
     }
   }
 }
