@@ -7,6 +7,7 @@ impl<'cli> Cli<'cli> {
     where I: IntoIterator<Item=App<'cli, 'cli>> { 
       Cli(App::new("hatch")
           .setting(AppSettings::SubcommandRequiredElseHelp)
+          .setting(AppSettings::DisableVersion)
           .subcommands(subcommands.into_iter().map(|s| {
 
             s.arg(Arg::with_name("PROJECT_PATH")
