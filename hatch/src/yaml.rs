@@ -16,7 +16,7 @@ pub fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
   });
 
   match parsed {
-    Err(ioError) => Err(Io(ioError)),
+    Err(io_error) => Err(Io(io_error)),
     Ok(yaml_result) => match yaml_result {
       Err(scanner_error) => Err(Parsing(scanner_error)),
       Ok(vec_yaml) => Ok(vec_yaml)
