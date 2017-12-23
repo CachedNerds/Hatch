@@ -32,19 +32,9 @@ pub enum HatchError {
 impl Error for HatchError {
   fn description(&self) -> &str {
     match *self {
-     _ => self.description()
+      _ => self.description()
     }
   }
-
-//      HatchError::Io(ref e) => e.description(),
-//      HatchError::Parsing(ref e) => e.description(),
-//      HatchError::Null(ref e) => e.description(),
-//      HatchError::EmptyConfig(ref e) => e.description(),
-//      HatchError::MissingName(ref e) => e.description(),
-//      HatchError::MissingBuild(ref e) => e.description(),
-//      HatchError::MissingVersion(ref e) => e.description(),
-//    }
-//  }
 
   fn cause(&self) -> Option<&Error> {
     match *self {
