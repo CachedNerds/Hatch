@@ -28,28 +28,27 @@ pub enum HatchError {
   MissingVersion(MissingVersionError),
 }
 
+
 impl Error for HatchError {
   fn description(&self) -> &str {
     match *self {
-      HatchError::Io(ref e) => e.description(),
-      HatchError::Parsing(ref e) => e.description(),
-      HatchError::Null(ref e) => e.description(),
-      HatchError::EmptyConfig(ref e) => e.description(),
-      HatchError::MissingName(ref e) => e.description(),
-      HatchError::MissingBuild(ref e) => e.description(),
-      HatchError::MissingVersion(ref e) => e.description(),
+     _ => self.description()
     }
   }
 
+//      HatchError::Io(ref e) => e.description(),
+//      HatchError::Parsing(ref e) => e.description(),
+//      HatchError::Null(ref e) => e.description(),
+//      HatchError::EmptyConfig(ref e) => e.description(),
+//      HatchError::MissingName(ref e) => e.description(),
+//      HatchError::MissingBuild(ref e) => e.description(),
+//      HatchError::MissingVersion(ref e) => e.description(),
+//    }
+//  }
+
   fn cause(&self) -> Option<&Error> {
     match *self {
-      HatchError::Io(ref e) => e.cause(),
-      HatchError::Parsing(ref e) => e.cause(),
-      HatchError::Null(ref e) => e.cause(),
-      HatchError::EmptyConfig(ref e) => e.cause(),
-      HatchError::MissingName(ref e) => e.cause(),
-      HatchError::MissingBuild(ref e) => e.cause(),
-      HatchError::MissingVersion(ref e) => e.cause(),
+      _ => self.cause()
     }
   }
 }
