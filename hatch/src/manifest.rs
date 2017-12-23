@@ -2,7 +2,6 @@ use asset::Asset;
 use project::Project;
 use project::ProjectKind;
 use project::LibraryKind;
-use cli::Cli;
 
 pub struct Manifest {
   project: Project,

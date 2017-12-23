@@ -5,11 +5,12 @@ pub struct Project {
   name: String,
   kind: ProjectKind,
   path: String,
+  version: String,
 }
 
 impl Project {
-  pub fn new(name: String, kind: ProjectKind, path: String) -> Project {
-    Project { name: name, kind: kind, path: path}
+  pub fn new(name: String, kind: ProjectKind, path: String, version: String) -> Project {
+    Project { name, kind, path, version }
   }
 
   pub fn name(&self) -> &str {
@@ -22,5 +23,9 @@ impl Project {
 
   pub fn path(&self) -> &str {
     self.path.as_ref()
+  }
+  
+  pub fn version(&self) -> &str {
+    self.version.as_ref()
   }
 }
