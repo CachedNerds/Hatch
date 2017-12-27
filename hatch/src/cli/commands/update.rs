@@ -24,7 +24,7 @@ impl Update {
     Update { name: "update" }
   }
 
-  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Project, HatchError> {
+  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Vec<Project>, HatchError> {
     if yml_vec.len() == 0 {
       return Err(HatchError::EmptyConfig(EmptyConfigError));
     }
@@ -55,7 +55,7 @@ impl Update {
       return Err(HatchError::MissingVersion(MissingVersionError));
     }
     
-    Ok(Project::new(name, kind, path, version))
+    Ok(vec![Project::new(name, kind, path, version)])
   }
 }
 
@@ -71,7 +71,7 @@ impl<'command> Command<'command> for Update {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Project, HatchError> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError> {
     match yaml::from_file(self.project_path(args) + "Hatch.yml") {
       Err(e) => Err(HatchError::from(e)),
       Ok(yml_vec) => {

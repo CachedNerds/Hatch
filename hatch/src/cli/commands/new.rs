@@ -68,7 +68,7 @@ impl<'command> Command<'command> for New {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Project, HatchError> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError> {
     match fs::create_dir(self.project_path(args) + self.project_name(args).unwrap().as_str()) {
       Err(e) => Err(HatchError::from(e)),
       Ok(_) => {
@@ -86,11 +86,13 @@ impl<'command> Command<'command> for New {
           Ok(mut file) => {
             match file.write_all(yaml_output.as_bytes()) {
               Err(e) => Err(HatchError::from(e)),
-              Ok(_) => Ok(Project::new(
-                  self.project_name(args).unwrap(),
-                  self.project_kind(args),
-                  self.project_path(args),
-                  self.project_version(args)))
+              Ok(_) => Ok(vec![
+                          Project::new(
+                            self.project_name(args).unwrap(),
+                            self.project_kind(args),
+                            self.project_path(args),
+                            self.project_version(args))
+              ])
             }
           }
         }
