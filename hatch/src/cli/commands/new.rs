@@ -18,9 +18,27 @@ pub struct New {
   name: &'static str
 }
 
-impl New {
+impl<'new> New {
   pub fn new() -> New {
     New { name: "new" }
+  }
+  
+  fn project_version(&self, args: &ArgMatches<'new>) -> String {
+    if args.is_present("VERSION") {
+      value_t!(args, "VERSION", String).unwrap()
+    } else {
+      "0.0.1".to_owned()
+    }
+  }
+
+  fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
+    if args.is_present("bin") {
+      ProjectKind::Binary
+    } else if args.is_present("static") {
+      ProjectKind::Library(LibraryKind::Static)
+    } else {
+      ProjectKind::Library(LibraryKind::Shared)
+    }
   }
 }
 
@@ -77,26 +95,6 @@ impl<'command> Command<'command> for New {
           }
         }
       }
-    }
-  }
-}
-
-impl<'new> New {
-  fn project_version(&self, args: &ArgMatches<'new>) -> String {
-    if args.is_present("VERSION") {
-      value_t!(args, "VERSION", String).unwrap()
-    } else {
-      "0.0.1".to_owned()
-    }
-  }
-
-  fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
-    if args.is_present("bin") {
-      ProjectKind::Binary
-    } else if args.is_present("static") {
-      ProjectKind::Library(LibraryKind::Static)
-    } else {
-      ProjectKind::Library(LibraryKind::Shared)
     }
   }
 }
