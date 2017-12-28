@@ -69,30 +69,25 @@ impl<'command> Command<'command> for New {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError> {
-    match fs::create_dir(self.project_path(args) + self.project_name(args).unwrap().as_str()) {
+    let name = self.project_name(args).unwrap();
+
+    match fs::create_dir(self.project_path(args) + &name.as_str()) {
       Err(e) => Err(HatchError::from(e)),
       Ok(_) => {
-        let mut yaml_output = String::new();
-        
-        write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\n",
-               self.project_name(args).unwrap(),
-               self.project_version(args),
-               self.project_kind(args));
+        let path = self.project_path(args);
+        let version = self.project_version(args);
+        let kind = self.project_kind(args);
 
-        match fs::File::create(self.project_path(args)
-                               + self.project_name(args).unwrap().as_str()
-                               + "/Hatch.yml") {
+        let mut yaml_output = String::new();
+
+        write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\n", &name, &version, &kind);
+
+        match fs::File::create(self.project_path(args) + &name.as_str() + "/Hatch.yml") {
           Err(e) => Err(HatchError::from(e)),
           Ok(mut file) => {
             match file.write_all(yaml_output.as_bytes()) {
               Err(e) => Err(HatchError::from(e)),
-              Ok(_) => Ok(vec![
-                          Project::new(
-                            self.project_name(args).unwrap(),
-                            self.project_kind(args),
-                            self.project_path(args),
-                            self.project_version(args))
-              ])
+              Ok(_) => Ok(vec![Project::new(name, kind, path, version)])
             }
           }
         }
