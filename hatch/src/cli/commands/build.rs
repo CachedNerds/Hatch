@@ -24,14 +24,7 @@ impl<'build> Build {
     Build { name: "build" }
   }
 
-  fn project_names(&self, args: &ArgMatches<'build>) -> Vec<String> {
-    if args.is_present("PROJECT_NAMES") {
-      values_t!(args, "PROJECT_NAMES", String).unwrap()
-    } else {
-      Vec::new()
-    }
-  }
-}
+ }
 
 impl<'command> Command<'command> for Build {
   fn cli_subcommand(&self) -> App<'command, 'command> {
@@ -50,16 +43,18 @@ impl<'command> Command<'command> for Build {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>> {
     let projects_vec = self.project_names(args);
+    let path = self.project_path(args);
 
     if projects_vec.len() == 0 {
-      println!("Building all projects");
+      println!("Building all projects at path: {}", &path);
     } else {
-      println!("Building {:?}", &projects_vec);
+      println!("Building {:?} at path: {}", &projects_vec, &path);
     }
-    
-    Ok(Vec::new())
+    // should check for Hatch.yml files at all locations and fail out if
+    // errors
+    Vec::new()
     // generate tup files parameterized with the current project
   }
 }
