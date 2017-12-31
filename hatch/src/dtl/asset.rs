@@ -39,10 +39,6 @@ impl AssetBuilder {
     &self.assets.as_ref()
   }
 
-  pub fn paths() -> &'static str {
-    "/C++/libs\n/C++/Toolbox\n/test"
-  }
-  
   fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
     match asset {
       Tuprules => print_file_path(BuildAssets::tuprules(&project)),
@@ -54,9 +50,9 @@ impl AssetBuilder {
 
   fn generate_platformkind_assets(&self, asset: &PlatformKind, project: &Project) {
     match asset {
-      Linux => print_file_path(PlatformAssets::linux(project.path())),
-      Darwin => print_file_path(PlatformAssets::darwin(project.path())),
-      Win32 => print_file_path(PlatformAssets::win32(project.path())),
+      Linux => print_file_path(PlatformAssets::linux()),
+      Darwin => print_file_path(PlatformAssets::darwin()),
+      Win32 => print_file_path(PlatformAssets::win32()),
     }
   }
 }

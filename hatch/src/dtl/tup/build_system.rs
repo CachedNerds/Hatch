@@ -18,7 +18,7 @@ impl Assets for BuildAssets {
 
 impl BuildAssets {
   pub fn tuprules(project: &Project) -> BuildAssets {
-    let file_path = project.path().to_string() + "/Tuprules.tup";
+    let file_path = "C++/libs/".to_owned() + "Tuprules.tup";
     let file_contents = 
 ".gitignore
 CC = g++
