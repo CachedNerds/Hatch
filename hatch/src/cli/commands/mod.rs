@@ -11,13 +11,13 @@ pub trait Command<'command> {
   
   fn subcommand_name(&self) -> &'static str;
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError>;
-
-  fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
-    if args.is_present("PROJECT_NAME") {
-      Some(value_t!(args, "PROJECT_NAME", String).unwrap())
+  fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>>;
+ 
+  fn project_names(&self, args: &ArgMatches<'command>) -> Vec<String> {
+    if args.is_present("PROJECT_NAMES") {
+      values_t!(args, "PROJECT_NAMES", String).unwrap()
     } else {
-      None
+      Vec::new()
     }
   }
   
