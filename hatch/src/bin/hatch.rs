@@ -31,14 +31,16 @@ fn main() {
     (subcommand_name, Some(cli_args)) => {
       match subcommands.get(subcommand_name) {
         Some(subcommand) => subcommand.execute(cli_args),
-        _ => Err(HatchError::Null(NullError))
+        _ => vec![Err(HatchError::Null(NullError))]
       }
     },
-    _ => Err(HatchError::Null(NullError))
+    _ => vec![Err(HatchError::Null(NullError))]
   };
 
-  match result {
-    Err(e) => println!("{}", e),
-    Ok(projects_vec) => {}
-  }
+  result.iter().for_each(|r| {
+    match *r {
+      Ok(ref p) => println!("{:?}", p),
+      Err(ref e) => println!("{}", e),
+    }
+  });
 }
