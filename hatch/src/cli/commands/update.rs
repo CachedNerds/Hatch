@@ -1,61 +1,55 @@
+use std::fs;
+use std::path::{ Path, PathBuf };
+
 use clap::{ App, SubCommand, Arg, ArgMatches };
-use cli::commands::Command;
+use cli::commands::{ Command };
 
 use yaml;
 
 use yaml_rust::Yaml;
 
+use hatch_error::HatchError;
+
 use project::{ Project, LibraryKind, ProjectKind };
 
-use hatch_error::{
-  HatchError,
-  MissingNameError,
-  MissingBuildError,
-  MissingVersionError,
-  EmptyConfigError
-};
-
-pub struct Update {
-  name: &'static str
+trait ProjectUpdater {
+  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>>; 
 }
 
-impl Update {
-  pub fn new() -> Update {
-    Update { name: "update" }
+struct AmbiguousUpdater;
+struct ExplicitUpdater;
+
+impl ProjectUpdater for AmbiguousUpdater {
+  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
+    match yaml::from_file(path.to_owned() + "Hatch.yml") {
+      Err(e) => vec![Err(e)],
+      Ok(yml_vec) => vec![yaml::parse(yml_vec)],
+    }
   }
+}
 
-  fn read_config(&self, yml_vec: Vec<Yaml>, path: String) -> Result<Vec<Project>, HatchError> {
-    if yml_vec.len() == 0 {
-      return Err(HatchError::EmptyConfig(EmptyConfigError));
-    }
+impl ProjectUpdater for ExplicitUpdater {
+  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
+    let yaml_result = project_names.into_iter().map(|p| {
+      yaml::from_file(path.to_owned() + &p[..] + "/Hatch.yml")
+    }).collect::<Vec<_>>();
 
-    let name: String;
-    let kind: ProjectKind;
-    let version: String;
-
-    if let Some(n) = yml_vec[0]["name"].as_str() {
-      name = n.to_owned();
-    } else {
-      return Err(HatchError::MissingName(MissingNameError));
-    }
-
-    if let Some(b) = yml_vec[0]["build"].as_str() {
-      kind = match b {
-        "static-lib" => ProjectKind::Library(LibraryKind::Shared), 
-        "shared-lib" => ProjectKind::Library(LibraryKind::Static),
-        _ => ProjectKind::Binary
+    yaml_result.into_iter().map(|i| {
+      match i {
+        Err(e) => Err(e),
+        Ok(yml_vec) => yaml::parse(yml_vec),
       }
-    } else {
-      return Err(HatchError::MissingBuild(MissingBuildError));
-    }
+    }).collect::<Vec<_>>()
+  }
+}
 
-    if let Some(v) = yml_vec[0]["version"].as_str() {
-      version = v.to_owned();
-    } else {
-      return Err(HatchError::MissingVersion(MissingVersionError));
+pub struct Update { name: &'static str }
+
+impl<'update> Update {
+  pub fn new() -> Update {
+    Update {
+      name: "update"
     }
-    
-    Ok(vec![Project::new(name, kind, path, version)])
   }
 }
 
@@ -65,18 +59,26 @@ impl<'command> Command<'command> for Update {
       .about("Updates project dependencies.")
       .version("0.1.0")
       .author("Josh Gould <mrgould93@gmail.com>") 
+
+      .arg(Arg::with_name("PROJECT_NAMES")
+           .help("The projects to be updated.")
+           .min_values(0).value_delimiter(" ")
+           .required(false))
   }
 
   fn subcommand_name(&self) -> &'static str {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Result<Vec<Project>, HatchError> {
-    match yaml::from_file(self.project_path(args) + "Hatch.yml") {
-      Err(e) => Err(HatchError::from(e)),
-      Ok(yml_vec) => {
-        self.read_config(yml_vec, self.project_path(args))
-      }
+  fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>> {
+    let mut updater: Box<ProjectUpdater>;
+
+    if args.is_present("PROJECT_NAMES") {
+      updater = Box::new(ExplicitUpdater)
+    } else {
+      updater = Box::new(AmbiguousUpdater)
     }
+
+    updater.execute(self.project_path(args), self.project_names(args))
   }
 }
