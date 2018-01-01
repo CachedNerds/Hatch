@@ -14,7 +14,27 @@ use hatch_error::{
 
 use self::HatchError::{ Io, Parsing };
 
-pub fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
+pub fn parse_one(path: String) -> Result<Project, HatchError> {
+  match from_file(path.to_owned() + "Hatch.yml") {
+    Err(e) => Err(e),
+    Ok(yml_vec) => parse(yml_vec),
+  }
+}
+
+pub fn parse_many(path: String, items: Vec<String>) -> Vec<Result<Project, HatchError>> {
+  let yaml_result = items.into_iter().map(|p| {
+    from_file(path.to_owned() + &p[..] + "/Hatch.yml")
+  }).collect::<Vec<_>>();
+
+  yaml_result.into_iter().map(|i| {
+    match i {
+      Err(e) => Err(e),
+      Ok(yml_vec) => parse(yml_vec),
+    }
+  }).collect::<Vec<_>>()
+}
+
+fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
   let parsed = fs::File::open(file_name).and_then(|mut file| {
     let mut contents = String::new();
     file.read_to_string(&mut contents).map(|_| YamlLoader::load_from_str(&contents))
@@ -29,7 +49,7 @@ pub fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
   }
 }
 
-pub fn parse(yml_vec: Vec<Yaml>) -> Result<Project, HatchError> {
+fn parse(yml_vec: Vec<Yaml>) -> Result<Project, HatchError> {
   if yml_vec.len() == 0 {
     return Err(HatchError::EmptyConfig(EmptyConfigError));
   }
