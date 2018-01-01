@@ -1,6 +1,7 @@
 pub mod new;
 pub mod update;
 pub mod build;
+mod ops;
 
 use project::Project;
 use clap::{ ArgMatches, App };
