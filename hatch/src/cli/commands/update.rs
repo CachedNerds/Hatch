@@ -1,45 +1,23 @@
-use std::fs;
-use std::path::{ Path, PathBuf };
-
 use clap::{ App, SubCommand, Arg, ArgMatches };
-use cli::commands::{ Command };
-
+use cli::commands::Command;
+use cli::commands::ops::ProjectOps;
 use yaml;
-
 use yaml_rust::Yaml;
-
+use project::Project;
 use hatch_error::HatchError;
-
-use project::{ Project, LibraryKind, ProjectKind };
-
-trait ProjectUpdater {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>>; 
-}
 
 struct AmbiguousUpdater;
 struct ExplicitUpdater;
 
-impl ProjectUpdater for AmbiguousUpdater {
+impl ProjectOps for AmbiguousUpdater {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
-    match yaml::from_file(path.to_owned() + "Hatch.yml") {
-      Err(e) => vec![Err(e)],
-      Ok(yml_vec) => vec![yaml::parse(yml_vec)],
-    }
+    vec![yaml::parse_one(path)]
   }
 }
 
-impl ProjectUpdater for ExplicitUpdater {
+impl ProjectOps for ExplicitUpdater {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
-    let yaml_result = project_names.into_iter().map(|p| {
-      yaml::from_file(path.to_owned() + &p[..] + "/Hatch.yml")
-    }).collect::<Vec<_>>();
-
-    yaml_result.into_iter().map(|i| {
-      match i {
-        Err(e) => Err(e),
-        Ok(yml_vec) => yaml::parse(yml_vec),
-      }
-    }).collect::<Vec<_>>()
+    yaml::parse_many(path, project_names)
   }
 }
 
@@ -71,7 +49,7 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>> {
-    let mut updater: Box<ProjectUpdater>;
+    let mut updater: Box<ProjectOps>;
 
     if args.is_present("PROJECT_NAMES") {
       updater = Box::new(ExplicitUpdater)
