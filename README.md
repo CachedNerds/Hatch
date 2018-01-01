@@ -11,6 +11,8 @@
 
 # Contributing
 
+Please follow the [Style Guide](STYLE.md) when contributing. 
+
 # Code of conduct
 
 # License
