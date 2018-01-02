@@ -26,7 +26,9 @@ pub struct Build {
 
 impl<'build> Build {
   pub fn new() -> Build {
-    Build { name: "build" }
+    Build {
+      name: "build"
+    }
   }
 }
 
