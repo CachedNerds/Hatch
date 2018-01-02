@@ -1,6 +1,7 @@
 use std::fs;
 use std::io::Read;
 
+use HatchResult;
 use yaml_rust::{ Yaml, YamlLoader };
 use project::{ Project, LibraryKind, ProjectKind };
 
@@ -14,14 +15,14 @@ use hatch_error::{
 
 use self::HatchError::{ Io, Parsing };
 
-pub fn parse_one(path: String) -> Result<Project, HatchError> {
+pub fn parse_one(path: String) -> HatchResult<Project> {
   match from_file(path.to_owned() + "Hatch.yml") {
     Err(e) => Err(e),
     Ok(yml_vec) => parse(yml_vec),
   }
 }
 
-pub fn parse_many(path: String, items: Vec<String>) -> Vec<Result<Project, HatchError>> {
+pub fn parse_many(path: String, items: Vec<String>) -> Vec<HatchResult<Project>> {
   let yaml_result = items.into_iter().map(|p| {
     from_file(path.to_owned() + &p[..] + "/Hatch.yml")
   }).collect::<Vec<_>>();
@@ -49,7 +50,7 @@ fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
   }
 }
 
-fn parse(yml_vec: Vec<Yaml>) -> Result<Project, HatchError> {
+fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if yml_vec.len() == 0 {
     return Err(HatchError::EmptyConfig(EmptyConfigError));
   }

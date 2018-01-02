@@ -1,3 +1,4 @@
+use HatchResult;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
@@ -9,13 +10,13 @@ struct AmbiguousBuilder;
 struct ExplicitBuilder;
 
 impl ProjectOps for AmbiguousBuilder {
-  fn execute(&self, path: String, _: Vec<String>) -> Vec<Result<Project, HatchError>> {
+  fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
     vec![yaml::parse_one(path)]
   }
 }
 
 impl ProjectOps for ExplicitBuilder {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
+  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
     yaml::parse_many(path, project_names)
   }
 }
@@ -49,7 +50,7 @@ impl<'command> Command<'command> for Build {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
     let mut builder: Box<ProjectOps>;
 
     if args.is_present("PROJECT_NAMES") {
