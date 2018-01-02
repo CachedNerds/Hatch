@@ -1,15 +1,12 @@
+use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command };
-
 use project::{ Project, ProjectKind, LibraryKind };
-
-use std::fs;
+use hatch_error::HatchError;
 
 // Must use qualified names to avoid conflict.
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
-
-use hatch_error::HatchError;
 
 pub struct New {
   name: &'static str,
