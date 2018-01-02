@@ -2,7 +2,6 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
 use yaml;
-use yaml_rust::Yaml;
 use project::Project;
 use hatch_error::HatchError;
 
@@ -10,7 +9,7 @@ struct AmbiguousUpdater;
 struct ExplicitUpdater;
 
 impl ProjectOps for AmbiguousUpdater {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<Result<Project, HatchError>> {
+  fn execute(&self, path: String, _: Vec<String>) -> Vec<Result<Project, HatchError>> {
     vec![yaml::parse_one(path)]
   }
 }

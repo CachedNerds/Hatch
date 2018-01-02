@@ -1,5 +1,3 @@
-use std::str::Lines;
-
 use dtl::tup::{ Assets };
 use project::{ ProjectKind, Project };
 

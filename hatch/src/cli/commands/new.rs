@@ -9,10 +9,7 @@ use std::fs;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use hatch_error::{
-  HatchError,
-  NullError
-};
+use hatch_error::HatchError;
 
 pub struct New {
   name: &'static str,

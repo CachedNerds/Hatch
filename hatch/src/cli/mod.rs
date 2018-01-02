@@ -1,7 +1,6 @@
 pub mod commands;
 
 use dtl::cli as cli_imp;
-use project::{ ProjectKind };
 use clap::{ App, ArgMatches };
 
 pub struct Cli<'cli>(cli_imp::Cli<'cli>);
