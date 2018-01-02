@@ -1,3 +1,4 @@
+use HatchResult;
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command };
@@ -68,7 +69,7 @@ impl<'command> Command<'command> for New {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<Result<Project, HatchError>> {
+  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
     let name = self.project_names(args).into_iter().nth(0).unwrap();
 
     let dir_path = self.project_path(args) + &name[..];

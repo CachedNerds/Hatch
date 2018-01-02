@@ -1,5 +1,7 @@
 #![forbid(unsafe_code)]
 
+pub type HatchResult<T> = Result<T, hatch_error::HatchError>;
+
 #[macro_use]
 pub extern crate clap;
 
