@@ -20,7 +20,9 @@ impl ProjectOps for ExplicitUpdater {
   }
 }
 
-pub struct Update { name: &'static str }
+pub struct Update {
+  name: &'static str
+}
 
 impl<'update> Update {
   pub fn new() -> Update {
