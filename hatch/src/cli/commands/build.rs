@@ -51,7 +51,7 @@ impl<'command> Command<'command> for Build {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let mut builder: Box<ProjectOps>;
+    let builder: Box<ProjectOps>;
 
     if args.is_present("PROJECT_NAMES") {
       builder = Box::new(ExplicitBuilder);

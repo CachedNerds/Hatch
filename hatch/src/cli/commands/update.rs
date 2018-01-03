@@ -51,7 +51,7 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let mut updater: Box<ProjectOps>;
+    let updater: Box<ProjectOps>;
 
     if args.is_present("PROJECT_NAMES") {
       updater = Box::new(ExplicitUpdater)
