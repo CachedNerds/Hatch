@@ -15,14 +15,14 @@ use hatch_error::{
 
 use self::HatchError::{ Io, Parsing };
 
-pub fn parse_one(path: String) -> HatchResult<Project> {
+pub fn parse_one(path: &String) -> HatchResult<Project> {
   match from_file(path.to_owned() + "Hatch.yml") {
     Err(e) => Err(e),
     Ok(yml_vec) => parse(yml_vec),
   }
 }
 
-pub fn parse_many(path: String, items: Vec<String>) -> Vec<HatchResult<Project>> {
+pub fn parse_many(path: &String, items: Vec<String>) -> Vec<HatchResult<Project>> {
   let yaml_result = items.into_iter().map(|p| {
     from_file(path.to_owned() + &p[..] + "/Hatch.yml")
   }).collect::<Vec<_>>();

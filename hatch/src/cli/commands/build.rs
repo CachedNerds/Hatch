@@ -1,4 +1,8 @@
 use HatchResult;
+
+use std::fs;
+use std::ffi::OsString;
+
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
@@ -9,15 +13,52 @@ use hatch_error::HatchError;
 struct ImplicitBuilder;
 struct ExplicitBuilder;
 
+impl ImplicitBuilder {
+  fn get_project_names(&self, path: &String) -> Vec<OsString> {
+    let mut res_vec = Vec::new();
+
+    if let Ok(files) = fs::read_dir(path) {
+      for f in files {
+        if let Ok(unwrapped_f) = f {
+          let unwrapped_f = unwrapped_f.path();
+          if unwrapped_f.is_dir() {
+            if let Some(p) = unwrapped_f.file_stem() {
+              res_vec.push(p.to_os_string());
+            }
+          }
+        }
+      }
+    };
+
+    res_vec
+  }
+
+  fn convert_to_string(&self, os_strs: Vec<OsString>) -> Vec<String> {
+    os_strs.into_iter().map(|os_s| {
+      match os_s.into_string() {
+        Err(os) => panic!("no invalid unicode chars!"),
+        Ok(s) => s
+      }
+    }).collect()
+  }
+
+  fn parse_all(&self, path: &String) -> Vec<HatchResult<Project>> {
+    yaml::parse_many(path, self.convert_to_string(self.get_project_names(path)))
+  }
+}
+
 impl ProjectOps for ImplicitBuilder {
   fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
-    vec![yaml::parse_one(path)]
+    match yaml::parse_one(&path) {
+      Ok(project) => vec![Ok(project)],
+      Err(e) => self.parse_all(&path),
+    }
   }
 }
 
 impl ProjectOps for ExplicitBuilder {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(path, project_names)
+    yaml::parse_many(&path, project_names)
   }
 }
 
