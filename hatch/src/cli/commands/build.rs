@@ -6,10 +6,10 @@ use yaml;
 use project::Project;
 use hatch_error::HatchError;
 
-struct AmbiguousBuilder;
+struct ImplicitBuilder;
 struct ExplicitBuilder;
 
-impl ProjectOps for AmbiguousBuilder {
+impl ProjectOps for ImplicitBuilder {
   fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
     vec![yaml::parse_one(path)]
   }
@@ -56,7 +56,7 @@ impl<'command> Command<'command> for Build {
     if args.is_present("PROJECT_NAMES") {
       builder = Box::new(ExplicitBuilder);
     } else {
-      builder = Box::new(AmbiguousBuilder);
+      builder = Box::new(ImplicitBuilder);
     }
 
     builder.execute(self.project_path(args), self.project_names(args))

@@ -6,10 +6,10 @@ use yaml;
 use project::Project;
 use hatch_error::HatchError;
 
-struct AmbiguousUpdater;
+struct ImplicitUpdater;
 struct ExplicitUpdater;
 
-impl ProjectOps for AmbiguousUpdater {
+impl ProjectOps for ImplicitUpdater {
   fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
     vec![yaml::parse_one(path)]
   }
@@ -56,7 +56,7 @@ impl<'command> Command<'command> for Update {
     if args.is_present("PROJECT_NAMES") {
       updater = Box::new(ExplicitUpdater)
     } else {
-      updater = Box::new(AmbiguousUpdater)
+      updater = Box::new(ImplicitUpdater)
     }
 
     updater.execute(self.project_path(args), self.project_names(args))
