@@ -11,13 +11,13 @@ struct ExplicitUpdater;
 
 impl ProjectOps for ImplicitUpdater {
   fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
-    vec![yaml::parse_one(path)]
+    vec![yaml::parse_one(&path)]
   }
 }
 
 impl ProjectOps for ExplicitUpdater {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(path, project_names)
+    yaml::parse_many(&path, project_names)
   }
 }
 
