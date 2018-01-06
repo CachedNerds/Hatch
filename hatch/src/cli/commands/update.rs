@@ -17,7 +17,10 @@ impl ProjectOps for ImplicitUpdater {
 
 impl ProjectOps for ExplicitUpdater {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(&path, project_names)
+    match yaml::parse_one(&path) {
+      Ok(project) => vec![Ok(project)],
+      Err(_) => yaml::parse_all(&path),
+    }
   }
 }
 
