@@ -6,10 +6,10 @@ use yaml;
 use project::Project;
 use hatch_error::HatchError;
 
-struct ImplicitUpdater;
-struct ExplicitUpdater;
+struct ImplicitBuilder;
+struct ExplicitBuilder;
 
-impl ProjectOps for ImplicitUpdater {
+impl ProjectOps for ImplicitBuilder {
   fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
     match yaml::parse_one(&path) {
       Ok(project) => vec![Ok(project)],
@@ -18,35 +18,35 @@ impl ProjectOps for ImplicitUpdater {
   }
 }
 
-impl ProjectOps for ExplicitUpdater {
+impl ProjectOps for ExplicitBuilder {
   fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
     yaml::parse_many(&path, project_names)
   }
 }
 
-pub struct Update {
+pub struct Build {
   name: &'static str
 }
 
-impl<'update> Update {
-  pub fn new() -> Update {
-    Update {
-      name: "update"
+impl<'build> Build {
+  pub fn new() -> Build {
+    Build {
+      name: "build"
     }
   }
 }
 
-impl<'command> Command<'command> for Update {
+impl<'command> Command<'command> for Build {
   fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
-      .about("Updates project dependencies.")
-      .version("0.1.0")
-      .author("Josh Gould <mrgould93@gmail.com>") 
+      .about("Builds a project.")
+      .author("Josh Gould <mrgould93@gmail.com>")
 
       .arg(Arg::with_name("PROJECT_NAMES")
-           .help("The projects to be updated.")
-           .min_values(0).value_delimiter(" ")
-           .required(false))
+           .help("The projects to be built.")
+           .required(false)
+           .min_values(0)
+           .value_delimiter(" "))
   }
 
   fn subcommand_name(&self) -> &'static str {
@@ -54,14 +54,14 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let updater: Box<ProjectOps>;
+    let builder: Box<ProjectOps>;
 
     if args.is_present("PROJECT_NAMES") {
-      updater = Box::new(ExplicitUpdater)
+      builder = Box::new(ExplicitBuilder);
     } else {
-      updater = Box::new(ImplicitUpdater)
+      builder = Box::new(ImplicitBuilder);
     }
 
-    updater.execute(self.project_path(args), self.project_names(args))
+    builder.execute(self.project_path(args), self.project_names(args))
   }
 }

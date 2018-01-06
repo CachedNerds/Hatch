@@ -18,7 +18,7 @@ impl Assets for TestAssets {
 
 impl TestAssets {
   pub fn tupfile(project: &Project) -> TestAssets {
-    let file_path = project.path().to_string() + "/" + project.name() + "/test/Tupfile";
+    let file_path = "C++/libs/".to_owned() + project.name() + "/test/Tupfile";
     let file_contents =
 ".gitignore".to_string();
 

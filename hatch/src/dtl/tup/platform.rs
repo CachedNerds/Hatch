@@ -16,27 +16,24 @@ impl Assets for PlatformAssets {
 }
 
 impl PlatformAssets {
-  // Expects path to be /xxxx/xxxx/Toolbox
-  pub fn linux(path: &str) -> PlatformAssets {
-    let file_path = path.to_string() + "/linux.tup";
+  pub fn linux() -> PlatformAssets {
+    let file_path = "C++/libs/linux.tup".to_owned();
     let file_contents =
 "STATIC = a
 SHARED = so".to_string();
     PlatformAssets { file_path, file_contents }
   }
   
-  // Expects path to be /xxxx/xxxx/Toolbox
-  pub fn darwin(path: &str) -> PlatformAssets {
-    let file_path = path.to_string() + "/macosx.tup";
+  pub fn darwin() -> PlatformAssets {
+    let file_path = "C++/libs/macosx.tup".to_owned();
     let file_contents =
 "STATIC = a
 SHARED = so".to_string();
     PlatformAssets { file_path, file_contents }
   }
 
-  // Expects path to be /xxxx/xxxx/Toolbox
-  pub fn win32(path: &str) -> PlatformAssets {
-    let file_path = path.to_string() + "/win32.tup";
+  pub fn win32() -> PlatformAssets {
+    let file_path = "C++/libs/win32.tup".to_owned();
     let file_contents =
 "STATIC = lib
 SHARED = dll

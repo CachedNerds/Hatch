@@ -1,24 +1,27 @@
 use std::fmt;
 
-use dtl::project as project_imp;
+#[derive(Debug)]
+pub struct Project {
+  name: String,
+  kind: ProjectKind,
+  version: String,
+}
 
-pub struct Project (project_imp::Project);
-
-impl Project { 
-  pub fn new(name: String, kind: ProjectKind, path: String, version: String) -> Project {
-    Project(project_imp::Project::new(name, kind, path, version))
+impl Project {
+  pub fn new(name: String, kind: ProjectKind, version: String) -> Project {
+    Project { name, kind, version }
   }
 
   pub fn name(&self) -> &str {
-    self.0.name()
+    self.name.as_ref()
   }
 
   pub fn kind(&self) -> &ProjectKind {
-    self.0.kind()
+    self.kind.as_ref()
   }
   
-  pub fn path(&self) -> &str {
-    self.0.path()
+  pub fn version(&self) -> &str {
+    self.version.as_ref()
   }
 }
 

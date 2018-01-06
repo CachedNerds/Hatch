@@ -18,7 +18,7 @@ impl Assets for ProjectAssets {
 
 impl ProjectAssets {
   pub fn config(project: &Project) -> ProjectAssets {
-    let file_path = project.path().to_string() + "/" + project.name() + "/config.tup";
+    let file_path = "C++/libs/".to_owned() + project.name() + "/config.tup";
 
     let file_contents = match project.kind() {
       &ProjectKind::Library(ref shared_lib) => format!( // {{{
@@ -40,7 +40,7 @@ LIB_TYPE = static", // }}}
   }
 
   pub fn tupfile(project: &Project) -> ProjectAssets {
-    let file_path = project.path().to_string() + "/" + project.name() + "/Tupfile";
+    let file_path = "C++/libs/".to_owned() + project.name() + "/Tupfile";
     let file_contents = // {{{
 "# order matters
 include config.tup
