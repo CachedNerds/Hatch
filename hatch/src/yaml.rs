@@ -1,5 +1,7 @@
 use std::fs;
 use std::io::Read;
+use std::ffi::OsStr;
+use std::path::PathBuf;
 
 use HatchResult;
 use yaml_rust::{ Yaml, YamlLoader };
@@ -14,6 +16,13 @@ use hatch_error::{
 };
 
 use self::HatchError::{ Io, Parsing };
+
+pub fn parse_all(path: &String) -> Vec<HatchResult<Project>> {
+  match read_path(path) {
+    Ok(files) => parse_many(path, get_project_names(extract_dirs(files))),
+    Err(e) => vec![Err(e)],
+  }
+}
 
 pub fn parse_one(path: &String) -> HatchResult<Project> {
   match from_file(path.to_owned() + "Hatch.yml") {
@@ -50,6 +59,30 @@ fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
   }
 }
 
+fn get_project_names(dir_paths: Vec<PathBuf>) -> Vec<String> {
+  dir_paths.iter()
+    .filter_map(|i| i.file_name())
+    .map(OsStr::new)
+    .filter_map(|i| i.to_str())
+    .map(String::from)
+    .collect()
+}
+
+fn extract_dirs(iter: fs::ReadDir) -> Vec<PathBuf> {
+  iter.filter_map(|i| i.ok())
+    .into_iter()
+    .map(|i| i.path())
+    .filter(|i| i.is_dir())
+    .collect()
+}
+
+fn read_path(path: &str) -> HatchResult<fs::ReadDir> {
+  match fs::read_dir(path) {
+    Ok(iter) => Ok(iter),
+    Err(e) => Err(HatchError::from(e)),
+  }
+}
+
 fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if yml_vec.len() == 0 {
     return Err(HatchError::EmptyConfig(EmptyConfigError));
@@ -83,3 +116,5 @@ fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
 
   Ok(Project::new(name, kind, version))
 }
+
+
