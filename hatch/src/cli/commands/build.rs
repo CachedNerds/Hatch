@@ -2,6 +2,8 @@ use HatchResult;
 
 use std::fs;
 use std::ffi::OsString;
+use std::ffi::OsStr;
+use std::path::PathBuf;
 
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
@@ -14,36 +16,35 @@ struct ImplicitBuilder;
 struct ExplicitBuilder;
 
 impl ImplicitBuilder {
-  fn get_project_names(&self, path: &String) -> Vec<OsString> {
-    let mut res_vec = Vec::new();
-
-    if let Ok(files) = fs::read_dir(path) {
-      for f in files {
-        if let Ok(unwrapped_f) = f {
-          let unwrapped_f = unwrapped_f.path();
-          if unwrapped_f.is_dir() {
-            if let Some(p) = unwrapped_f.file_stem() {
-              res_vec.push(p.to_os_string());
-            }
-          }
-        }
-      }
-    };
-
-    res_vec
+  fn get_project_names(&self, dir_paths: Vec<PathBuf>) -> Vec<String> {
+    dir_paths.iter()
+      .filter_map(|i| i.file_name())
+      .map(OsStr::new)
+      .filter_map(|i| i.to_str())
+      .map(String::from)
+      .collect()
   }
 
-  fn convert_to_string(&self, os_strs: Vec<OsString>) -> Vec<String> {
-    os_strs.into_iter().map(|os_s| {
-      match os_s.into_string() {
-        Err(os) => panic!("no invalid unicode chars!"),
-        Ok(s) => s
-      }
-    }).collect()
+  fn extract_dirs(&self, iter: fs::ReadDir) -> Vec<PathBuf> {
+    iter.filter_map(|i| i.ok())
+      .into_iter()
+      .map(|i| i.path())
+      .filter(|i| i.is_dir())
+      .collect()
+  }
+
+  fn read_path(&self, path: &str) -> HatchResult<fs::ReadDir> {
+    match fs::read_dir(path) {
+      Ok(iter) => Ok(iter),
+      Err(e) => Err(HatchError::from(e)),
+    }
   }
 
   fn parse_all(&self, path: &String) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(path, self.convert_to_string(self.get_project_names(path)))
+    match self.read_path(path) {
+      Ok(files) => yaml::parse_many(path, self.get_project_names(self.extract_dirs(files))),
+      Err(e) => vec![Err(e)],
+    }
   }
 }
 
