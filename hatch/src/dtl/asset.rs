@@ -41,14 +41,14 @@ impl AssetBuilder {
 
   fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
     match * asset {
-      TupKind::Tuprules => print_file_path(BuildAssets::tuprules(&project)),
+      TupKind::Tuprules => print_file_path(BuildAssets::tuprules()),
       TupKind::ProjectConfig => print_file_path(ProjectAssets::config(&project)),
       TupKind::ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
       TupKind::ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
     }
   }
 
-  fn generate_platformkind_assets(&self, asset: &PlatformKind, project: &Project) {
+  fn generate_platformkind_assets(&self, asset: &PlatformKind) {
     match * asset {
       PlatformKind::Linux => print_file_path(PlatformAssets::linux()),
       PlatformKind::Darwin => print_file_path(PlatformAssets::darwin()),
