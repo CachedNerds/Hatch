@@ -49,10 +49,10 @@ impl AssetBuilder {
   }
 
   fn generate_platformkind_assets(&self, asset: &PlatformKind, project: &Project) {
-    match asset {
-      Linux => print_file_path(PlatformAssets::linux()),
-      Darwin => print_file_path(PlatformAssets::darwin()),
-      Win32 => print_file_path(PlatformAssets::win32()),
+    match * asset {
+      PlatformKind::Linux => print_file_path(PlatformAssets::linux()),
+      PlatformKind::Darwin => print_file_path(PlatformAssets::darwin()),
+      PlatformKind::Win32 => print_file_path(PlatformAssets::win32()),
     }
   }
 }
