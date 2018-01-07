@@ -63,6 +63,13 @@ impl<'command> Command<'command> for New {
            .help("Set the project version")
            .long("version").short("v").takes_value(true)
            .required(false))
+
+      .arg(Arg::with_name("include")
+        .help("List GitHub dependencies in format username/project[:branch]")
+        .long("include")
+        .short("i")
+        .multiple(true)
+        .takes_value(true))
   }
 
   fn subcommand_name(&self) -> &'static str {
