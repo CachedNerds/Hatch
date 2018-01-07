@@ -72,3 +72,5 @@ match *y {
   ...
 }
 ```
+
+When `*y` is a reference the same styling as above should be used.  
