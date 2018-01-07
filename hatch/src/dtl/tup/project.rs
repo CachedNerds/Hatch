@@ -23,7 +23,7 @@ impl ProjectAssets {
     let file_contents = match *project.kind() {
       ProjectKind::Library(ref lib_type) => match lib_type {
         &LibraryKind::Shared => format!( // {{{
-"PROJEct = {}
+"PROJECT = {}
 LIB_TYpe = shared", // }}}
         project.name()).to_string(),
 
