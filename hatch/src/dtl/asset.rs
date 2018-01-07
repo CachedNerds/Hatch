@@ -40,11 +40,11 @@ impl AssetBuilder {
   }
 
   fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
-    match asset {
-      Tuprules => print_file_path(BuildAssets::tuprules(&project)),
-      ProjectConfig => print_file_path(ProjectAssets::config(&project)),
-      ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
-      ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
+    match * asset {
+      TupKind::Tuprules => print_file_path(BuildAssets::tuprules(&project)),
+      TupKind::ProjectConfig => print_file_path(ProjectAssets::config(&project)),
+      TupKind::ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
+      TupKind::ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
     }
   }
 
