@@ -4,7 +4,6 @@ use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
-use hatch_error::HatchError;
 
 struct ImplicitUpdater;
 struct ExplicitUpdater;
