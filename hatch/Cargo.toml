@@ -6,3 +6,4 @@ authors = ["technetos <mrgould93@gmail.com>"]
 [dependencies]
 clap = "2"
 yaml-rust = "0.3"
+regex = "0.2"
