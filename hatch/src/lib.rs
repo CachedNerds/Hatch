@@ -4,9 +4,7 @@ pub type HatchResult<T> = Result<T, hatch_error::HatchError>;
 
 #[macro_use]
 pub extern crate clap;
-
 pub extern crate yaml_rust;
-
 pub extern crate git2;
 
 pub mod project;
