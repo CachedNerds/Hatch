@@ -68,7 +68,7 @@ impl<'command> Command<'command> for New {
         .help("List GitHub dependencies in format username/project[:branch]")
         .long("include")
         .short("i")
-        .multiple(true)
+        .min_values(1)
         .takes_value(true))
   }
 
