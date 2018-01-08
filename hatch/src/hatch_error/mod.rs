@@ -72,6 +72,6 @@ impl From<io::Error> for HatchError {
 
 impl From<git2::Error> for HatchError {
   fn from(e: git2::Error) -> Self {
-    HatchError::from(e)
+    HatchError::Git(e)
   }
 }
