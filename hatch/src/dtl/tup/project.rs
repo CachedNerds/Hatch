@@ -1,5 +1,5 @@
 use dtl::tup::{ Assets };
-use project::{ ProjectKind, Project };
+use project::{ LibraryKind, ProjectKind, Project };
 
 pub struct ProjectAssets {
   file_path: String,
@@ -20,20 +20,22 @@ impl ProjectAssets {
   pub fn config(project: &Project) -> ProjectAssets {
     let file_path = "C++/libs/".to_owned() + project.name() + "/config.tup";
 
-    let file_contents = match project.kind() {
-      &ProjectKind::Library(ref shared_lib) => format!( // {{{
+    let file_contents = match *project.kind() {
+      ProjectKind::Library(ref lib_type) => match lib_type {
+        &LibraryKind::Shared => format!( // {{{
 "PROJECT = {}
-LIB_TYPE = shared", // }}}
-      project.name()).to_string(),
-      
-      &ProjectKind::Library(ref static_lib) => format!( // {{{
+LIB_TYpe = shared", // }}}
+        project.name()).to_string(),
+
+        &LibraryKind::Static => format!( // {{{
 "PROJECT = {}
 LIB_TYPE = static", // }}}
         project.name()).to_string(),
-      
-      &ProjectKind::Binary => format!( // {{{
+      },
+
+      ProjectKind::Binary => format!( // {{{
 "PROJECT = {}", // }}}
-        project.name()).to_string(),
+    project.name()).to_string(),
     };
 
     ProjectAssets { file_path, file_contents }

@@ -7,3 +7,4 @@ authors = ["technetos <mrgould93@gmail.com>"]
 clap = "2"
 yaml-rust = "0.3"
 regex = "0.2"
+git2 = "0.6"
