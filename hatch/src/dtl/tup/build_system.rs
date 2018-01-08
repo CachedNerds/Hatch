@@ -1,6 +1,4 @@
 use dtl::tup::{ Assets };
-use project::{ Project };
-
 pub struct BuildAssets {
   file_path: String,
   file_contents: String,
@@ -17,7 +15,7 @@ impl Assets for BuildAssets {
 }
 
 impl BuildAssets {
-  pub fn tuprules(project: &Project) -> BuildAssets {
+  pub fn tuprules() -> BuildAssets {
     let file_path = "C++/libs/".to_owned() + "Tuprules.tup";
     let file_contents = 
 ".gitignore

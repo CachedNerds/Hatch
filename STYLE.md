@@ -5,7 +5,9 @@
 ## Table of Contents
 
 1. [Unsafe](#unsafe)
-1. [Whitespace](#whitespace)
+2. [Whitespace](#whitespace)
+3. [Dereferences](#dereferences)
+
 
 ## Unsafe
 
@@ -15,11 +17,14 @@ No use of the `unsafe` keyword is allowed. This guideline is statically enforced
 
 All curly brace blocks will have at least one line return between the opening brace and the closing brace. The opening 
 curly brace of keyword blocks (e.g. `impl`) will be placed on the same line as the keyword. 
-```rust
-// bad
-impl Project { pub fn new() -> Project { ... } }
 
-// good
+##### Bad
+```rust
+impl Project { pub fn new() -> Project { ... } }
+```
+
+##### Good
+```rust
 impl Project { 
   pub fn new() -> Project {
     ...
@@ -28,13 +33,16 @@ impl Project {
 ```
 
 All `else` and `else if` blocks will begin on the same line as the previous closing curly brace.
-```rust
-// bad
-if (foo) { doFoo(); }
-else if arg.is_present("static") { ProjectKind::Library(LibraryKind::Static) } 
-else { ProjectKind::Library(LibraryKind::Shared) }
 
-// good
+##### Bad
+```rust
+if arg.is_present("bin") { ... }
+else if arg.is_present("static") { ... }
+else { ... }
+```
+
+##### Good
+```rust
 if arg.is_present("bin") {
   ...
 } else if arg.is_present("static") {
@@ -43,3 +51,26 @@ if arg.is_present("bin") {
   ...
 }
 ```
+
+## Dereferences
+
+When `y` is a reference, the asterisk operator used to _dereference_ `y` should
+contain no whitespace between the operator and the reference.
+
+##### Bad
+
+```rust
+match * y {
+  ...
+}
+```
+
+##### Good
+
+```rust
+match *y {
+  ...
+}
+```
+
+When `*y` is a reference the same styling as above should be used.  

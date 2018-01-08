@@ -6,7 +6,6 @@ mod ops;
 use HatchResult;
 use project::Project;
 use clap::{ ArgMatches, App };
-use hatch_error::HatchError;
 
 pub trait Command<'command> {
   fn cli_subcommand(&self) -> App<'command, 'command>;

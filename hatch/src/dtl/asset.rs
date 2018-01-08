@@ -40,19 +40,19 @@ impl AssetBuilder {
   }
 
   fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
-    match asset {
-      Tuprules => print_file_path(BuildAssets::tuprules(&project)),
-      ProjectConfig => print_file_path(ProjectAssets::config(&project)),
-      ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
-      ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
+    match *asset {
+      TupKind::Tuprules => print_file_path(BuildAssets::tuprules()),
+      TupKind::ProjectConfig => print_file_path(ProjectAssets::config(&project)),
+      TupKind::ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
+      TupKind::ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
     }
   }
 
-  fn generate_platformkind_assets(&self, asset: &PlatformKind, project: &Project) {
-    match asset {
-      Linux => print_file_path(PlatformAssets::linux()),
-      Darwin => print_file_path(PlatformAssets::darwin()),
-      Win32 => print_file_path(PlatformAssets::win32()),
+  fn generate_platformkind_assets(&self, asset: &PlatformKind) {
+    match *asset {
+      PlatformKind::Linux => print_file_path(PlatformAssets::linux()),
+      PlatformKind::Darwin => print_file_path(PlatformAssets::darwin()),
+      PlatformKind::Win32 => print_file_path(PlatformAssets::win32()),
     }
   }
 }
