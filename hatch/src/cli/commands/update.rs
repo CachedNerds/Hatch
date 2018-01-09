@@ -5,7 +5,7 @@ use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
 
-use cli::commands::{PROJECT_NAMES};
+use cli::commands::{ PROJECT_NAMES };
 
 struct ImplicitUpdater;
 struct ExplicitUpdater;
