@@ -72,11 +72,11 @@ impl<'command> Command<'command> for New {
            .required(false))
 
       .arg(Arg::with_name("include")
-        .help("List GitHub dependencies in format username/project[:branch]")
-        .long("include")
-        .short("i")
-        .min_values(1)
-        .takes_value(true))
+           .help("List GitHub dependencies in format username/project[:branch]")
+           .long("include")
+           .short("i")
+           .min_values(1)
+           .takes_value(true))
   }
 
   fn subcommand_name(&self) -> &'static str {
