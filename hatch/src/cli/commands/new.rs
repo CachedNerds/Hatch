@@ -73,10 +73,8 @@ impl<'command> Command<'command> for New {
 
       .arg(Arg::with_name("INCLUDE")
            .help("List URLs to git repositories")
-           .long("include")
-           .short("i")
-           .min_values(1)
-           .takes_value(true))
+           .long("include").short("i").min_values(1).takes_value(true)
+           .required(false))
   }
 
   fn subcommand_name(&self) -> &'static str {
