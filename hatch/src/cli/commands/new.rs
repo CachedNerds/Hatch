@@ -98,7 +98,8 @@ impl<'command> Command<'command> for New {
 
         let mut yaml_output = String::new();
 
-        let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\ndeps:\n{}", &name, &version, &kind, &includes_str);
+        let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\ndeps:\n{}",
+                       &name, &version, &kind, &includes_str);
 
         match fs::File::create(hatch_file) {
           Err(e) => vec![Err(HatchError::from(e))],
