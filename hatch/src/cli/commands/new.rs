@@ -71,7 +71,7 @@ impl<'command> Command<'command> for New {
            .long("version").short("v").takes_value(true)
            .required(false))
 
-      .arg(Arg::with_name("include")
+      .arg(Arg::with_name("INCLUDE")
            .help("List URLs to git repositories")
            .long("include")
            .short("i")
