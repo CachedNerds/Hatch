@@ -72,7 +72,7 @@ impl<'command> Command<'command> for New {
            .required(false))
 
       .arg(Arg::with_name("include")
-           .help("List GitHub dependencies in format username/project[:branch]")
+           .help("List URLs to git repositories")
            .long("include")
            .short("i")
            .min_values(1)
