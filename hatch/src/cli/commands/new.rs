@@ -92,12 +92,12 @@ impl<'command> Command<'command> for New {
       Ok(_) => {
         let version = self.project_version(args);
         let kind = self.project_kind(args);
-        let includes_str =  String::from("  - ") + &self.get_includes(args).join("\n  - ");
+        let includes =  String::from("  - ") + &self.get_includes(args).join("\n  - ");
 
         let mut yaml_output = String::new();
 
         let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\ndeps:\n{}",
-                       &name, &version, &kind, &includes_str);
+                       &name, &version, &kind, &includes);
 
         match fs::File::create(hatch_file) {
           Err(e) => vec![Err(HatchError::from(e))],
