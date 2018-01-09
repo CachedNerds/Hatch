@@ -5,6 +5,8 @@ use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
 
+use cli::commands::PROJECT_NAMES;
+
 struct ImplicitUpdater;
 struct ExplicitUpdater;
 
@@ -42,7 +44,7 @@ impl<'command> Command<'command> for Update {
       .version("0.1.0")
       .author("Josh Gould <mrgould93@gmail.com>") 
 
-      .arg(Arg::with_name("PROJECT_NAMES")
+      .arg(Arg::with_name(PROJECT_NAMES)
            .help("The projects to be updated.")
            .min_values(0).value_delimiter(" ")
            .required(false))
@@ -55,7 +57,7 @@ impl<'command> Command<'command> for Update {
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
     let updater: Box<ProjectOps>;
 
-    if args.is_present("PROJECT_NAMES") {
+    if args.is_present(PROJECT_NAMES) {
       updater = Box::new(ExplicitUpdater)
     } else {
       updater = Box::new(ImplicitUpdater)
