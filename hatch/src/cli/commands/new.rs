@@ -4,7 +4,6 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command };
 use project::{ Project, ProjectKind, LibraryKind };
 use hatch_error::HatchError;
-use regex::Regex;
 
 // Must use qualified names to avoid conflict.
 use std::fmt::Write as FmtWrite;
@@ -40,15 +39,8 @@ impl<'new> New {
   }
 
   fn get_includes(&self, args: &ArgMatches<'new>) -> Vec<String> {
-
-    let re = Regex::new(r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)").unwrap();
-
-    let is_url = |value: &&str| -> bool {
-      re.is_match(value)
-    };
-
     match args.values_of("include") {
-      Some(values) => values.take_while(is_url).map(String::from).collect(),
+      Some(values) => values.map(String::from).collect(),
       None => vec![],
     }
   }
