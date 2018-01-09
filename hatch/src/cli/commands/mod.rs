@@ -7,12 +7,12 @@ use HatchResult;
 use project::Project;
 use clap::{ ArgMatches, App };
 
-static INCLUDE : &str = "INCLUDE";
-static VERSION : &str = "VERSION";
-static BIN : &str = "BIN";
-static STATIC : &str = "STATIC";
-static PROJECT_NAMES : &str = "PROJECT_NAMES";
-static PROJECT_PATH : &str = "PROJECT_PATH";
+static INCLUDE: &str = "INCLUDE";
+static VERSION: &str = "VERSION";
+static BIN: &str = "BIN";
+static STATIC: &str = "STATIC";
+static PROJECT_NAMES: &str = "PROJECT_NAMES";
+static PROJECT_PATH: &str = "PROJECT_PATH";
 
 pub trait Command<'command> {
   fn cli_subcommand(&self) -> App<'command, 'command>;
