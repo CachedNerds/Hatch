@@ -94,7 +94,7 @@ impl<'command> Command<'command> for New {
       Ok(_) => {
         let version = self.project_version(args);
         let kind = self.project_kind(args);
-        let includes =  String::from("  - ") + &self.get_includes(args).join("\n  - ");
+        let includes = String::from("  - ") + &self.get_includes(args).join("\n  - ");
 
         let mut yaml_output = String::new();
 
