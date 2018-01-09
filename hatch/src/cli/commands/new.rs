@@ -1,7 +1,7 @@
 use HatchResult;
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
-use cli::commands::{ Command };
+use cli::commands::Command;
 use project::{ Project, ProjectKind, LibraryKind };
 use hatch_error::HatchError;
 
