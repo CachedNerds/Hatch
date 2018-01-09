@@ -9,7 +9,7 @@ use hatch_error::HatchError;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, STATIC, BIN };
+use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAMES };
 
 pub struct New {
   name: &'static str,
@@ -53,7 +53,7 @@ impl<'command> Command<'command> for New {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
-      .arg(Arg::with_name("PROJECT_NAMES")
+      .arg(Arg::with_name(PROJECT_NAMES)
            .help("Name of project")
            .takes_value(true).max_values(1)
            .required(true))
