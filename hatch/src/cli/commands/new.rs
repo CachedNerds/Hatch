@@ -39,7 +39,7 @@ impl<'new> New {
   }
 
   fn get_includes(&self, args: &ArgMatches<'new>) -> Vec<String> {
-    match args.values_of("include") {
+    match args.values_of("INCLUDE") {
       Some(values) => values.map(String::from).collect(),
       None => vec![],
     }
