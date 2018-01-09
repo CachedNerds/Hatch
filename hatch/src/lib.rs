@@ -7,8 +7,6 @@ pub extern crate clap;
 pub extern crate yaml_rust;
 pub extern crate git2;
 
-pub extern crate regex;
-
 pub mod project;
 pub mod cli;
 pub mod asset;
