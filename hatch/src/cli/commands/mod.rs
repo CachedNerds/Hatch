@@ -1,6 +1,7 @@
 pub mod new;
 pub mod update;
 pub mod build;
+mod repo;
 mod ops;
 
 use HatchResult;

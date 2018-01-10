@@ -3,7 +3,7 @@ use std::fs;
 use std::collections::HashMap;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command };
-use cli::commands::ops::RepoManager;
+use cli::commands::repo::RepoManager;
 use project::{ Project, ProjectKind, LibraryKind };
 use hatch_error::HatchError;
 
@@ -11,7 +11,7 @@ use hatch_error::HatchError;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use git2;
+use git2::Repository;
 
 use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAMES };
 
@@ -52,7 +52,7 @@ impl<'new> New {
 impl<'new> RepoManager<'new> for New {
   fn fetch_dependencies(&self, repo_spec: &Vec<(String, String)>, path: &str) {
     repo_spec.iter().for_each(|repo| {
-      git2::Repository::clone(&repo.0, path.to_owned() + "/" + &repo.1);
+      Repository::clone(&repo.0, path.to_owned() + "/" + &repo.1);
     });
   }
 
