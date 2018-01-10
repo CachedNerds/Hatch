@@ -52,7 +52,7 @@ impl<'new> New {
 impl<'new> RepoManager<'new> for New {
   fn fetch_dependencies(&self, repo_spec: &Vec<(String, String)>, path: &str) {
     repo_spec.iter().for_each(|repo| {
-      git2::Repository::clone(&repo.0, &repo.1);
+      git2::Repository::clone(&repo.0, path.to_owned() + "/" + &repo.1);
     });
   }
 
