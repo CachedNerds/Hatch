@@ -9,6 +9,8 @@ use hatch_error::HatchError;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
+use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAMES };
+
 pub struct New {
   name: &'static str,
 }
@@ -21,20 +23,27 @@ impl<'new> New {
   }
   
   fn project_version(&self, args: &ArgMatches<'new>) -> String {
-    if args.is_present("VERSION") {
-      value_t!(args, "VERSION", String).unwrap()
+    if args.is_present(VERSION) {
+      value_t!(args, VERSION, String).unwrap()
     } else {
       "0.0.1".to_owned()
     }
   }
 
   fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
-    if args.is_present("bin") {
+    if args.is_present(BIN) {
       ProjectKind::Binary
-    } else if args.is_present("static") {
+    } else if args.is_present(STATIC) {
       ProjectKind::Library(LibraryKind::Static)
     } else {
       ProjectKind::Library(LibraryKind::Shared)
+    }
+  }
+
+  fn get_includes(&self, args: &ArgMatches<'new>) -> Vec<String> {
+    match args.values_of(INCLUDE) {
+      Some(values) => values.map(String::from).collect(),
+      None => vec![],
     }
   }
 }
@@ -44,24 +53,29 @@ impl<'command> Command<'command> for New {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
-      .arg(Arg::with_name("PROJECT_NAMES")
+      .arg(Arg::with_name(PROJECT_NAMES)
            .help("Name of project")
            .takes_value(true).max_values(1)
            .required(true))
 
-      .arg(Arg::with_name("bin")
+      .arg(Arg::with_name(BIN)
            .help("Generate a stand alone executable")
            .long("bin").short("b")
            .required(false)) 
 
-      .arg(Arg::with_name("static")
+      .arg(Arg::with_name(STATIC)
            .help("Generate a static library")
            .long("static").short("s").conflicts_with("bin")
            .required(false))
 
-      .arg(Arg::with_name("VERSION")
+      .arg(Arg::with_name(VERSION)
            .help("Set the project version")
            .long("version").short("v").takes_value(true)
+           .required(false))
+
+      .arg(Arg::with_name(INCLUDE)
+           .help("List URLs to git repositories")
+           .long("include").short("i").min_values(1).takes_value(true)
            .required(false))
   }
 
@@ -80,10 +94,12 @@ impl<'command> Command<'command> for New {
       Ok(_) => {
         let version = self.project_version(args);
         let kind = self.project_kind(args);
+        let includes = String::from("  - ") + &self.get_includes(args).join("\n  - ");
 
         let mut yaml_output = String::new();
 
-        let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\n", &name, &version, &kind);
+        let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\ndeps:\n{}",
+                       &name, &version, &kind, &includes);
 
         match fs::File::create(hatch_file) {
           Err(e) => vec![Err(HatchError::from(e))],

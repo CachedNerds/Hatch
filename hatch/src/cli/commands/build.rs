@@ -5,6 +5,8 @@ use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
 
+use cli::commands::PROJECT_NAMES;
+
 struct ImplicitBuilder;
 struct ExplicitBuilder;
 
@@ -41,7 +43,7 @@ impl<'command> Command<'command> for Build {
       .about("Builds a project.")
       .author("Josh Gould <mrgould93@gmail.com>")
 
-      .arg(Arg::with_name("PROJECT_NAMES")
+      .arg(Arg::with_name(PROJECT_NAMES)
            .help("The projects to be built.")
            .required(false)
            .min_values(0)
@@ -55,7 +57,7 @@ impl<'command> Command<'command> for Build {
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
     let builder: Box<ProjectOps>;
 
-    if args.is_present("PROJECT_NAMES") {
+    if args.is_present(PROJECT_NAMES) {
       builder = Box::new(ExplicitBuilder);
     } else {
       builder = Box::new(ImplicitBuilder);
