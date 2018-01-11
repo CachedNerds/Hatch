@@ -6,16 +6,7 @@ use hatch_error::HatchError;
 use project::Project;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 
-struct ImplicitTester;
-struct ExplicitTester;
-
-impl ImplicitTester {
-  fn execute(&self, path: String, _: Vec<String>) {
-
-  }
-}
-
-impl ExplicitTester {
+impl Tester {
   fn execute(&self, path: String, project_names: Vec<String>) {
     for project_name in project_names {
       let testExecutablePath = path.to_owned() + "test/build/" + project_name.as_str() + ".test";
@@ -67,10 +58,7 @@ impl<'command> Command<'command> for Test {
 
   fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
     if args.is_present("PROJECT_NAMES") {
-      let tester = Box::new(ExplicitTester);
-      tester.execute(self.project_path(args), self.project_names(args));
-    } else {
-      let tester = Box::new(ImplicitTester);
+      let tester = Box::new(Tester);
       tester.execute(self.project_path(args), self.project_names(args));
     }
 
