@@ -7,6 +7,7 @@
 1. [Unsafe](#unsafe)
 2. [Whitespace](#whitespace)
 3. [Dereferences](#dereferences)
+4. [Use Statements](#use_statements)
 
 
 ## Unsafe
@@ -73,4 +74,21 @@ match *y {
 }
 ```
 
-When `*y` is a reference the same styling as above should be used.  
+When `*y` is a reference the same styling as above should be used.
+
+## Use Statements
+
+When importing names from a module, only use the bracket notation when importing multiple names.
+
+##### Bad
+
+```rust
+use project::{ Project };
+```
+
+##### Good
+
+```rust
+use project::Project;
+use Foo::{ Bar, Baz };
+```
