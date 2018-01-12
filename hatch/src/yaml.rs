@@ -78,14 +78,11 @@ fn extract_dirs(iter: fs::ReadDir) -> Vec<PathBuf> {
 }
 
 fn read_path(path: &str) -> HatchResult<fs::ReadDir> {
-  match fs::read_dir(path) {
-    Ok(iter) => Ok(iter),
-    Err(e) => {
-      let ctx = format!("failed to read directory `{}`", path);
-      let e = HatchError::from(e);
-      return Err(e.context(ctx).into())
-    }
-  }
+  let res = fs::read_dir(path).with_context(|_| {
+    format!("failed to read directory `{}`", path)
+  })?;
+
+  Ok(res)
 }
 
 fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
