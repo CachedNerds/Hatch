@@ -17,10 +17,8 @@ impl Config {
   pub fn lib_type(project_kind: &ProjectKind) -> String {
     let kind = match *project_kind {
       ProjectKind::Binary => "BINARY",
-      ProjectKind::Library(ref library_kind) => match *library_kind {
-        LibraryKind::Static => "STATIC",
-        LibraryKind::Shared => "SHARED"
-      }
+      ProjectKind::Library(LibraryKind::Static) => "STATIC",
+      ProjectKind::Library(LibraryKind::Shared) => "SHARED"
     };
 
     String::from("LIB_TYPE = ".to_owned() + kind)

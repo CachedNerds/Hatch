@@ -1,10 +1,9 @@
 use project::Project;
 use dtl::tup::Asset;
-use dtl::tup::build_system::BuildAssets;
 use dtl::tup::ProjectAsset;
 use dtl::tup::config::Config;
 use dtl::tup::platform::{ Linux, Darwin, Windows };
-use dtl::tup::test::TestAssets;
+use dtl::tup::test::Tupfile;
 
 pub fn print_file_path<T>(asset: T) where T: Asset {
   println!("{}", asset.path());
@@ -44,6 +43,7 @@ impl ProjectAssetBuilder {
   pub fn project(&mut self, asset_kind: &TupKind, project: &Project) {
     let asset = match *asset_kind {
       TupKind::Config => Self::config(project),
+      TupKind::TestTupfile => Self::test_tupfile(project),
       _ => ProjectAsset::new(String::new(), String::new())
     };
 
@@ -63,6 +63,13 @@ impl ProjectAssetBuilder {
   fn config(project: &Project) -> ProjectAsset {
     let file_path = "C++/libs/".to_owned() + project.name() + "/config.tup";
     let file_contents = Config::new(project.name(), project.kind()).to_string();
+
+    ProjectAsset::new(file_path, file_contents)
+  }
+
+  fn test_tupfile(project: &Project) -> ProjectAsset {
+    let file_path = "C++/libs/".to_owned() + project.name() + "/test/Tupfile";
+    let file_contents = Tupfile::new().to_string();
 
     ProjectAsset::new(file_path, file_contents)
   }
