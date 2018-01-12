@@ -9,7 +9,6 @@ pub extern crate git2;
 
 pub mod project;
 pub mod cli;
-pub mod asset;
 pub mod hatch_error;
 pub mod yaml;
 mod dtl;

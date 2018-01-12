@@ -4,6 +4,7 @@ use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
+use dtl::asset::{ ProjectAssetBuilder, TupKind };
 
 use cli::commands::PROJECT_NAMES;
 
@@ -63,6 +64,15 @@ impl<'command> Command<'command> for Build {
       builder = Box::new(ImplicitBuilder);
     }
 
-    builder.execute(self.project_path(args), self.project_names(args))
+    let result = builder.execute(self.project_path(args), self.project_names(args));
+
+    match result[0] {
+      Ok(ref project) => {
+        let mut assets = ProjectAssetBuilder::from(project);
+      },
+      _ => {},
+    }
+
+    vec![]
   }
 }

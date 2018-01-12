@@ -1,10 +1,10 @@
-use dtl::tup::{ Assets };
+use dtl::tup::Asset;
 pub struct BuildAssets {
   file_path: String,
   file_contents: String,
 }
 
-impl Assets for BuildAssets {
+impl Asset for BuildAssets {
   fn path(&self) -> &str {
     &self.file_path.as_str()
   }

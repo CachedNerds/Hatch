@@ -1,58 +1,90 @@
 use project::Project;
-use dtl::tup::{ Assets };
-
+use dtl::tup::Asset;
 use dtl::tup::build_system::BuildAssets;
-use dtl::tup::project::ProjectAssets;
-use dtl::tup::platform::PlatformAssets;
+use dtl::tup::ProjectAsset;
+use dtl::tup::config::Config;
+use dtl::tup::platform::{ Linux, Darwin, Windows };
 use dtl::tup::test::TestAssets;
 
-pub fn print_file_path<T>(asset: T) where T: Assets {
+pub fn print_file_path<T>(asset: T) where T: Asset {
   println!("{}", asset.path());
 }
 
-pub fn print_file_contents<T>(asset: T) where T: Assets {
-  println!("{}", asset.path());
+pub fn print_file_contents<T>(asset: T) where T: Asset {
+  println!("{}", asset.contents());
 }
 
 #[derive(Debug)]
-pub enum TupKind { Tuprules, ProjectConfig, ProjectTupfile, ProjectTestTupfile }
+pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile }
 
 #[derive(Debug)]
-pub enum PlatformKind { Linux, Darwin, Win32 }
+pub enum PlatformKind { Linux, Darwin, Windows }
 
 #[derive(Debug)]
 pub enum AssetKind { Os(PlatformKind), Tup(TupKind) }
 
 #[derive(Debug)]
-pub struct AssetBuilder {
-  assets: Vec<AssetKind>,
+pub struct ProjectAssetBuilder {
+  assets: Vec<ProjectAsset>,
 }
 
-impl AssetBuilder {
-  pub fn new() -> AssetBuilder {
-    AssetBuilder {
-      assets: Vec::new(),
-    }
+impl ProjectAssetBuilder {
+  pub fn from(project: &Project) -> ProjectAssetBuilder {
+    let mut asset_builder = ProjectAssetBuilder { assets: Vec::new() };
+    asset_builder.project(&TupKind::Config, project);
+    asset_builder.platform(&PlatformKind::Darwin);
+
+    asset_builder
   }
 
-  pub fn assets(&mut self) -> &Vec<AssetKind> {
+  pub fn assets(&mut self) -> &Vec<ProjectAsset> {
     &self.assets.as_ref()
   }
 
-  fn generate_tupkind_assets(&self, asset: &TupKind, project: &Project) {
-    match *asset {
-      TupKind::Tuprules => print_file_path(BuildAssets::tuprules()),
-      TupKind::ProjectConfig => print_file_path(ProjectAssets::config(&project)),
-      TupKind::ProjectTupfile => print_file_path(ProjectAssets::tupfile(&project)),
-      TupKind::ProjectTestTupfile => print_file_path(TestAssets::tupfile(&project)),
-    }
+  pub fn project(&mut self, asset_kind: &TupKind, project: &Project) {
+    let asset = match *asset_kind {
+      TupKind::Config => Self::config(project),
+      _ => ProjectAsset::new(String::new(), String::new())
+    };
+
+    self.assets.push(asset);
   }
 
-  fn generate_platformkind_assets(&self, asset: &PlatformKind) {
-    match *asset {
-      PlatformKind::Linux => print_file_path(PlatformAssets::linux()),
-      PlatformKind::Darwin => print_file_path(PlatformAssets::darwin()),
-      PlatformKind::Win32 => print_file_path(PlatformAssets::win32()),
-    }
+  pub fn platform(&mut self, asset_kind: &PlatformKind) {
+    let asset = match *asset_kind {
+      PlatformKind::Linux => Self::linux(),
+      PlatformKind::Darwin => Self::darwin(),
+      PlatformKind::Windows => Self::windows()
+    };
+
+    self.assets.push(asset);
+  }
+
+  fn config(project: &Project) -> ProjectAsset {
+    let file_path = "C++/libs/".to_owned() + project.name() + "/config.tup";
+    let file_contents = Config::new(project.name(), project.kind()).to_string();
+
+    ProjectAsset::new(file_path, file_contents)
+  }
+
+  fn linux() -> ProjectAsset {
+    let file_path = "C++/libs/linux.tup".to_owned();
+    let file_contents = Linux::new().to_string();
+
+    ProjectAsset::new(file_path, file_contents)
+  }
+
+  fn darwin() -> ProjectAsset {
+    let file_path = "C++/libs/macosx.tup".to_owned();
+    let file_contents = Darwin::new().to_string();
+
+    ProjectAsset::new(file_path, file_contents)
+  }
+
+  fn windows() -> ProjectAsset {
+    let file_path = "C++/libs/win32.tup".to_owned();
+    let file_contents = Windows::new().to_string();
+
+    ProjectAsset::new(file_path, file_contents)
   }
 }

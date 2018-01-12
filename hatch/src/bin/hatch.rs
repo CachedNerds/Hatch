@@ -27,7 +27,7 @@ fn main() {
   let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
 
   // execute selected subcommand
-  let result = match cli.subcommand() {
+  match cli.subcommand() {
     (subcommand_name, Some(cli_args)) => {
       match subcommands.get(subcommand_name) {
         Some(subcommand) => subcommand.execute(cli_args),
@@ -36,11 +36,4 @@ fn main() {
     },
     _ => vec![Err(HatchError::Null(NullError))]
   };
-
-  result.iter().for_each(|r| {
-    match *r {
-      Ok(ref p) => println!("{:?}", p),
-      Err(ref e) => println!("{}", e),
-    }
-  });
 }

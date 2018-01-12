@@ -1,46 +1,86 @@
-use dtl::tup::{ Assets };
+use project::{ LibraryKind, ProjectKind };
 
-pub struct PlatformAssets {
-  file_path: String,
-  file_contents: String,
+pub struct Linux {
+  static_extension: String,
+  shared_extension: String,
 }
 
-impl Assets for PlatformAssets {
-  fn path(&self) -> &str {
-    &self.file_path.as_str()
+impl Linux {
+  pub fn new() -> Linux {
+    Linux { static_extension: Linux::static_extension(), shared_extension: Linux::shared_extension() }
   }
 
-  fn contents(&self) -> &str {
-    &self.file_contents.as_str()
+  pub fn static_extension() -> String {
+    String::from("STATIC = a")
+  }
+
+  pub fn shared_extension() -> String {
+    String::from("SHARED = so")
   }
 }
 
-impl PlatformAssets {
-  pub fn linux() -> PlatformAssets {
-    let file_path = "C++/libs/linux.tup".to_owned();
-    let file_contents =
-"STATIC = a
-SHARED = so".to_string();
-    PlatformAssets { file_path, file_contents }
+impl ToString for Linux {
+  fn to_string(&self) -> String {
+    [self.static_extension.as_str(), self.shared_extension.as_str()].join("\n")
   }
-  
-  pub fn darwin() -> PlatformAssets {
-    let file_path = "C++/libs/macosx.tup".to_owned();
-    let file_contents =
-"STATIC = a
-SHARED = so".to_string();
-    PlatformAssets { file_path, file_contents }
+}
+
+pub struct Darwin {
+  static_extension: String,
+  shared_extension: String,
+}
+
+impl Darwin {
+  pub fn new() -> Darwin {
+    Darwin { static_extension: Darwin::static_extension(), shared_extension: Darwin::shared_extension() }
   }
 
-  pub fn win32() -> PlatformAssets {
-    let file_path = "C++/libs/win32.tup".to_owned();
-    let file_contents =
-"STATIC = lib
-SHARED = dll
-# Use clang for front-end
-CC = clang++.exe
-# Use llvm-lib for static libraries
-!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>".to_string();
-    PlatformAssets { file_path, file_contents }
+  pub fn static_extension() -> String {
+    String::from("STATIC = a")
+  }
+
+  pub fn shared_extension() -> String {
+    String::from("SHARED = so")
+  }
+}
+
+impl ToString for Darwin {
+  fn to_string(&self) -> String {
+    [self.static_extension.as_str(), self.shared_extension.as_str()].join("\n")
+  }
+}
+
+pub struct Windows {
+  static_extension: String,
+  shared_extension: String,
+}
+
+impl Windows {
+  pub fn new() -> Windows {
+    Windows { static_extension: Windows::static_extension(), shared_extension: Windows::shared_extension() }
+  }
+
+  pub fn static_extension() -> String {
+    String::from("STATIC = lib")
+  }
+
+  pub fn shared_extension() -> String {
+    String::from("SHARED = dll")
+  }
+}
+
+impl ToString for Windows {
+  fn to_string(&self) -> String {
+    let clang_comment = "# Use clang for front-end";
+    let clang = "CC = clang++.exe";
+    let llvm_comment = "# Use llvm-lib for static libraries";
+    let archive_macro = "!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>";
+    
+    [self.static_extension.as_str(),
+     self.shared_extension.as_str(),
+     clang_comment,
+     clang,
+     llvm_comment,
+     archive_macro].join("\n")
   }
 }

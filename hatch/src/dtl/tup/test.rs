@@ -1,12 +1,12 @@
-use project::{ Project };
-use dtl::tup::{ Assets };
+use project::Project;
+use dtl::tup::Asset;
 
 pub struct TestAssets {
   file_path: String,
   file_contents: String,
 }
 
-impl Assets for TestAssets {
+impl Asset for TestAssets {
   fn path(&self) -> &str {
     &self.file_path.as_str()
   }
