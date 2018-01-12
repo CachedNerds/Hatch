@@ -3,19 +3,18 @@ use std::io::Read;
 use std::ffi::OsStr;
 use std::path::PathBuf;
 
-use HatchResult;
 use yaml_rust::{ Yaml, YamlLoader };
 use project::{ Project, LibraryKind, ProjectKind };
 
 use hatch_error::{
+  HatchResult,
+  ResultExt,
   HatchError,
   MissingNameError,
   MissingBuildError,
   MissingVersionError,
   EmptyConfigError
 };
-
-use self::HatchError::{ Io, Parsing };
 
 pub fn parse_all(path: &String) -> Vec<HatchResult<Project>> {
   match read_path(path) {
@@ -44,19 +43,21 @@ pub fn parse_many(path: &String, items: Vec<String>) -> Vec<HatchResult<Project>
   }).collect::<Vec<_>>()
 }
 
-fn from_file(file_name: String) -> Result<Vec<Yaml>, HatchError> {
-  let parsed = fs::File::open(file_name).and_then(|mut file| {
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).map(|_| YamlLoader::load_from_str(&contents))
-  });
+fn from_file(file_name: String) -> HatchResult<Vec<Yaml>> {
+  let mut file = fs::File::open(&file_name).with_context(|_| {
+    format!("failed to open file: `{}`", &file_name)
+  })?;
 
-  match parsed {
-    Err(io_error) => Err(Io(io_error)),
-    Ok(yaml_result) => match yaml_result {
-      Err(scanner_error) => Err(Parsing(scanner_error)),
-      Ok(vec_yaml) => Ok(vec_yaml)
-    }
-  }
+  let mut contents = String::new();
+  file.read_to_string(&mut contents).with_context(|_| {
+    format!("failed to read contents of: `{}`", file_name)
+  })?;
+
+  let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
+    format!("Parsing error: `{}`", e)
+  })?;
+
+  Ok(res)
 }
 
 fn get_project_names(dir_paths: Vec<PathBuf>) -> Vec<String> {
@@ -79,13 +80,17 @@ fn extract_dirs(iter: fs::ReadDir) -> Vec<PathBuf> {
 fn read_path(path: &str) -> HatchResult<fs::ReadDir> {
   match fs::read_dir(path) {
     Ok(iter) => Ok(iter),
-    Err(e) => Err(HatchError::from(e)),
+    Err(e) => {
+      let ctx = format!("failed to read directory `{}`", path);
+      let e = HatchError::from(e);
+      return Err(e.context(ctx).into())
+    }
   }
 }
 
 fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if yml_vec.len() == 0 {
-    return Err(HatchError::EmptyConfig(EmptyConfigError));
+    return Err(EmptyConfigError)?;
   }
 
   let name: String;
@@ -95,7 +100,7 @@ fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if let Some(n) = yml_vec[0]["name"].as_str() {
     name = n.to_owned();
   } else {
-    return Err(HatchError::MissingName(MissingNameError));
+    return Err(MissingNameError)?;
   }
 
   if let Some(b) = yml_vec[0]["build"].as_str() {
@@ -105,13 +110,13 @@ fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
       _ => ProjectKind::Binary
     }
   } else {
-    return Err(HatchError::MissingBuild(MissingBuildError));
+    return Err(MissingBuildError)?;
   }
 
   if let Some(v) = yml_vec[0]["version"].as_str() {
     version = v.to_owned();
   } else {
-    return Err(HatchError::MissingVersion(MissingVersionError));
+    return Err(MissingVersionError)?;
   }
 
   Ok(Project::new(name, kind, version))
