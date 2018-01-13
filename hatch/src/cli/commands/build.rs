@@ -4,7 +4,8 @@ use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
 use yaml;
 use project::Project;
-use dtl::asset::{ ProjectAssetBuilder, TupKind };
+use dtl::asset::{ ProjectAssetBuilder, TupKind, print_file_contents };
+use dtl::tup::Asset;
 
 use cli::commands::PROJECT_NAMES;
 
@@ -68,7 +69,10 @@ impl<'command> Command<'command> for Build {
 
     match result[0] {
       Ok(ref project) => {
-        let mut assets = ProjectAssetBuilder::from(project);
+        let mut asset_builder = ProjectAssetBuilder::from(project);
+        for asset in asset_builder.assets() {
+          println!("{}\n", asset.contents());
+        }
       },
       _ => {},
     }

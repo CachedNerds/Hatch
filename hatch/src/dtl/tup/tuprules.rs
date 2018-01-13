@@ -1,36 +1,75 @@
-use dtl::tup::Asset;
-pub struct BuildAssets {
-  file_path: String,
-  file_contents: String,
+use project::{ Project, LibraryKind, ProjectKind };
+
+pub enum Arch { X64, X32 }
+
+pub struct Tuprules {
+  compiler: String,
+  debug: bool,
+  arch: Arch,
+  compiler_version: String,
+  lib_type: LibraryKind,
 }
 
-impl Asset for BuildAssets {
-  fn path(&self) -> &str {
-    &self.file_path.as_str()
+impl Tuprules {
+  pub fn new(compiler: String, debug: bool, arch: Arch, compiler_version: String, lib_type: &LibraryKind) -> Tuprules {
+    let copy_lib_type = match *lib_type {
+      LibraryKind::Static => LibraryKind::Static,
+      LibraryKind::Shared => LibraryKind::Shared
+    };
+
+    Tuprules { compiler, debug, arch, compiler_version, lib_type: copy_lib_type }
   }
 
-  fn contents(&self) -> &str {
-    &self.file_contents.as_str()
+  fn arch_flag(arch: &Arch) -> String {
+    match *arch {
+      Arch::X64 => String::from("-m64"),
+      Arch::X32 => String::from("-m32"),
+    }
+  }
+
+  fn type_flag(lib_type: &LibraryKind) -> String {
+    match *lib_type {
+      LibraryKind::Static => String::from("-static"),
+      LibraryKind::Shared => String::from("-dynamic"),
+    }
   }
 }
 
-impl BuildAssets {
-  pub fn tuprules() -> BuildAssets {
-    let file_path = "C++/libs/".to_owned() + "Tuprules.tup";
-    let file_contents = 
-".gitignore
-CC = g++
-# Uncomment to build with debug symbols
-#CFLAGS += -g
-ARCH = -m64
-#ARCH = -m32
-CFLAGS += $(ARCH)
-CFLAGS += -std=c++1z
-CFLAGS += -c
-CFLAGS += -I ../../
-LINKFLAGS += $(ARCH)
-LINKFLAGS += -static
-LINKFLAGS += -v
+impl ToString for Tuprules {
+  fn to_string(&self) -> String {
+    let mut tokens = Vec::new();
+    tokens.push(String::from(".gitignore"));
+
+    let compiler_token = String::from("CC = ") + self.compiler.as_str();
+    tokens.push(compiler_token);
+    
+    if (self.debug) {
+      let debug_token = String::from("CFLAGS += -g");
+      tokens.push(debug_token);
+    }
+
+    let arch_flag = Tuprules::arch_flag(&self.arch);
+    let arch_token = String::from("ARCH = ") + arch_flag.as_str();
+    tokens.push(arch_token);
+
+    tokens.push(String::from("CFLAGS += $(ARCH)"));
+
+    let cflags_version = String::from("CFLAGS += -std=") + self.compiler_version.as_str();
+    tokens.push(cflags_version);
+
+    tokens.push(String::from("CFLAGS += -c"));
+    tokens.push(String::from("CFLAGS += -I ../../"));
+
+    tokens.push(String::from("LINKFLAGS += $(ARCH)"));
+
+    let link_flags_type = String::from(
+"ifneq (@(TUP_PLATFORM),macosx)
+  LINKFLAGS += ".to_owned() + Tuprules::type_flag(&self.lib_type).as_str() + "
+endif");
+    tokens.push(link_flags_type);
+
+    tokens.push(String::from(
+"LINKFLAGS += -v
 SOURCE = src
 SOURCE_OUT = build
 SOURCE_FILES = $(SOURCE)/*.cpp
@@ -56,7 +95,8 @@ else
     endif
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)".to_string();
-    BuildAssets { file_path, file_contents }
+PROJECT_LIB = $(PROJECT).$(EXTENSION)"));
+
+    tokens.iter().map(|token| token.as_str()).collect::<Vec<_>>().join("\n")
   }
 }

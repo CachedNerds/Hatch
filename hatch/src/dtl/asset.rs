@@ -1,7 +1,8 @@
-use project::Project;
+use project::{ Project, ProjectKind, LibraryKind };
 use dtl::tup::Asset;
 use dtl::tup::ProjectAsset;
 use dtl::tup::config::Config;
+use dtl::tup::tuprules::{ Tuprules, Arch };
 use dtl::tup::platform::{ Linux, Darwin, Windows };
 use dtl::tup::test::Tupfile;
 
@@ -31,7 +32,11 @@ impl ProjectAssetBuilder {
   pub fn from(project: &Project) -> ProjectAssetBuilder {
     let mut asset_builder = ProjectAssetBuilder { assets: Vec::new() };
     asset_builder.project(&TupKind::Config, project);
+    asset_builder.project(&TupKind::TestTupfile, project);
+    asset_builder.project(&TupKind::Tuprules, project);
+    asset_builder.platform(&PlatformKind::Linux);
     asset_builder.platform(&PlatformKind::Darwin);
+    asset_builder.platform(&PlatformKind::Windows);
 
     asset_builder
   }
@@ -44,6 +49,7 @@ impl ProjectAssetBuilder {
     let asset = match *asset_kind {
       TupKind::Config => Self::config(project),
       TupKind::TestTupfile => Self::test_tupfile(project),
+      TupKind::Tuprules => Self::tuprules(project),
       _ => ProjectAsset::new(String::new(), String::new())
     };
 
@@ -70,6 +76,19 @@ impl ProjectAssetBuilder {
   fn test_tupfile(project: &Project) -> ProjectAsset {
     let file_path = "C++/libs/".to_owned() + project.name() + "/test/Tupfile";
     let file_contents = Tupfile::new().to_string();
+
+    ProjectAsset::new(file_path, file_contents)
+  }
+
+  fn tuprules(project: &Project) -> ProjectAsset {
+    let file_path = "C++/libs/".to_owned() + "Tuprules.tup";
+    let project_kind = project.kind();
+    let file_contents = match *project_kind {
+      ProjectKind::Library(ref lib_type) =>  {
+        Tuprules::new("g++".to_owned(), false, Arch::X64, "c++1z".to_owned(), lib_type).to_string()
+      },
+      _ => String::new()
+    };
 
     ProjectAsset::new(file_path, file_contents)
   }
