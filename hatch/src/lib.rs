@@ -11,6 +11,7 @@ pub mod project;
 pub mod cli;
 pub mod hatch_error;
 pub mod yaml;
+pub mod assets;
 mod dtl;
 
 #[cfg(test)]

@@ -1,5 +1,3 @@
-use project::{ LibraryKind, ProjectKind };
-
 pub struct Linux {
   static_extension: String,
   shared_extension: String,

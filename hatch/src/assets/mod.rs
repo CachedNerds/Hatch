@@ -1,3 +1,4 @@
+pub mod builder;
 pub mod config;
 pub mod tupfile;
 pub mod platform;
@@ -10,6 +11,23 @@ pub trait Asset {
   fn path(&self) -> &str;
   fn contents(&self) -> &str;
 }
+
+pub fn print_file_path<T>(asset: T) where T: Asset {
+  println!("{}", asset.path());
+}
+
+pub fn print_file_contents<T>(asset: T) where T: Asset {
+  println!("{}", asset.contents());
+}
+
+#[derive(Debug)]
+pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile }
+
+#[derive(Debug)]
+pub enum PlatformKind { Linux, Darwin, Windows }
+
+#[derive(Debug)]
+pub enum Arch { X64, X32 }
 
 pub struct ProjectAsset {
   file_path: String,

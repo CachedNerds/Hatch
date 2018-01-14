@@ -7,11 +7,11 @@ pub struct Config {
 
 impl Config {
   pub fn new(name: &str, project_kind: &ProjectKind) -> Config {
-    Config { project: Config::project(name), lib_type: Config::lib_type(project_kind)}
+    Config { project: Config::project(name), lib_type: Config::lib_type(project_kind) }
   }
 
   pub fn project(name: &str) -> String {
-    String::from("PROJECT = ".to_owned() + name)
+    String::from("PROJECT = ") + name
   }
 
   pub fn lib_type(project_kind: &ProjectKind) -> String {
@@ -21,7 +21,7 @@ impl Config {
       ProjectKind::Library(LibraryKind::Shared) => "SHARED"
     };
 
-    String::from("LIB_TYPE = ".to_owned() + kind)
+    String::from("LIB_TYPE = ") + kind
   }
 }
 

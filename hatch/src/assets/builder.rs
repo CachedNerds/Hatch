@@ -1,44 +1,25 @@
-use project::{ Project, ProjectKind, LibraryKind };
-use dtl::tup::Asset;
-use dtl::tup::ProjectAsset;
-use dtl::tup::config::Config;
-use dtl::tup::tuprules::{ Tuprules, Arch };
-use dtl::tup::platform::{ Linux, Darwin, Windows };
-use dtl::tup::test::Tupfile;
+use assets::{ TupKind, PlatformKind, Arch, ProjectAsset };
+use assets::config::Config;
+use assets::tuprules::Tuprules;
+use assets::test::Tupfile;
+use assets::platform::{ Linux, Darwin, Windows};
+use project::{ Project, ProjectKind };
 
-pub fn print_file_path<T>(asset: T) where T: Asset {
-  println!("{}", asset.path());
-}
-
-pub fn print_file_contents<T>(asset: T) where T: Asset {
-  println!("{}", asset.contents());
-}
-
-#[derive(Debug)]
-pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile }
-
-#[derive(Debug)]
-pub enum PlatformKind { Linux, Darwin, Windows }
-
-#[derive(Debug)]
-pub enum AssetKind { Os(PlatformKind), Tup(TupKind) }
-
-#[derive(Debug)]
-pub struct ProjectAssetBuilder {
+pub struct Builder {
   assets: Vec<ProjectAsset>,
 }
 
-impl ProjectAssetBuilder {
-  pub fn from(project: &Project) -> ProjectAssetBuilder {
-    let mut asset_builder = ProjectAssetBuilder { assets: Vec::new() };
-    asset_builder.project(&TupKind::Config, project);
-    asset_builder.project(&TupKind::TestTupfile, project);
-    asset_builder.project(&TupKind::Tuprules, project);
-    asset_builder.platform(&PlatformKind::Linux);
-    asset_builder.platform(&PlatformKind::Darwin);
-    asset_builder.platform(&PlatformKind::Windows);
+impl Builder {
+  pub fn from(project: &Project) -> Builder {
+    let mut builder = Builder { assets: Vec::new() };
+    builder.project(&TupKind::Config, project);
+    builder.project(&TupKind::TestTupfile, project);
+    builder.project(&TupKind::Tuprules, project);
+    builder.platform(&PlatformKind::Linux);
+    builder.platform(&PlatformKind::Darwin);
+    builder.platform(&PlatformKind::Windows);
 
-    asset_builder
+    builder
   }
 
   pub fn assets(&mut self) -> &Vec<ProjectAsset> {

@@ -1,5 +1,3 @@
-use project::{ LibraryKind, ProjectKind };
-
 pub struct Tupfile;
 
 impl Tupfile {

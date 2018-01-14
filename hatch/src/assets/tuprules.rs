@@ -1,6 +1,5 @@
+use assets::Arch;
 use project::{ Project, LibraryKind, ProjectKind };
-
-pub enum Arch { X64, X32 }
 
 pub struct Tuprules {
   compiler: String,
