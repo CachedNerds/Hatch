@@ -1,10 +1,10 @@
 use std::fs;
 use std::io::Read;
 use std::ffi::OsStr;
-use std::path::PathBuf;
+use std::path::{ Path, PathBuf };
 
 use yaml_rust::{ Yaml, YamlLoader };
-use project::{ Project, LibraryKind, ProjectKind };
+use project::{ Project, LibraryKind, ProjectKind, Dependency };
 
 use hatch_error::{
   HatchResult,
@@ -16,41 +16,42 @@ use hatch_error::{
   EmptyConfigError
 };
 
-pub fn parse_all(path: &String) -> Vec<HatchResult<Project>> {
-  match read_path(path) {
-    Ok(files) => parse_many(path, get_project_names(extract_dirs(files))),
-    Err(e) => vec![Err(e)],
-  }
-}
+//pub fn parse_all(path: &String) -> Vec<HatchResult<Project>> {
+//  match read_path(path) {
+//    Ok(files) => parse_many(path, get_project_names(extract_dirs(files))),
+//    Err(e) => vec![Err(e)],
+//  }
+//}
 
-pub fn parse_one(path: &String) -> HatchResult<Project> {
-  match from_file(path.to_owned() + "Hatch.yml") {
+pub fn parse_one(path: &Path) -> HatchResult<Project> {
+  match from_file(path) {
     Err(e) => Err(e),
     Ok(yml_vec) => parse(yml_vec),
   }
 }
 
-pub fn parse_many(path: &String, items: Vec<String>) -> Vec<HatchResult<Project>> {
-  let yaml_result = items.into_iter().map(|p| {
-    from_file(path.to_owned() + &p[..] + "/Hatch.yml")
-  }).collect::<Vec<_>>();
+//pub fn parse_many(path: &String, items: Vec<String>) -> Vec<HatchResult<Project>> {
+//  let yaml_result = items.into_iter().map(|p| {
+//    from_file(path.to_owned() + &p[..] + "/Hatch.yml")
+//  }).collect::<Vec<_>>();
+//
+//  yaml_result.into_iter().map(|i| {
+//    match i {
+//      Err(e) => Err(e),
+//      Ok(yml_vec) => parse(yml_vec),
+//    }
+//  }).collect::<Vec<_>>()
+//  println!("{:?}", yml_vec[0]["deps"].as_vec());
+//}
 
-  yaml_result.into_iter().map(|i| {
-    match i {
-      Err(e) => Err(e),
-      Ok(yml_vec) => parse(yml_vec),
-    }
-  }).collect::<Vec<_>>()
-}
-
-fn from_file(file_name: String) -> HatchResult<Vec<Yaml>> {
+fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
   let mut file = fs::File::open(&file_name).with_context(|_| {
-    format!("failed to open file: `{}`", &file_name)
+    format!("failed to open file: `{}`", &file_name.display())
   })?;
 
   let mut contents = String::new();
   file.read_to_string(&mut contents).with_context(|_| {
-    format!("failed to read contents of: `{}`", file_name)
+    format!("failed to read contents of: `{}`", file_name.display())
   })?;
 
   let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
@@ -93,6 +94,7 @@ fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   let name: String;
   let kind: ProjectKind;
   let version: String;
+  let deps: Vec<Dependency>;
 
   if let Some(n) = yml_vec[0]["name"].as_str() {
     name = n.to_owned();
@@ -116,7 +118,18 @@ fn parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
     return Err(MissingVersionError)?;
   }
 
-  Ok(Project::new(name, kind, version))
+  if let Some(d) = yml_vec[0]["deps"].as_hash() {
+    deps = d
+      .iter()
+      .map(|(k, v)| (k.as_str(), v.as_str()))
+      .filter(|&(k, v)| k.is_some() && v.is_some())
+      .map(|(k, v)| Dependency::new(k.unwrap().to_owned(), v.unwrap().to_owned()))
+      .collect();
+  } else {
+    deps = Vec::new();
+  }
+
+  Ok(Project::new(name, kind, version, deps))
 }
 
 
