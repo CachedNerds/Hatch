@@ -19,6 +19,10 @@ impl Tuprules {
     Tuprules { compiler, debug, arch, compiler_version, lib_type: copy_lib_type }
   }
 
+  pub fn name() -> String {
+    String::from("Tuprules.tup")
+  }
+
   fn arch_flag(arch: &Arch) -> String {
     match *arch {
       Arch::X64 => String::from("-m64"),

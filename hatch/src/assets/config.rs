@@ -10,6 +10,10 @@ impl Config {
     Config { project: Config::project(name), lib_type: Config::lib_type(project_kind) }
   }
 
+  pub fn name() -> String {
+    String::from("config.tup")
+  }
+
   pub fn project(name: &str) -> String {
     String::from("PROJECT = ") + name
   }

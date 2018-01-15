@@ -8,6 +8,10 @@ impl Linux {
     Linux { static_extension: Linux::static_extension(), shared_extension: Linux::shared_extension() }
   }
 
+  pub fn name() -> String {
+    String::from("linux.tup")
+  }
+
   pub fn static_extension() -> String {
     String::from("STATIC = a")
   }
@@ -33,6 +37,10 @@ impl Darwin {
     Darwin { static_extension: Darwin::static_extension(), shared_extension: Darwin::shared_extension() }
   }
 
+  pub fn name() -> String {
+    String::from("macosx.tup")
+  }
+
   pub fn static_extension() -> String {
     String::from("STATIC = a")
   }
@@ -56,6 +64,10 @@ pub struct Windows {
 impl Windows {
   pub fn new() -> Windows {
     Windows { static_extension: Windows::static_extension(), shared_extension: Windows::shared_extension() }
+  }
+
+  pub fn name() -> String {
+    String::from("win32.tup")
   }
 
   pub fn static_extension() -> String {

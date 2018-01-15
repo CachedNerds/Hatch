@@ -3,15 +3,23 @@ use std::fs;
 use std::io::Write;
 
 pub fn generate_one(asset: &ProjectAsset) {
-  let file_path = asset.file_path();
-  let contents = asset.contents();
+  let path = asset.path();
 
-  match fs::File::create(file_path) {
-    Ok(mut file) => {
-      file.write_all(contents.as_bytes());
-    },
-    _ => {}
-  };
+  match fs::create_dir_all(&path) {
+    Err(e) => println!("{:?}", e),
+    Ok(_) => {
+      let file_path = String::from(path) + asset.name();
+      match fs::File::create(&file_path) {
+        Ok(mut file) => {
+          let contents = asset.contents();
+          file.write_all(contents.as_bytes());
+        },
+        Err(e) => {
+          println!("{:?}", e);
+        }
+      }
+    }
+  }
 }
 
 pub fn generate_all(assets: &Vec<ProjectAsset>) {

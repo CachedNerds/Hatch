@@ -10,12 +10,17 @@ mod tests;
 use std::fmt;
 
 pub trait Asset {
-  fn file_path(&self) -> &str;
+  fn path(&self) -> &str;
+  fn name(&self) -> &str;
   fn contents(&self) -> &str;
 }
 
 pub fn print_file_path<T>(asset: T) where T: Asset {
-  println!("{}", asset.file_path());
+  println!("{}", asset.path());
+}
+
+pub fn print_file_name<T>(asset: T) where T: Asset {
+  println!("{}", asset.name());
 }
 
 pub fn print_file_contents<T>(asset: T) where T: Asset {
@@ -32,28 +37,33 @@ pub enum PlatformKind { Linux, Darwin, Windows }
 pub enum Arch { X64, X32 }
 
 pub struct ProjectAsset {
-  file_path: String,
-  file_contents: String,
+  path: String,
+  name: String,
+  contents: String,
 }
 
 impl ProjectAsset {
-  pub fn new(file_path: String, file_contents: String) -> ProjectAsset {
-    ProjectAsset { file_path, file_contents }
+  pub fn new(path: String, name: String, contents: String) -> ProjectAsset {
+    ProjectAsset { path, name, contents }
   }
 }
 
 impl Asset for ProjectAsset {
-  fn file_path(&self) -> &str {
-    &self.file_path.as_str()
+  fn path(&self) -> &str {
+    &self.path.as_str()
+  }
+
+  fn name(&self) -> &str {
+    &self.name.as_str()
   }
 
   fn contents(&self) -> &str {
-    &self.file_contents.as_str()
+    &self.contents.as_str()
   }
 }
 
 impl fmt::Debug for ProjectAsset {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "path: {}, contents: {}", self.file_path, self.file_contents)
+    write!(f, "path: {}, name: {}, contents: {}", self.path, self.name, self.contents)
   }
 }
