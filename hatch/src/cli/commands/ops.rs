@@ -1,4 +1,4 @@
-use HatchResult;
+use hatch_error::HatchResult;
 use project::Project;
 
 pub trait ProjectOps {
