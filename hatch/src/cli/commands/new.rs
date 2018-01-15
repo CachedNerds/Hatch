@@ -1,9 +1,10 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
-use repo::{ clone_dep, modules_path };
-use project::{ Project, ProjectKind, LibraryKind };
+use repo::{ clone_dep, modules_path, hatchfile_path, clone_project_deps };
+use project::{ Project, ProjectKind, LibraryKind, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
+use std::path::PathBuf;
 
 // Must use qualified names to avoid conflict.
 use std::fmt::Write as FmtWrite;
@@ -40,23 +41,28 @@ impl<'new> New {
     }
   }
 
-  fn construct_deps_string(&self, args: &ArgMatches<'new>) -> String {
-    parse_deps_from_cli(args).into_iter().map(|(url, name)| {
+  fn construct_deps_string(&self, deps: &Vec<(String, String)>) -> String {
+    deps.iter().map(|&(ref url, ref name)| {
       let mut includes = String::new();
-      includes.push_str("  - ");
-      includes.push_str(&name);
-      includes.push_str("\n");
+      includes.push_str("deps:\n");
       includes.push_str("  ");
-      includes.push_str(&url);
+      includes.push_str(&name[..]);
+      includes.push_str(": ");
+      includes.push_str(&url[..]);
       includes.push_str("\n");
       includes
     }).collect()
   }
 
-  fn hatch_yml_contents(&self, name: &str, version: &str, kind: &ProjectKind, includes: &str)-> String {
+  fn hatch_yml_contents(&self,
+                        name: &str,
+                        version: &str,
+                        kind: &ProjectKind,
+                        includes: &str)-> String
+  {
     let mut yaml_output = String::new();
 
-    let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\ndeps:\n{}",
+    let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\n{}",
                    &name, &version, &kind, &includes);
     yaml_output
   }
@@ -69,7 +75,7 @@ impl<'command> Command<'command> for New {
 
       .arg(Arg::with_name(PROJECT_NAMES)
            .help("Name of project")
-           .takes_value(true).max_values(1)
+           .takes_value(true)
            .required(true))
 
       .arg(Arg::with_name(BIN)
@@ -99,32 +105,35 @@ impl<'command> Command<'command> for New {
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
     let name = self.project_name(args).unwrap();
-
-    let dir_path = self.project_path(args) + &name[..];
-    let hatch_file = self.project_path(args) + &name[..] + "/Hatch.yml";
-
     let version = self.project_version(args);
     let kind = self.project_kind(args);
+
+    let dir_path = PathBuf::from(self.project_path(args) + &name[..]);
+    let hatch_file = PathBuf::from(hatchfile_path(&dir_path));
+
+    let deps_from_cli = parse_deps_from_cli(args);
     
     let res = (|| -> HatchResult<_> {
+      // create directory for new project
       fs::create_dir(&dir_path)?;
+      // create the hatch_modules directory inside the project directory
       fs::create_dir(modules_path(&dir_path))?;
+
+      let deps: Vec<Dependency> = deps_from_cli.iter().map(|repo| {
+        Dependency::new(repo.1.clone(), repo.0.clone())
+      }).collect();
       
-      if args.is_present(INCLUDE) {
-        parse_deps_from_cli(args).iter().for_each(|repo| {
-          clone_dep(repo, &modules_path(&dir_path));
-        });
-      }
+      clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
       
-      let includes = self.construct_deps_string(args);
+      let includes = self.construct_deps_string(&deps_from_cli);
       let yaml_output = self.hatch_yml_contents(&name, &version, &kind, &includes);
 
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
-      
-      Ok(Project::new(name, kind, version))
+
+      Ok(Project::new(name, kind, version, deps))
     })().with_context(|e| {
-      format!("Failed to create project at: `{}` : {}", dir_path, e)
+      format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;
     Ok(res)
   }
