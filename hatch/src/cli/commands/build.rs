@@ -2,12 +2,10 @@ use HatchResult;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::ops::ProjectOps;
+use cli::commands::PROJECT_NAMES;
 use yaml;
 use project::Project;
-use assets::{ Asset, TupKind, print_file_contents };
-use assets::builder::Builder as AssetBuilder;
-
-use cli::commands::PROJECT_NAMES;
+use task::generate_assets;
 
 struct ImplicitBuilder;
 struct ExplicitBuilder;
@@ -69,10 +67,7 @@ impl<'command> Command<'command> for Build {
 
     match result[0] {
       Ok(ref project) => {
-        let mut asset_builder = AssetBuilder::from(project);
-        for asset in asset_builder.assets() {
-          println!("{}\n", asset.contents());
-        }
+        generate_assets(project);
       },
       _ => {},
     }

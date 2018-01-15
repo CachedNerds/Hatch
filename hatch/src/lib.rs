@@ -12,7 +12,7 @@ pub mod cli;
 pub mod hatch_error;
 pub mod yaml;
 pub mod assets;
-mod dtl;
+pub mod task;
 
 #[cfg(test)]
 mod tests {
