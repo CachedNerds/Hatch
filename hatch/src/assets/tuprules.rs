@@ -1,5 +1,5 @@
 use assets::Arch;
-use project::{ Project, LibraryKind, ProjectKind };
+use project::LibraryKind;
 
 pub struct Tuprules {
   compiler: String,
@@ -42,7 +42,7 @@ impl ToString for Tuprules {
     let compiler_token = String::from("CC = ") + self.compiler.as_str();
     tokens.push(compiler_token);
     
-    if (self.debug) {
+    if self.debug {
       let debug_token = String::from("CFLAGS += -g");
       tokens.push(debug_token);
     }

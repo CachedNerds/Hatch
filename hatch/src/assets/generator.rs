@@ -6,7 +6,7 @@ pub fn generate_one(asset: &ProjectAsset) {
   let file_path = asset.file_path();
   let contents = asset.contents();
 
-  let result = match fs::File::create(file_path) {
+  match fs::File::create(file_path) {
     Ok(mut file) => {
       file.write_all(contents.as_bytes());
     },

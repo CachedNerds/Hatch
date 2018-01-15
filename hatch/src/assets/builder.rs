@@ -1,7 +1,7 @@
 use assets::{ TupKind, PlatformKind, Arch, ProjectAsset };
 use assets::config::Config;
 use assets::tuprules::Tuprules;
-use assets::test::Tupfile as TestTupfile;
+use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
 use assets::platform::{ Linux, Darwin, Windows};
 use project::{ Project, ProjectKind };
@@ -31,7 +31,7 @@ impl Builder {
   pub fn project(&mut self, asset_kind: &TupKind, project: &Project) {
     let asset = match *asset_kind {
       TupKind::Config => Self::config(project),
-      TupKind::TestTupfile => Self::test_tupfile(project),
+      TupKind::TestTupfile => Self::test_tupfile(),
       TupKind::Tuprules => Self::tuprules(project),
       TupKind::Tupfile => Self::tupfile(project),
     };
@@ -56,7 +56,7 @@ impl Builder {
     ProjectAsset::new(file_path, file_contents)
   }
 
-  fn test_tupfile(project: &Project) -> ProjectAsset {
+  fn test_tupfile() -> ProjectAsset {
     let file_path = String::from("./test/Tupfile");
     let file_contents = TestTupfile::new().to_string();
 

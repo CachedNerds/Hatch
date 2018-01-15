@@ -4,7 +4,8 @@ pub mod config;
 pub mod tupfile;
 pub mod platform;
 pub mod tuprules;
-pub mod test;
+pub mod test_tupfile;
+mod tests;
 
 use std::fmt;
 

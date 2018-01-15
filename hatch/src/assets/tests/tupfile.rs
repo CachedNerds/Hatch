@@ -1,14 +1,8 @@
-pub struct Tupfile;
+use assets::tupfile::Tupfile;
 
-impl Tupfile {
-  pub fn new() -> Tupfile {
-    Tupfile
-  }
-}
-
-impl ToString for Tupfile {
-  fn to_string(&self) -> String {
-    String::from(
+#[test]
+fn build_tupfile() {
+  let contents = String::from(
 "include config.tup
 include_rules
 
@@ -27,6 +21,7 @@ include_rules
 : foreach $(TEST_FILES) |> !compile |> $(TEST_OUT)/%B.o
 
 # Create Link Executable
-: $(TEST_OBJ_FILES) $(SOURCE_OUT)/$(PROJECT_LIB) |> !link |> $(TEST_OUT)/$(PROJECT).test")
-  }
+: $(TEST_OBJ_FILES) $(SOURCE_OUT)/$(PROJECT_LIB) |> !link |> $(TEST_OUT)/$(PROJECT).test");
+
+  assert_eq!(contents, Tupfile::new().to_string());
 }
