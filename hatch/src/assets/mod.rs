@@ -1,4 +1,5 @@
 pub mod builder;
+pub mod generator;
 pub mod config;
 pub mod tupfile;
 pub mod platform;
@@ -8,12 +9,12 @@ pub mod test;
 use std::fmt;
 
 pub trait Asset {
-  fn path(&self) -> &str;
+  fn file_path(&self) -> &str;
   fn contents(&self) -> &str;
 }
 
 pub fn print_file_path<T>(asset: T) where T: Asset {
-  println!("{}", asset.path());
+  println!("{}", asset.file_path());
 }
 
 pub fn print_file_contents<T>(asset: T) where T: Asset {
@@ -41,7 +42,7 @@ impl ProjectAsset {
 }
 
 impl Asset for ProjectAsset {
-  fn path(&self) -> &str {
+  fn file_path(&self) -> &str {
     &self.file_path.as_str()
   }
 
