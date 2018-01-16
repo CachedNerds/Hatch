@@ -31,7 +31,7 @@ pub fn print_file_contents<T>(asset: T) where T: Asset {
 pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile }
 
 #[derive(Debug)]
-pub enum PlatformKind { Linux, Darwin, Windows }
+pub enum PlatformKind { Linux, MacOS, Windows }
 
 #[derive(Debug)]
 pub enum Arch { X64, X32 }

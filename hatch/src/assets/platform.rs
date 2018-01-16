@@ -27,14 +27,14 @@ impl ToString for Linux {
   }
 }
 
-pub struct Darwin {
+pub struct MacOS {
   static_extension: String,
   shared_extension: String,
 }
 
-impl Darwin {
-  pub fn new() -> Darwin {
-    Darwin { static_extension: Darwin::static_extension(), shared_extension: Darwin::shared_extension() }
+impl MacOS {
+  pub fn new() -> MacOS {
+    MacOS { static_extension: MacOS::static_extension(), shared_extension: MacOS::shared_extension() }
   }
 
   pub fn name() -> String {
@@ -50,7 +50,7 @@ impl Darwin {
   }
 }
 
-impl ToString for Darwin {
+impl ToString for MacOS {
   fn to_string(&self) -> String {
     [self.static_extension.as_str(), self.shared_extension.as_str()].join("\n")
   }

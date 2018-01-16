@@ -1,4 +1,4 @@
-use assets::platform::{ Linux, Darwin, Windows };
+use assets::platform::{ Linux, MacOS, Windows };
 
 #[test]
 fn build_linux() {
@@ -6,8 +6,8 @@ fn build_linux() {
 }
 
 #[test]
-fn build_darwin() {
-  assert_eq!("STATIC = a\nSHARED = so", Darwin::new().to_string());
+fn build_macos() {
+  assert_eq!("STATIC = a\nSHARED = so", MacOS::new().to_string());
 }
 
 #[test]

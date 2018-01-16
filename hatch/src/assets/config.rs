@@ -20,9 +20,9 @@ impl Config {
 
   pub fn lib_type(project_kind: &ProjectKind) -> String {
     let kind = match *project_kind {
-      ProjectKind::Binary => "BINARY",
-      ProjectKind::Library(LibraryKind::Static) => "STATIC",
-      ProjectKind::Library(LibraryKind::Shared) => "SHARED"
+      ProjectKind::Binary => "binary",
+      ProjectKind::Library(LibraryKind::Static) => "static",
+      ProjectKind::Library(LibraryKind::Shared) => "shared"
     };
 
     String::from("LIB_TYPE = ") + kind

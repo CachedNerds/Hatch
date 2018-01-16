@@ -3,7 +3,7 @@ use assets::config::Config;
 use assets::tuprules::Tuprules;
 use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
-use assets::platform::{ Linux, Darwin, Windows};
+use assets::platform::{ Linux, MacOS, Windows};
 use project::{ Project, ProjectKind };
 
 pub struct Builder {
@@ -18,7 +18,7 @@ impl Builder {
     builder.project(&TupKind::Tuprules, project);
     builder.project(&TupKind::Tupfile, project);
     builder.platform(&PlatformKind::Linux);
-    builder.platform(&PlatformKind::Darwin);
+    builder.platform(&PlatformKind::MacOS);
     builder.platform(&PlatformKind::Windows);
 
     builder
@@ -42,7 +42,7 @@ impl Builder {
   pub fn platform(&mut self, asset_kind: &PlatformKind) {
     let asset = match *asset_kind {
       PlatformKind::Linux => Self::linux(),
-      PlatformKind::Darwin => Self::darwin(),
+      PlatformKind::MacOS => Self::macos(),
       PlatformKind::Windows => Self::windows()
     };
 
@@ -90,11 +90,11 @@ impl Builder {
     ProjectAsset::new(path, Linux::name(), contents)
   }
 
-  fn darwin() -> ProjectAsset {
+  fn macos() -> ProjectAsset {
     let path = String::from("./");
-    let contents = Darwin::new().to_string();
+    let contents = MacOS::new().to_string();
 
-    ProjectAsset::new(path, Darwin::name(), contents)
+    ProjectAsset::new(path, MacOS::name(), contents)
   }
 
   fn windows() -> ProjectAsset {

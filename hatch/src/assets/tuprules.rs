@@ -45,7 +45,7 @@ impl ToString for Tuprules {
 
     let compiler_token = String::from("CC = ") + self.compiler.as_str();
     tokens.push(compiler_token);
-    
+
     if self.debug {
       let debug_token = String::from("CFLAGS += -g");
       tokens.push(debug_token);

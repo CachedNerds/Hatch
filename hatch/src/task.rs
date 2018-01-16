@@ -4,10 +4,5 @@ use assets::generator;
 use assets::Asset;
 
 pub fn generate_assets(project: &Project) {
-  let mut asset_builder = AssetBuilder::from(project);
-  for asset in asset_builder.assets() {
-    println!("{}\n", asset.contents());
-  }
-
-  generator::generate_all(asset_builder.assets());
+  generator::generate_all(AssetBuilder::from(project).assets());
 }
