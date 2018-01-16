@@ -27,12 +27,8 @@ fn main() {
   let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
 
   // execute selected subcommand
-  match cli.subcommand() {
-    (subcommand_name, Some(cli_args)) => {
-      if let Some(cmd) = subcommands.get(subcommand_name) {
-        cmd.execute(cli_args);
-      }
-    },
-    _ => ()
+  let (name, args) = cli.subcommand();
+  if let Some(cmd) = subcommands.get(name) {
+    cmd.execute(args.unwrap());
   }
 }
