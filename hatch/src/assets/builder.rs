@@ -11,8 +11,12 @@ pub struct Builder {
 }
 
 impl Builder {
+  pub fn new() -> Builder {
+    Builder { assets: Vec::new() }
+  }
+
   pub fn from(project: &Project) -> Builder {
-    let mut builder = Builder { assets: Vec::new() };
+    let mut builder = Builder::new();
     builder.project(&TupKind::Config, project);
     builder.project(&TupKind::TestTupfile, project);
     builder.project(&TupKind::Tuprules, project);
@@ -30,10 +34,10 @@ impl Builder {
 
   pub fn project(&mut self, asset_kind: &TupKind, project: &Project) {
     let asset = match *asset_kind {
-      TupKind::Config => Self::config(project),
-      TupKind::TestTupfile => Self::test_tupfile(),
-      TupKind::Tuprules => Self::tuprules(project),
-      TupKind::Tupfile => Self::tupfile(project),
+      TupKind::Config => self.config(project),
+      TupKind::TestTupfile => self.test_tupfile(),
+      TupKind::Tuprules => self.tuprules(project),
+      TupKind::Tupfile => self.tupfile(project),
     };
 
     self.assets.push(asset);
@@ -41,29 +45,29 @@ impl Builder {
 
   pub fn platform(&mut self, asset_kind: &PlatformKind) {
     let asset = match *asset_kind {
-      PlatformKind::Linux => Self::linux(),
-      PlatformKind::MacOS => Self::macos(),
-      PlatformKind::Windows => Self::windows()
+      PlatformKind::Linux => self.linux(),
+      PlatformKind::MacOS => self.macos(),
+      PlatformKind::Windows => self.windows()
     };
 
     self.assets.push(asset);
   }
 
-  fn config(project: &Project) -> ProjectAsset {
+  pub fn config(&self, project: &Project) -> ProjectAsset {
     let path = String::from("./");
     let contents = Config::new(project.name(), project.kind()).to_string();
 
     ProjectAsset::new(path, Config::name(), contents)
   }
 
-  fn test_tupfile() -> ProjectAsset {
+  pub fn test_tupfile(&self) -> ProjectAsset {
     let path = String::from("./test/");
     let contents = TestTupfile::new().to_string();
 
     ProjectAsset::new(path, TestTupfile::name(), contents)
   }
 
-  fn tuprules(project: &Project) -> ProjectAsset {
+  pub fn tuprules(&self, project: &Project) -> ProjectAsset {
     let path = String::from("./");
     let project_kind = project.kind();
     let contents = match *project_kind {
@@ -76,28 +80,28 @@ impl Builder {
     ProjectAsset::new(path, Tuprules::name(), contents)
   }
 
-  fn tupfile(project: &Project) -> ProjectAsset {
+  pub fn tupfile(&self, project: &Project) -> ProjectAsset {
     let path = String::from("./");
     let contents = Tupfile::new().to_string();
 
     ProjectAsset::new(path, Tupfile::name(), contents)
   }
 
-  fn linux() -> ProjectAsset {
+  pub fn linux(&self) -> ProjectAsset {
     let path = String::from("./");
     let contents = Linux::new().to_string();
 
     ProjectAsset::new(path, Linux::name(), contents)
   }
 
-  fn macos() -> ProjectAsset {
+  pub fn macos(&self) -> ProjectAsset {
     let path = String::from("./");
     let contents = MacOS::new().to_string();
 
     ProjectAsset::new(path, MacOS::name(), contents)
   }
 
-  fn windows() -> ProjectAsset {
+  pub fn windows(&self) -> ProjectAsset {
     let path = String::from("./");
     let contents = Windows::new().to_string();
 

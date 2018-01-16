@@ -8,6 +8,7 @@ pub mod test_tupfile;
 mod tests;
 
 use std::fmt;
+use std::cmp;
 
 pub trait Asset {
   fn path(&self) -> &str;
@@ -65,5 +66,11 @@ impl Asset for ProjectAsset {
 impl fmt::Debug for ProjectAsset {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "path: {}, name: {}, contents: {}", self.path, self.name, self.contents)
+  }
+}
+
+impl cmp::PartialEq for ProjectAsset {
+  fn eq(&self, other: &ProjectAsset) -> bool {
+    self.name == other.name && self.contents == other.contents
   }
 }
