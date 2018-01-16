@@ -29,6 +29,8 @@ fn main() {
   // execute selected subcommand
   let (name, args) = cli.subcommand();
   if let Some(cmd) = subcommands.get(name) {
-    cmd.execute(args.unwrap());
+    if let Err(e) = cmd.execute(args.unwrap()) {
+      println!("{}", e);
+    }
   }
 }
