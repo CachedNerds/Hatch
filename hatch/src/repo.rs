@@ -38,6 +38,7 @@ pub fn clone_project_deps(path: &Path,
                           user_defined_deps: &Vec<Dependency>) -> HatchResult<Vec<Project>> 
 {
   let mut visited: HashSet<String> = HashSet::new();
+
   // Clone the dependencies specified on the command line
   user_defined_deps.iter().for_each(|dep| {
     clone_dep(&dep.as_pair(), path);
@@ -64,13 +65,12 @@ pub fn clone_project_deps(path: &Path,
 }
 
 fn clone_nested_project_deps(path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
-  let current_project = yaml::parse_one(hatchfile_path(path).as_path())?;
-  if !visited.insert(current_project.name().to_owned()) {
-    current_project.deps().iter().for_each(|dep| {
+  let current_project = yaml::parse(hatchfile_path(path).as_path())?;
+  current_project.deps().iter().for_each(|dep| {
+    // If we have already pulled in a dep, dont do it again
+    if !visited.insert(current_project.name().to_owned()) {
       clone_dep(&dep.as_pair(), &modules_path(path).as_path());
-    });
-    Ok(true)
-  } else {
-    Ok(false)
-  }
+    }
+  });
+  Ok(true)
 }
