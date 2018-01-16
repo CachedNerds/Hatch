@@ -42,12 +42,12 @@ impl<'new> New {
   }
 
   fn construct_deps_string(&self, deps: &Vec<(String, String)>) -> String {
-    if deps.len() > 0 {
+    if deps.is_empty() {
+      String::new()
+    } else {
       String::from("deps:\n") + deps.iter().map(|&(ref url, ref name)| {
         format!("  {}: {}\n", &name[..], &url[..])
       }).collect::<String>().as_str()
-    } else {
-      String::new()
     }
   }
 
@@ -120,7 +120,7 @@ impl<'command> Command<'command> for New {
         Dependency::new(repo.1.clone(), repo.0.clone())
       }).collect::<Vec<_>>();
 
-      if deps.len() > 0 {
+      if !deps.is_empty() {
         clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
       }
 
