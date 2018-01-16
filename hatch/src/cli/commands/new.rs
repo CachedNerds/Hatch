@@ -42,16 +42,13 @@ impl<'new> New {
   }
 
   fn construct_deps_string(&self, deps: &Vec<(String, String)>) -> String {
-    deps.iter().map(|&(ref url, ref name)| {
-      let mut includes = String::new();
-      includes.push_str("deps:\n");
-      includes.push_str("  ");
-      includes.push_str(&name[..]);
-      includes.push_str(": ");
-      includes.push_str(&url[..]);
-      includes.push_str("\n");
-      includes
-    }).collect()
+    if deps.len() > 0 {
+      String::from("deps:\n") + deps.iter().map(|&(ref url, ref name)| {
+        format!("  {}: {}\n", &name[..], &url[..])
+      }).collect::<String>().as_str()
+    } else {
+      String::new()
+    }
   }
 
   fn hatch_yml_contents(&self,
@@ -119,12 +116,14 @@ impl<'command> Command<'command> for New {
       // create the hatch_modules directory inside the project directory
       fs::create_dir(modules_path(&dir_path))?;
 
-      let deps: Vec<Dependency> = deps_from_cli.iter().map(|repo| {
+      let deps = deps_from_cli.iter().map(|repo| {
         Dependency::new(repo.1.clone(), repo.0.clone())
-      }).collect();
-      
-      clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
-      
+      }).collect::<Vec<_>>();
+
+      if deps.len() > 0 {
+        clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
+      }
+
       let includes = self.construct_deps_string(&deps_from_cli);
       let yaml_output = self.hatch_yml_contents(&name, &version, &kind, &includes);
 
