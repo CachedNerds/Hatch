@@ -35,7 +35,7 @@ fn walk(path: &Path, callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchR
 }
 
 pub fn clone_project_deps(path: &Path,
-                          user_defined_deps: &Vec<Dependency>) -> HatchResult<Vec<Project>> 
+                          user_defined_deps: &Vec<Dependency>) -> HatchResult<()> 
 {
   let mut visited: HashSet<String> = HashSet::new();
 
@@ -61,7 +61,7 @@ pub fn clone_project_deps(path: &Path,
     Ok(true)
   })?;
 
-  Ok(Vec::new())
+  Ok(())
 }
 
 fn clone_nested_project_deps(path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
