@@ -5,7 +5,7 @@ use std::fs;
 use std::io::prelude::*;
 
 #[test]
-fn generate_one_no_directories() {
+fn generate_one_without_directories() {
   let test_asset = ProjectAsset::new(String::from("./"), String::from("test.test"), String::from("test"));
 
   generate_one(&test_asset);
@@ -38,6 +38,41 @@ fn generate_one_with_directories() {
       
       fs::remove_file("./test/test.test");
       fs::remove_dir("./test/");
+    },
+    Err(e) => panic!(e)
+  }
+}
+
+#[test]
+fn generate_one_overwrites_file() {
+  let test_asset = ProjectAsset::new(String::from("./"), String::from("test2.test"), String::from("old"));
+
+  generate_one(&test_asset);
+
+  // verify that the old content is there
+  match fs::File::open("./test2.test") {
+    Ok(mut file) => {
+      let mut contents = String::new();
+      file.read_to_string(&mut contents);
+    
+      assert_eq!(contents, "old");
+    },
+    Err(e) => panic!(e)
+  }
+
+  let test_asset = ProjectAsset::new(String::from("./"), String::from("test2.test"), String::from("new"));
+
+  generate_one(&test_asset);
+
+  // verify that the new content overwrites the old content
+  match fs::File::open("./test2.test") {
+    Ok(mut file) => {
+      let mut contents = String::new();
+      file.read_to_string(&mut contents);
+    
+      assert_eq!(contents, "new");
+      
+      fs::remove_file("./test2.test");
     },
     Err(e) => panic!(e)
   }

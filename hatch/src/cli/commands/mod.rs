@@ -1,9 +1,9 @@
+use hatch_error::HatchResult;
+
 pub mod new;
 pub mod update;
 pub mod build;
-mod ops;
 
-use HatchResult;
 use project::Project;
 use clap::{ ArgMatches, App };
 
@@ -19,14 +19,10 @@ pub trait Command<'command> {
   
   fn subcommand_name(&self) -> &'static str;
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>>;
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project>;
  
-  fn project_names(&self, args: &ArgMatches<'command>) -> Vec<String> {
-    if args.is_present(PROJECT_NAMES) {
-      values_t!(args, PROJECT_NAMES, String).unwrap()
-    } else {
-      Vec::new()
-    }
+  fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
+    value_t!(args, PROJECT_NAMES, String).ok()
   }
   
   fn project_path(&self, args: &ArgMatches<'command>) -> String {
@@ -46,4 +42,17 @@ pub trait Command<'command> {
       }
     }
   }
+}
+
+fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<(String, String)> {
+  let mut parsed_deps = Vec::new();
+  if let Some(values) = args.values_of(INCLUDE) {
+    let mut vals = values.map(String::from).collect::<Vec<String>>().into_iter();
+    while vals.len() != 0 {
+      let url = vals.next();
+      let name = vals.next();
+      parsed_deps.push((url.unwrap(), name.unwrap()));
+    }
+  }
+  parsed_deps
 }

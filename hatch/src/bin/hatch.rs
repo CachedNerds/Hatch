@@ -8,8 +8,6 @@ use hatch::cli::commands::new::New;
 use hatch::cli::commands::update::Update;
 use hatch::cli::commands::build::Build;
 
-use hatch::hatch_error::{ HatchError, NullError };
-
 fn main() {
   // create the subcommand to command map
   let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
@@ -27,13 +25,10 @@ fn main() {
   let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
 
   // execute selected subcommand
-  match cli.subcommand() {
-    (subcommand_name, Some(cli_args)) => {
-      match subcommands.get(subcommand_name) {
-        Some(subcommand) => subcommand.execute(cli_args),
-        _ => vec![Err(HatchError::Null(NullError))]
-      }
-    },
-    _ => vec![Err(HatchError::Null(NullError))]
-  };
+  let (name, args) = cli.subcommand();
+  if let Some(cmd) = subcommands.get(name) {
+    if let Err(e) = cmd.execute(args.unwrap()) {
+      println!("{}", e);
+    }
+  }
 }

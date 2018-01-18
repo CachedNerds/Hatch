@@ -80,7 +80,7 @@ impl Builder {
     ProjectAsset::new(path, Tuprules::name(), contents)
   }
 
-  pub fn tupfile(&self, project: &Project) -> ProjectAsset {
+  pub fn tupfile(&self, _project: &Project) -> ProjectAsset {
     let path = String::from("./");
     let contents = Tupfile::new().to_string();
 

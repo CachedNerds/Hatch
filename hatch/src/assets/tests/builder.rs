@@ -4,7 +4,7 @@ use project::{ Project, ProjectKind, LibraryKind };
 
 #[test]
 fn build_config_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"));
+  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"), Vec::new());
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.config(&project);
@@ -28,7 +28,7 @@ fn build_test_tupfile_asset() {
 
 #[test]
 fn build_tuprules_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Shared), String::from("0.1.0"));
+  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Shared), String::from("0.1.0"), Vec::new());
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tuprules(&project);
@@ -79,7 +79,7 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
 #[test]
 fn build_tupfile_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"));
+  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"), Vec::new());
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile(&project);

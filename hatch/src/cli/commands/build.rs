@@ -1,29 +1,9 @@
-use HatchResult;
+use hatch_error::HatchResult;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
-use cli::commands::ops::ProjectOps;
 use cli::commands::PROJECT_NAMES;
-use yaml;
 use project::Project;
-use task::generate_assets;
-
-struct ImplicitBuilder;
-struct ExplicitBuilder;
-
-impl ProjectOps for ImplicitBuilder {
-  fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
-    match yaml::parse_one(&path) {
-      Ok(project) => vec![Ok(project)],
-      Err(_) => yaml::parse_all(&path),
-    }
-  }
-}
-
-impl ProjectOps for ExplicitBuilder {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(&path, project_names)
-  }
-}
+use task::{ read_project, generate_assets };
 
 pub struct Build {
   name: &'static str
@@ -54,24 +34,9 @@ impl<'command> Command<'command> for Build {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let builder: Box<ProjectOps>;
-
-    if args.is_present(PROJECT_NAMES) {
-      builder = Box::new(ExplicitBuilder);
-    } else {
-      builder = Box::new(ImplicitBuilder);
-    }
-
-    let result = builder.execute(self.project_path(args), self.project_names(args));
-
-    match result[0] {
-      Ok(ref project) => {
-        generate_assets(project);
-      },
-      _ => {},
-    }
-
-    vec![]
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
+    let project = read_project(self.project_path(args))?;
+    generate_assets(&project)?;
+    Ok(project)
   }
 }

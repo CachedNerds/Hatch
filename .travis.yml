@@ -1,5 +1,7 @@
 lanugage: rust
 cache: cargo
+rust:
+- stable
 script:
   - ./.ci_helper.sh
 branches:
@@ -7,3 +9,4 @@ branches:
   - staging
   # This is where pull requests from "bors try" are built.
   - trying
+  - dev

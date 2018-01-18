@@ -1,29 +1,10 @@
-use HatchResult;
+use hatch_error::HatchResult;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
-use cli::commands::ops::ProjectOps;
-use yaml;
 use project::Project;
+use task::read_project;
 
 use cli::commands::PROJECT_NAMES;
-
-struct ImplicitUpdater;
-struct ExplicitUpdater;
-
-impl ProjectOps for ImplicitUpdater {
-  fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
-    match yaml::parse_one(&path) {
-      Ok(project) => vec![Ok(project)],
-      Err(_) => yaml::parse_all(&path),
-    }
-  }
-}
-
-impl ProjectOps for ExplicitUpdater {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(&path, project_names)
-  }
-}
 
 pub struct Update {
   name: &'static str
@@ -54,15 +35,7 @@ impl<'command> Command<'command> for Update {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let updater: Box<ProjectOps>;
-
-    if args.is_present(PROJECT_NAMES) {
-      updater = Box::new(ExplicitUpdater)
-    } else {
-      updater = Box::new(ImplicitUpdater)
-    }
-
-    updater.execute(self.project_path(args), self.project_names(args))
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
+    read_project(self.project_path(args))
   }
 }
