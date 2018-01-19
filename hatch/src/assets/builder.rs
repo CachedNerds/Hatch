@@ -3,9 +3,12 @@ use assets::config::Config;
 use assets::tuprules::Tuprules;
 use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
-use assets::platform::{ Linux, MacOS, Windows};
+use assets::platform::{ Linux, MacOS, Windows };
+use assets::tupfile_ini::TupfileIni;
 use project::{ Project, ProjectKind };
 use std::path::PathBuf;
+use os_info;
+use os_info::{ Info, Type };
 
 pub struct Builder {
   assets: Vec<ProjectAsset>,
@@ -22,9 +25,17 @@ impl Builder {
     builder.project(&TupKind::TestTupfile, project);
     builder.project(&TupKind::Tuprules, project);
     builder.project(&TupKind::Tupfile, project);
-    builder.platform(&PlatformKind::Linux, project);
-    builder.platform(&PlatformKind::MacOS, project);
-    builder.platform(&PlatformKind::Windows, project);
+
+    let info = os_info::get();
+    let platform_kind = {
+      match *info.os_type() {
+        Type::Macos => PlatformKind::MacOS,
+        Type::Windows => PlatformKind::Windows,
+        _ => PlatformKind::Linux
+      }
+    };
+
+    builder.platform(&platform_kind, project);
 
     builder
   }

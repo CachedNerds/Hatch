@@ -7,6 +7,7 @@ pub extern crate yaml_rust;
 pub extern crate git2;
 #[macro_use]
 pub extern crate failure;
+pub extern crate os_info;
 
 pub mod project;
 pub mod cli;
