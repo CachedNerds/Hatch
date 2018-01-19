@@ -1,34 +1,49 @@
 use assets::builder::Builder as AssetBuilder;
 use assets::ProjectAsset;
 use project::{ Project, ProjectKind, LibraryKind };
+use std::path::PathBuf;
 
 #[test]
 fn build_config_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"), Vec::new());
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.config(&project);
 
   let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("config.tup"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("config.tup"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_test_tupfile_asset() {
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
+
   let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.test_tupfile();
+  let actual_asset = asset_builder.test_tupfile(&project);
 
   let expected_contents = String::from(".gitignore");
-  let expected_asset = ProjectAsset::new(String::from("./test/"), String::from("Tupfile"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./test/"), String::from("Tupfile"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_tuprules_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Shared), String::from("0.1.0"), Vec::new());
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Shared),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tuprules(&project);
@@ -72,14 +87,18 @@ else
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("Tuprules.tup"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tuprules.tup"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_tupfile_asset() {
-  let project = Project::new(String::from("test"), ProjectKind::Library(LibraryKind::Static), String::from("0.1.0"), Vec::new());
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile(&project);
@@ -104,37 +123,55 @@ include_rules
 
 # Create Link Executable
 : $(TEST_OBJ_FILES) $(SOURCE_OUT)/$(PROJECT_LIB) |> !link |> $(TEST_OUT)/$(PROJECT).test");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("Tupfile"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tupfile"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_linux_asset() {
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
+
   let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.linux();
+  let actual_asset = asset_builder.linux(&project);
 
   let expected_contents = String::from("STATIC = a\nSHARED = so");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("linux.tup"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("linux.tup"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_macos_asset() {
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
+
   let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.macos();
+  let actual_asset = asset_builder.macos(&project);
 
   let expected_contents = String::from("STATIC = a\nSHARED = so");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("macosx.tup"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("macosx.tup"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_windows_asset() {
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
+
   let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.windows();
+  let actual_asset = asset_builder.windows(&project);
 
   let expected_contents = String::from(
 "STATIC = lib
@@ -143,7 +180,7 @@ SHARED = dll
 CC = clang++.exe
 # Use llvm-lib for static libraries
 !archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>");
-  let expected_asset = ProjectAsset::new(String::from("./"), String::from("win32.tup"), expected_contents);
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("win32.tup"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }

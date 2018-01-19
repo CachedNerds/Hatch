@@ -1,6 +1,6 @@
 use std::fs;
 use std::io::Read;
-use std::path::Path;
+use std::path::{ Path, PathBuf };
 
 use yaml_rust::{ Yaml, YamlLoader };
 use project::{ Project, LibraryKind, ProjectKind, Dependency };
@@ -11,33 +11,14 @@ use hatch_error::{
   MissingNameError,
   MissingBuildError,
   MissingVersionError,
-  EmptyConfigError
+  EmptyConfigError,
 };
 
 pub fn parse(path: &Path) -> HatchResult<Project> {
-  let yaml_vec = do_parse(from_file(path)?)?;
-  Ok(yaml_vec)
-}
+  let file_path = path.join("Hatch.yml");
+  let yml_vec = from_file(&file_path)?;
 
-fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
-  let mut file = fs::File::open(&file_name).with_context(|_| {
-    format!("failed to open file: `{}`", &file_name.display())
-  })?;
-
-  let mut contents = String::new();
-  file.read_to_string(&mut contents).with_context(|_| {
-    format!("failed to read contents of: `{}`", file_name.display())
-  })?;
-
-  let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
-    format!("Parsing error: `{}`", e)
-  })?;
-
-  Ok(res)
-}
-
-fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
-  if yml_vec.len() == 0 {
+  if yml_vec.is_empty() {
     return Err(EmptyConfigError)?;
   }
 
@@ -79,5 +60,22 @@ fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
     deps = Vec::new();
   }
 
-  Ok(Project::new(name, kind, version, deps))
+  Ok(Project::new(name, kind, version, deps, PathBuf::from(path)))
+}
+
+fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
+  let mut file = fs::File::open(&file_name).with_context(|_| {
+    format!("failed to open file: `{}`", &file_name.display())
+  })?;
+
+  let mut contents = String::new();
+  file.read_to_string(&mut contents).with_context(|_| {
+    format!("failed to read contents of: `{}`", file_name.display())
+  })?;
+
+  let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
+    format!("Parsing error: `{}`", e)
+  })?;
+
+  Ok(res)
 }

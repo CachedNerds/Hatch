@@ -130,7 +130,7 @@ impl<'command> Command<'command> for New {
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
-      Ok(Project::new(name, kind, version, deps))
+      Ok(Project::new(name, kind, version, deps, dir_path.to_path_buf()))
     })().with_context(|e| {
       format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;

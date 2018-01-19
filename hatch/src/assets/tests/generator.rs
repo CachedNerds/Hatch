@@ -3,10 +3,11 @@ use assets::ProjectAsset;
 
 use std::fs;
 use std::io::prelude::*;
+use std::path::PathBuf;
 
 #[test]
 fn generate_one_without_directories() {
-  let test_asset = ProjectAsset::new(String::from("./"), String::from("test.test"), String::from("test"));
+  let test_asset = ProjectAsset::new(PathBuf::from("./"), String::from("test.test"), String::from("test"));
 
   generate_one(&test_asset);
 
@@ -25,7 +26,7 @@ fn generate_one_without_directories() {
 
 #[test]
 fn generate_one_with_directories() {
-  let test_asset = ProjectAsset::new(String::from("./test/"), String::from("test.test"), String::from("test"));
+  let test_asset = ProjectAsset::new(PathBuf::from("./test/"), String::from("test.test"), String::from("test"));
 
   generate_one(&test_asset);
 
@@ -45,7 +46,7 @@ fn generate_one_with_directories() {
 
 #[test]
 fn generate_one_overwrites_file() {
-  let test_asset = ProjectAsset::new(String::from("./"), String::from("test2.test"), String::from("old"));
+  let test_asset = ProjectAsset::new(PathBuf::from("./"), String::from("test2.test"), String::from("old"));
 
   generate_one(&test_asset);
 
@@ -60,7 +61,7 @@ fn generate_one_overwrites_file() {
     Err(e) => panic!(e)
   }
 
-  let test_asset = ProjectAsset::new(String::from("./"), String::from("test2.test"), String::from("new"));
+  let test_asset = ProjectAsset::new(PathBuf::from("./"), String::from("test2.test"), String::from("new"));
 
   generate_one(&test_asset);
 
@@ -80,8 +81,8 @@ fn generate_one_overwrites_file() {
 
 #[test]
 fn generate_all_assets() {
-  let test_asset_one = ProjectAsset::new(String::from("./"), String::from("one.test"), String::from("one"));
-  let test_asset_two = ProjectAsset::new(String::from("./"), String::from("two.test"), String::from("two"));
+  let test_asset_one = ProjectAsset::new(PathBuf::from("./"), String::from("one.test"), String::from("one"));
+  let test_asset_two = ProjectAsset::new(PathBuf::from("./"), String::from("two.test"), String::from("two"));
 
   let test_assets = vec![test_asset_one, test_asset_two];
 
