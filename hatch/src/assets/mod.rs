@@ -5,6 +5,7 @@ pub mod tupfile;
 pub mod platform;
 pub mod tuprules;
 pub mod test_tupfile;
+pub mod tupfile_ini;
 mod tests;
 
 use std::fmt;
@@ -30,7 +31,7 @@ pub fn print_file_contents<T>(asset: T) where T: Asset {
 }
 
 #[derive(Debug)]
-pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile }
+pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile, TupfileIni }
 
 #[derive(Debug)]
 pub enum PlatformKind { Linux, MacOS, Windows }

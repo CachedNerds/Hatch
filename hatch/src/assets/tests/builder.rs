@@ -129,6 +129,23 @@ include_rules
 }
 
 #[test]
+fn build_tupfile_ini_asset() {
+  let project = Project::new(String::from("test"),
+                             ProjectKind::Library(LibraryKind::Static),
+                             String::from("0.1.0"),
+                             Vec::new(),
+                             PathBuf::from("./"));
+
+  let asset_builder = AssetBuilder::new();
+  let actual_asset = asset_builder.tupfile_ini(&project);
+
+  let expected_contents = String::from("");
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tupfile.ini"), expected_contents);
+
+  assert_eq!(actual_asset, expected_asset);
+}
+
+#[test]
 fn build_linux_asset() {
   let project = Project::new(String::from("test"),
                              ProjectKind::Library(LibraryKind::Static),

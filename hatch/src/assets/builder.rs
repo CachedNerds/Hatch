@@ -50,6 +50,7 @@ impl Builder {
       TupKind::TestTupfile => self.test_tupfile(project),
       TupKind::Tuprules => self.tuprules(project),
       TupKind::Tupfile => self.tupfile(project),
+      TupKind::TupfileIni => self.tupfile_ini(project),
     };
 
     self.assets.push(asset);
@@ -97,6 +98,13 @@ impl Builder {
     let contents = Tupfile::new().to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Tupfile::name(), contents)
+  }
+
+  pub fn tupfile_ini(&self, project: &Project) -> ProjectAsset {
+    let project_path = project.path();
+    let contents = TupfileIni::new().to_string();
+
+    ProjectAsset::new(project_path.to_path_buf(), TupfileIni::name(), contents)
   }
 
   pub fn linux(&self, project: &Project) -> ProjectAsset {
