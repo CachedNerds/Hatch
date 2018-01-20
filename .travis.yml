@@ -1,7 +1,10 @@
 lanugage: rust
 cache: cargo
+rust:
+- stable
 script:
-  - ./.ci_helper.sh
+  - cargo build --verbose --all
+  - cargo test --verbose --all
 branches:
   # This is where pull requests from "bors r+" are built.
   - staging
