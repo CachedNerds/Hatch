@@ -1,4 +1,4 @@
-lanugage: rust
+language: rust
 cache: cargo
 rust:
 - stable
