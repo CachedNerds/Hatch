@@ -74,11 +74,11 @@ endif");
     tokens.push(String::from(
 "LINKFLAGS += -v
 SOURCE = src
-SOURCE_OUT = build
+SOURCE_OUT = target
 SOURCE_FILES = $(SOURCE)/*.cpp
 SOURCE_OBJ_FILES = $(SOURCE_OUT)/*.o
 TEST = test
-TEST_OUT = $(TEST)/build
+TEST_OUT = $(TEST)/target
 TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
 TEST_OBJ_FILES = $(TEST_OUT)/*.o
 # macros

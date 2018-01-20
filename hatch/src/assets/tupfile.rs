@@ -25,7 +25,7 @@ include_rules
 : foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_OUT)/%B.o
 
 # Archive Source
-: $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_OUT)/$(PROJECT_LIB) ../<$(PROJECT)>
+: $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_OUT)/$(PROJECT_LIB) <$(PROJECT)>
 
 # Compile Tests
 : foreach $(TEST_FILES) |> !compile |> $(TEST_OUT)/%B.o
