@@ -75,7 +75,7 @@ fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
       .iter()
       .map(|(k, v)| (k.as_str(), v.as_str()))
       .filter(|&(k, v)| k.is_some() && v.is_some())
-      .map(|(k, v)| Dependency::new(k.unwrap().to_owned(), v.unwrap().to_owned()))
+      .map(|(k, v)| Dependency::new(k.unwrap().to_owned()))
       .collect();
   } else {
     deps = Vec::new();
