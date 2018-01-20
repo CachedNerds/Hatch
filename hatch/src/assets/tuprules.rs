@@ -74,13 +74,14 @@ endif");
     tokens.push(String::from(
 "LINKFLAGS += -v
 SOURCE = src
-SOURCE_OUT = target
+TARGET = target
+SOURCE_TARGET = $(TARGET)
 SOURCE_FILES = $(SOURCE)/*.cpp
-SOURCE_OBJ_FILES = $(SOURCE_OUT)/*.o
+SOURCE_OBJ_FILES = $(SOURCE_TARGET)/*.o
 TEST = test
-TEST_OUT = $(TEST)/target
+TEST_TARGET = $(TEST)/$(TARGET)
 TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
-TEST_OBJ_FILES = $(TEST_OUT)/*.o
+TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # macros
 !compile = |> $(CC) $(CFLAGS) %f -o %o |>
 !archive = |> ar crs %o %f |>

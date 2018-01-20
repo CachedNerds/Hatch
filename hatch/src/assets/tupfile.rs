@@ -22,15 +22,15 @@ include_rules
 # define custom build variables
 
 # Compile Source
-: foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_OUT)/%B.o
+: foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_TARGET)/%B.o
 
 # Archive Source
-: $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_OUT)/$(PROJECT_LIB) <$(PROJECT)>
+: $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_TARGET)/$(PROJECT_LIB) <$(PROJECT)>
 
 # Compile Tests
-: foreach $(TEST_FILES) |> !compile |> $(TEST_OUT)/%B.o
+: foreach $(TEST_FILES) |> !compile |> $(TEST_TARGET)/%B.o
 
 # Create Link Executable
-: $(TEST_OBJ_FILES) $(SOURCE_OUT)/$(PROJECT_LIB) |> !link |> $(TEST_OUT)/$(PROJECT).test")
+: $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test")
   }
 }
