@@ -1,7 +1,5 @@
 lanugage: rust
 cache: cargo
-rust:
-- stable
 script:
   - ./.ci_helper.sh
 branches:
