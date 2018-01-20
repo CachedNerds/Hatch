@@ -25,6 +25,7 @@ impl Builder {
     builder.project(&TupKind::TestTupfile, project);
     builder.project(&TupKind::Tuprules, project);
     builder.project(&TupKind::Tupfile, project);
+    builder.project(&TupKind::TupfileIni, project);
 
     let platform_type = task::platform_type();
     builder.platform(&platform_type, project);
