@@ -8,6 +8,7 @@ mod ops;
 use project::Project;
 use clap::{ ArgMatches, App };
 
+
 static INCLUDE: &str = "INCLUDE";
 static VERSION: &str = "VERSION";
 static BIN: &str = "BIN";
@@ -45,15 +46,10 @@ pub trait Command<'command> {
   }
 }
 
-fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<(String, String)> {
-  let mut parsed_deps = Vec::new();
+fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<String> {
   if let Some(values) = args.values_of(INCLUDE) {
-    let mut vals = values.map(String::from).collect::<Vec<String>>().into_iter();
-    while vals.len() != 0 {
-      let mut url = vals.next();
-      let mut name = vals.next();
-      parsed_deps.push((url.unwrap(), name.unwrap()));
-    }
+    values.map(String::from).collect::<Vec<String>>()
+  } else {
+    Vec::new()
   }
-  parsed_deps
 }
