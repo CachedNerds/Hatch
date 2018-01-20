@@ -41,12 +41,12 @@ impl<'new> New {
     }
   }
 
-  fn construct_deps_string(&self, deps: &Vec<(String, String)>) -> String {
+  fn construct_deps_string(&self, deps: &Vec<Dependency>) -> String {
     if deps.is_empty() {
       String::new()
     } else {
-      String::from("deps:\n") + deps.iter().map(|&(ref url, ref name)| {
-        format!("  {}: {}\n", &name[..], &url[..])
+      String::from("deps:\n") + deps.iter().map(|d| {
+        format!("  {}: {}\n", d.name(), d.url())
       }).collect::<String>().as_str()
     }
   }
@@ -92,7 +92,7 @@ impl<'command> Command<'command> for New {
 
       .arg(Arg::with_name(INCLUDE)
            .help("List URLs to git repositories")
-           .long("include").short("i").multiple(true).number_of_values(2).takes_value(true)
+           .long("include").short("i").multiple(true).number_of_values(1).takes_value(true)
            .required(false))
   }
 
@@ -117,14 +117,14 @@ impl<'command> Command<'command> for New {
       fs::create_dir(modules_path(&dir_path))?;
 
       let deps = deps_from_cli.iter().map(|repo| {
-        Dependency::new(repo.1.clone(), repo.0.clone())
+        Dependency::new(repo.clone())
       }).collect::<Vec<_>>();
 
       if !deps.is_empty() {
         clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
       }
 
-      let includes = self.construct_deps_string(&deps_from_cli);
+      let includes = self.construct_deps_string(&deps);
       let yaml_output = self.hatch_yml_contents(&name, &version, &kind, &includes);
 
       let mut file = fs::File::create(hatch_file)?;
