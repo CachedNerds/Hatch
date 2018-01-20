@@ -10,10 +10,10 @@ mod tests;
 
 use std::fmt;
 use std::cmp;
-use std::path::PathBuf;
+use std::path::{ Path, PathBuf };
 
 pub trait Asset {
-  fn path(&self) -> &PathBuf;
+  fn path(&self) -> &Path;
   fn name(&self) -> &str;
   fn contents(&self) -> &str;
 }
@@ -52,8 +52,8 @@ impl ProjectAsset {
 }
 
 impl Asset for ProjectAsset {
-  fn path(&self) -> &PathBuf {
-    &self.path
+  fn path(&self) -> &Path {
+    self.path.as_path()
   }
 
   fn name(&self) -> &str {

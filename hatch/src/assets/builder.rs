@@ -7,8 +7,7 @@ use assets::platform::{ Linux, MacOS, Windows };
 use assets::tupfile_ini::TupfileIni;
 use project::{ Project, ProjectKind };
 use std::path::PathBuf;
-use os_info;
-use os_info::{ Info, Type };
+use task;
 
 pub struct Builder {
   assets: Vec<ProjectAsset>,
@@ -21,21 +20,14 @@ impl Builder {
 
   pub fn from(project: &Project) -> Builder {
     let mut builder = Builder::new();
+
     builder.project(&TupKind::Config, project);
     builder.project(&TupKind::TestTupfile, project);
     builder.project(&TupKind::Tuprules, project);
     builder.project(&TupKind::Tupfile, project);
 
-    let info = os_info::get();
-    let platform_kind = {
-      match *info.os_type() {
-        Type::Macos => PlatformKind::MacOS,
-        Type::Windows => PlatformKind::Windows,
-        _ => PlatformKind::Linux
-      }
-    };
-
-    builder.platform(&platform_kind, project);
+    let platform_type = task::platform_type();
+    builder.platform(&platform_type, project);
 
     builder
   }

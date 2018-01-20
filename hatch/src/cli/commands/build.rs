@@ -3,7 +3,7 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::PROJECT_NAMES;
 use project::Project;
-use task::{ read_project, generate_assets };
+use task;
 
 pub struct Build {
   name: &'static str
@@ -35,8 +35,8 @@ impl<'command> Command<'command> for Build {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
-    let project = read_project(self.project_path(args))?;
-    generate_assets(&project)?;
+    let project = task::read_project(self.project_path(args))?;
+    task::generate_assets(&project)?;
     Ok(project)
   }
 }
