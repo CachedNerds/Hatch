@@ -15,7 +15,7 @@ impl Config {
   }
 
   pub fn project(name: &str) -> String {
-    String::from("PROJECT = ") + name
+    format!("PROJECT = {}", name)
   }
 
   pub fn lib_type(project_kind: &ProjectKind) -> String {
@@ -25,7 +25,7 @@ impl Config {
       ProjectKind::Library(LibraryKind::Shared) => "shared"
     };
 
-    String::from("LIB_TYPE = ") + kind
+    format!("LIB_TYPE = {}", kind)
   }
 }
 

@@ -41,7 +41,7 @@ impl<'command> Command<'command> for Build {
     task::generate_assets(&project)?;
 
     if let Some(path) = project.path().to_str() {
-      let command = String::from("cd ") + path + " && tup";
+      let command = format!("cd {} && tup", path);
       match task::platform_type() {
         PlatformKind::Windows => {
           let mut child = process::Command::new("cmd")

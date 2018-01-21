@@ -43,7 +43,7 @@ impl ToString for Tuprules {
     let mut tokens = Vec::new();
     tokens.push(String::from(".gitignore"));
 
-    let compiler_token = String::from("CC = ") + self.compiler.as_str();
+    let compiler_token = format!("CC = {}", self.compiler);
     tokens.push(compiler_token);
 
     if self.debug {
@@ -52,12 +52,12 @@ impl ToString for Tuprules {
     }
 
     let arch_flag = Tuprules::arch_flag(&self.arch);
-    let arch_token = String::from("ARCH = ") + arch_flag.as_str();
+    let arch_token = format!("ARCH = {}", arch_flag);
     tokens.push(arch_token);
 
     tokens.push(String::from("CFLAGS += $(ARCH)"));
 
-    let cflags_version = String::from("CFLAGS += -std=") + self.compiler_version.as_str();
+    let cflags_version = format!("CFLAGS += -std={}", self.compiler_version);
     tokens.push(cflags_version);
 
     tokens.push(String::from("CFLAGS += -c"));
@@ -65,10 +65,10 @@ impl ToString for Tuprules {
 
     tokens.push(String::from("LINKFLAGS += $(ARCH)"));
 
-    let link_flags_type = String::from(
+    let link_flags_type = format!(
 "ifneq (@(TUP_PLATFORM),macosx)
-  LINKFLAGS += ".to_owned() + Tuprules::type_flag(&self.lib_type).as_str() + "
-endif");
+  LINKFLAGS += {}
+endif", Tuprules::type_flag(&self.lib_type));
     tokens.push(link_flags_type);
 
     tokens.push(String::from(
