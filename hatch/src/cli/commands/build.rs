@@ -4,6 +4,7 @@ use cli::commands::Command;
 use cli::commands::PROJECT_NAMES;
 use project::Project;
 use task;
+use std::process;
 
 pub struct Build {
   name: &'static str
@@ -37,6 +38,18 @@ impl<'command> Command<'command> for Build {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
     let project = task::read_project(self.project_path(args))?;
     task::generate_assets(&project)?;
+
+    if let Some(path) = project.path().to_str() {
+      let command = String::from("cd ") + path + " && tup";
+      let mut child = process::Command::new("sh")
+                                        .arg("-c")
+                                        .arg(command)
+                                        .spawn()
+                                        .expect("failed to build project.");
+      child.wait();
+    }
+
+
     Ok(project)
   }
 }
