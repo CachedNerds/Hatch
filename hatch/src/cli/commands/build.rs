@@ -49,7 +49,6 @@ impl<'command> Command<'command> for Build {
       child.wait();
     }
 
-
     Ok(project)
   }
 }
