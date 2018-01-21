@@ -8,3 +8,5 @@ cd $PROJECT_NAME;
 travis-cargo build
 travis-cargo test
 travis-cargo bench
+
+travis-cargo coveralls --no-sudo --verify
