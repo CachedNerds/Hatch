@@ -8,4 +8,4 @@ clap = "2"
 yaml-rust = "0.3"
 git2 = "0.6"
 failure = "0.1.1"
-os_info = { git = "https://github.com/DarkEld3r/os_info", branch = "master" }
+os_info = "0.7.0"
