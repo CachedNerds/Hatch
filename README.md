@@ -5,6 +5,7 @@
 
 [![Build Status](https://travis-ci.org/CachedNerds/Hatch.svg?branch=dev)](https://travis-ci.org/CachedNerds/Hatch)
 [![Build status](https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/dev?svg=true)](https://ci.appveyor.com/project/DannyPeck/hatch/branch/dev)
+[![license](https://img.shields.io/github/license/DannyPeck/hive-apiserver.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # [Workflow Standards](https://github.com/CachedNerds/Hatch/blob/master/WORKFLOW.md)
 
