@@ -5,5 +5,6 @@ PROJECT_NAME="hatch";
 
 cd $PROJECT_NAME;
 
-cargo build --verbose --all
-cargo test --verbose --all
+travis-cargo build
+travis-cargo test
+travis-cargo bench
