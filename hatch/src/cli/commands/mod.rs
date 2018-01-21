@@ -8,7 +8,6 @@ mod ops;
 use project::Project;
 use clap::{ ArgMatches, App };
 
-
 static INCLUDE: &str = "INCLUDE";
 static VERSION: &str = "VERSION";
 static BIN: &str = "BIN";
