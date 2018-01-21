@@ -116,8 +116,8 @@ impl<'command> Command<'command> for New {
       // create the hatch_modules directory inside the project directory
       fs::create_dir(modules_path(&dir_path))?;
 
-      let deps = deps_from_cli.iter().map(|repo| {
-        Dependency::new(repo.clone())
+      let deps = deps_from_cli.into_iter().map(|repo| {
+        Dependency::new(repo)
       }).collect::<Vec<_>>();
 
       if !deps.is_empty() {
