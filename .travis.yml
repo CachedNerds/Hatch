@@ -1,9 +1,9 @@
-lanugage: rust
+language: rust
 cache: cargo
 rust:
 - stable
 script:
-  - ./.ci_helper.sh
+  - ./.travis_ci_helper.sh
 branches:
   # This is where pull requests from "bors r+" are built.
   - staging
