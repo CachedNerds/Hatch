@@ -74,7 +74,9 @@ impl Dependency {
         .unwrap()
         .as_os_str()
         .to_string_lossy()
-        .into_owned(),
+        .into_owned()
+        .as_str()
+        .replace(".git", ""),
       url,
     }
   }
