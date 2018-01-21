@@ -3,6 +3,7 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::PROJECT_NAMES;
 use project::Project;
+use assets::PlatformKind;
 use task;
 use std::process;
 
@@ -41,12 +42,24 @@ impl<'command> Command<'command> for Build {
 
     if let Some(path) = project.path().to_str() {
       let command = String::from("cd ") + path + " && tup";
-      let mut child = process::Command::new("sh")
-                                        .arg("-c")
-                                        .arg(command)
-                                        .spawn()
-                                        .expect("failed to build project.");
-      child.wait();
+      match task::platform_type() {
+        PlatformKind::Windows => {
+          let mut child = process::Command::new("cmd")
+                                            .arg("/C")
+                                            .arg(command)
+                                            .spawn()
+                                            .expect("failed to build project.");
+          child.wait();
+        },
+        _ => {
+          let mut child = process::Command::new("sh")
+                                            .arg("-c")
+                                            .arg(command)
+                                            .spawn()
+                                            .expect("failed to build project.");
+          child.wait();
+        }
+      }
     }
 
     Ok(project)
