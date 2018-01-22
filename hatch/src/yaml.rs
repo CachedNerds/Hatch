@@ -73,9 +73,8 @@ fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if let Some(d) = yml_vec[0]["deps"].as_hash() {
     deps = d
       .iter()
-      .map(|(k, v)| (k.as_str(), v.as_str()))
-      .filter(|&(k, v)| k.is_some() && v.is_some())
-      .map(|(k, v)| Dependency::new(k.unwrap().to_owned()))
+      .filter_map(|(_k, v)| v.as_str())
+      .map(|v| Dependency::new(v.to_owned()))
       .collect();
   } else {
     deps = Vec::new();
