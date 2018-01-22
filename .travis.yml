@@ -14,7 +14,7 @@ addons:
 cache: cargo
 
 rust:
-- stable
+  - stable
 
 # load travis-cargo
 before_script:
@@ -23,7 +23,13 @@ before_script:
       export PATH=$HOME/.local/bin:$PATH
 
 script:
-  - ./.travis_ci_helper.sh
+  - |
+      cd "hatch" &&
+      travis-cargo build &&
+      travis-cargo test &&
+
+after_success:
+  - travis-cargo coveralls --no-sudo --verify
 
 branches:
   # This is where pull requests from "bors r+" are built.
