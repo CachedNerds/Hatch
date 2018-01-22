@@ -1,4 +1,4 @@
-use hatch_error::HatchResult;
+use hatch_error::{ HatchResult, ResultExt };
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use cli::commands::PROJECT_NAMES;
@@ -37,8 +37,14 @@ impl<'command> Command<'command> for Build {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
-    let project = task::read_project(self.project_path(args))?;
-    task::generate_assets(&project)?;
+    let project_path = self.project_path(args);
+    let project = task::read_project(&project_path).with_context(|e| {
+      format!("Failed to read project `{:?}` : {}", project_path, e)
+    })?;
+
+    task::generate_assets(&project).with_context(|e| {
+      format!("Failed to generate assets : {}", e)
+    })?;
 
     if let Some(path) = project.path().to_str() {
       let command = format!("cd {} && tup", path);

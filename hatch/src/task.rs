@@ -8,8 +8,8 @@ use std::path::Path;
 use os_info;
 use os_info::Type;
 
-pub fn read_project(path: String) -> HatchResult<Project> {
-  yaml::parse(Path::new(&path))
+pub fn read_project(path: &String) -> HatchResult<Project> {
+  yaml::parse(Path::new(path))
 }
 
 pub fn generate_assets(project: &Project) -> HatchResult<()> {

@@ -77,7 +77,7 @@ impl Builder {
     let project_path = project.path();
     let project_kind = project.kind();
     let contents = match *project_kind {
-      ProjectKind::Library(ref lib_type) =>  {
+      ProjectKind::Library(ref lib_type) => {
         Tuprules::new(String::from("g++"), false, Arch::X64, String::from("c++1z"), lib_type).to_string()
       },
       _ => String::new()
