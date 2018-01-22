@@ -24,9 +24,9 @@ before_script:
 
 script:
   - |
-      cd "hatch" &&
+      cd hatch &&
       travis-cargo build &&
-      travis-cargo test &&
+      travis-cargo test
 
 after_success:
   - travis-cargo coveralls --no-sudo --verify
