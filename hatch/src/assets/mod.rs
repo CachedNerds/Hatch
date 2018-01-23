@@ -19,7 +19,7 @@ pub trait Asset {
 }
 
 pub fn print_file_path<T>(asset: T) where T: Asset {
-  println!("{:?}", asset.path());
+  println!("{}", asset.path().display());
 }
 
 pub fn print_file_name<T>(asset: T) where T: Asset {
@@ -67,7 +67,7 @@ impl Asset for ProjectAsset {
 
 impl fmt::Debug for ProjectAsset {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "path: {:?}, name: {}, contents: {}", self.path, self.name, self.contents)
+    write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
   }
 }
 

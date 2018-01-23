@@ -39,7 +39,7 @@ impl<'command> Command<'command> for Build {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
     let project_path = self.project_path(args);
     let project = task::read_project(&project_path).with_context(|e| {
-      format!("Failed to read project `{:?}` : {}", project_path, e)
+      format!("Failed to read project `{}` : {}", project_path, e)
     })?;
 
     task::generate_assets(&project).with_context(|e| {
