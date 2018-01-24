@@ -1,10 +1,11 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
-use repo::{ clone_dep, modules_path, hatchfile_path, clone_project_deps };
+use repo::{ modules_path, hatchfile_path, clone_project_deps };
 use project::{ Project, ProjectKind, LibraryKind, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
 use std::path::PathBuf;
+use task;
 
 // Must use qualified names to avoid conflict.
 use std::fmt::Write as FmtWrite;
@@ -116,7 +117,12 @@ impl<'command> Command<'command> for New {
       // create the hatch_modules directory inside the project directory
       fs::create_dir(modules_path(&dir_path))?;
 
-      let deps = deps_from_cli.into_iter().map(|repo| {
+      fs::create_dir(dir_path.join("src"))?;
+      fs::create_dir(dir_path.join("target"))?;
+      fs::create_dir_all(dir_path.join("test").join("src"))?;
+      fs::create_dir(dir_path.join("test").join("target"))?;
+
+       let deps = deps_from_cli.into_iter().map(|repo| {
         Dependency::new(repo)
       }).collect::<Vec<_>>();
 
@@ -130,7 +136,10 @@ impl<'command> Command<'command> for New {
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
-      Ok(Project::new(name, kind, version, deps))
+      let project = Project::new(name, kind, version, deps, dir_path.to_path_buf());
+      task::generate_assets(&project)?;
+
+      Ok(project)
     })().with_context(|e| {
       format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;
