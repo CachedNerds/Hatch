@@ -1,9 +1,9 @@
-use hatch_error::{ HatchResult, ResultExt };
+use hatch_error::HatchResult;
 use git2::Repository;
 use std::collections::HashSet;
-use project::{ Project, Dependency };
+use project::Dependency;
 use std::fs;
-use std::path::{ Path, PathBuf, Component };
+use std::path::{ Path, PathBuf };
 use yaml;
 
 pub fn modules_path(base: &Path) -> PathBuf {

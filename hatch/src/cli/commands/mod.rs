@@ -1,9 +1,8 @@
 use hatch_error::HatchResult;
 
 pub mod new;
-//pub mod update;
-//pub mod build;
-mod ops;
+pub mod update;
+pub mod build;
 
 use project::Project;
 use clap::{ ArgMatches, App };
@@ -50,8 +49,8 @@ fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<(String, String)>
   if let Some(values) = args.values_of(INCLUDE) {
     let mut vals = values.map(String::from).collect::<Vec<String>>().into_iter();
     while vals.len() != 0 {
-      let mut url = vals.next();
-      let mut name = vals.next();
+      let url = vals.next();
+      let name = vals.next();
       parsed_deps.push((url.unwrap(), name.unwrap()));
     }
   }

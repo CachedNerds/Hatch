@@ -7,15 +7,17 @@ pub struct Project {
   kind: ProjectKind,
   version: String,
   deps: Vec<Dependency>,
+  path: PathBuf
 }
 
 impl Project {
   pub fn new(name: String,
              kind: ProjectKind,
              version: String,
-             deps: Vec<Dependency>) -> Project
+             deps: Vec<Dependency>,
+             path: PathBuf) -> Project
   {
-    Project { name, kind, version, deps: deps }
+    Project { name, kind, version, deps, path }
   }
 
   pub fn name(&self) -> &str {
@@ -32,6 +34,10 @@ impl Project {
 
   pub fn deps(&self) -> &Vec<Dependency> {
     self.deps.as_ref()
+  }
+
+  pub fn path(&self) -> &PathBuf {
+    &self.path
   }
 }
 
