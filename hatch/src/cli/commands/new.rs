@@ -56,7 +56,7 @@ impl<'new> New {
                         name: &str,
                         version: &str,
                         kind: &ProjectKind,
-                        includes: &str)-> String
+                        includes: &str) -> String
   {
     let mut yaml_output = String::new();
 
@@ -106,8 +106,8 @@ impl<'command> Command<'command> for New {
     let version = self.project_version(args);
     let kind = self.project_kind(args);
 
-    let dir_path = PathBuf::from(self.project_path(args) + &name[..]);
-    let hatch_file = PathBuf::from(hatchfile_path(&dir_path));
+    let dir_path = self.project_path(args).join(&name);
+    let hatch_file = hatchfile_path(&dir_path);
 
     let deps_from_cli = parse_deps_from_cli(args);
     
@@ -122,7 +122,7 @@ impl<'command> Command<'command> for New {
       fs::create_dir_all(dir_path.join("test").join("src"))?;
       fs::create_dir(dir_path.join("test").join("target"))?;
 
-       let deps = deps_from_cli.into_iter().map(|repo| {
+      let deps = deps_from_cli.into_iter().map(|repo| {
         Dependency::new(repo)
       }).collect::<Vec<_>>();
 
@@ -136,7 +136,7 @@ impl<'command> Command<'command> for New {
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
-      let project = Project::new(name, kind, version, deps, dir_path.to_path_buf());
+      let project = Project::new(name, kind, version, deps, dir_path.to_owned());
       task::generate_assets(&project)?;
 
       Ok(project)
