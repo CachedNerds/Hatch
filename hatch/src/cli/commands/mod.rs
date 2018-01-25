@@ -4,6 +4,8 @@ pub mod new;
 pub mod update;
 pub mod build;
 
+use std::path::PathBuf;
+
 use project::Project;
 use clap::{ ArgMatches, App };
 
@@ -25,21 +27,11 @@ pub trait Command<'command> {
     value_t!(args, PROJECT_NAMES, String).ok()
   }
   
-  fn project_path(&self, args: &ArgMatches<'command>) -> String {
-    let mut path = String::new();
-
+  fn project_path(&self, args: &ArgMatches<'command>) -> PathBuf {
     if args.is_present(PROJECT_PATH) {
-      path.push_str(value_t!(args, PROJECT_PATH, String).unwrap().as_str());
+      PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
     } else {
-      path.push_str("./");
-    }
-
-    match path.as_str().chars().last().unwrap() {
-      '/' => path,
-      _   => {
-        path.push_str("/");
-        path
-      }
+      PathBuf::from("./")
     }
   }
 }
