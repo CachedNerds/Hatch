@@ -1,7 +1,7 @@
-#[cfg(test)] use assets::builder::Builder as AssetBuilder;
-#[cfg(test)] use assets::ProjectAsset;
-#[cfg(test)] use project::{ Project, ProjectKind, LibraryKind };
-#[cfg(test)] use std::path::PathBuf;
+use assets::builder::Builder as AssetBuilder;
+use assets::ProjectAsset;
+use project::{ Project, ProjectKind, LibraryKind };
+use std::path::PathBuf;
 
 #[test]
 fn build_config_asset() {
