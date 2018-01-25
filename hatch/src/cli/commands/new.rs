@@ -1,5 +1,6 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
+<<<<<<< HEAD
 use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
 use project::{ Project, ProjectKind, LibraryKind, Dependency };
