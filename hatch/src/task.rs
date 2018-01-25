@@ -4,12 +4,13 @@ use assets::generator;
 use assets::PlatformKind;
 use yaml;
 use hatch_error::HatchResult;
-use std::path::Path;
+use std::path::{ PathBuf, Path };
 use os_info;
 use os_info::Type;
+use repo::hatchfile_path;
 
-pub fn read_project(path: &String) -> HatchResult<Project> {
-  yaml::parse(Path::new(path))
+pub fn read_project(path: &Path) -> HatchResult<Project> {
+  yaml::parse(hatchfile_path(path).as_path())
 }
 
 pub fn generate_assets(project: &Project) -> HatchResult<()> {
