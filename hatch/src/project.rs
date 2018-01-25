@@ -1,5 +1,5 @@
 use std::fmt;
-use std::path::{ Path, PathBuf, Component };
+use std::path::PathBuf;
 use std::ffi::OsString;
 
 

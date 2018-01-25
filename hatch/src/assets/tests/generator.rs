@@ -1,9 +1,8 @@
-use assets::generator::*;
-use assets::ProjectAsset;
-
-use std::fs;
-use std::io::prelude::*;
-use std::path::PathBuf;
+#[cfg(test)] use assets::generator::*;
+#[cfg(test)] use assets::ProjectAsset;
+#[cfg(test)] use std::fs;
+#[cfg(test)] use std::io::prelude::*;
+#[cfg(test)] use std::path::PathBuf;
 
 #[test]
 fn generate_one_without_directories() {

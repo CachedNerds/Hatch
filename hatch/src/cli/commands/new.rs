@@ -4,7 +4,6 @@ use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
 use project::{ Project, ProjectKind, LibraryKind, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
-use std::path::PathBuf;
 use task;
 
 // Must use qualified names to avoid conflict.

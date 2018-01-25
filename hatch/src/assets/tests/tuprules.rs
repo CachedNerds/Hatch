@@ -1,6 +1,6 @@
-use assets::Arch;
-use assets::tuprules::Tuprules;
-use project::LibraryKind;
+#[cfg(test)] use assets::Arch;
+#[cfg(test)] use assets::tuprules::Tuprules;
+#[cfg(test)] use project::LibraryKind;
 
 #[test]
 fn build_tuprules() {

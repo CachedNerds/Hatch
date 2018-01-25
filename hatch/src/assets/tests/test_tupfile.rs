@@ -1,4 +1,4 @@
-use assets::test_tupfile::Tupfile;
+#[cfg(test)] use assets::test_tupfile::Tupfile;
 
 #[test]
 fn build_test_tupfile() {

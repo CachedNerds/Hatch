@@ -1,4 +1,4 @@
-use assets::platform::{ Linux, MacOS, Windows };
+#[cfg(test)] use assets::platform::{ Linux, MacOS, Windows };
 
 #[test]
 fn build_linux() {

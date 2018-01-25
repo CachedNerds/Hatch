@@ -1,5 +1,5 @@
-use assets::config::Config;
-use project::{ LibraryKind, ProjectKind };
+#[cfg(test)] use assets::config::Config;
+#[cfg(test)] use project::{ LibraryKind, ProjectKind };
 
 #[test]
 fn build_shared_config() {
