@@ -96,7 +96,7 @@ impl Dependency {
   }
 
   pub fn url(&self) -> &str {
-    self.name.as_ref()
+    self.url.as_ref()
   }
 }
 
