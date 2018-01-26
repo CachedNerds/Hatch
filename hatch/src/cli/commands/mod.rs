@@ -1,11 +1,11 @@
-use hatch_error::HatchResult;
-
 pub mod new;
 pub mod update;
 pub mod build;
 pub mod test;
 
+use hatch_error::HatchResult;
 use clap::{ ArgMatches, App };
+use std::path::PathBuf;
 
 static ARGS: &str = "ARGS";
 static INCLUDE: &str = "INCLUDE";

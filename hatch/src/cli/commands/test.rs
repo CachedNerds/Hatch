@@ -5,6 +5,7 @@ use cli::commands::ARGS;
 use hatch_error::{ HatchResult, ResultExt };
 use task;
 use clap::{ App, SubCommand, Arg, ArgMatches };
+use std::path::PathBuf;
 
 pub struct Test {
   name: &'static str,
@@ -49,7 +50,7 @@ impl<'command> Command<'command> for Test {
     let project_path = self.project_path(args);
 
     let project = task::read_project(&project_path).with_context(|e| {
-      format!("failed to read project at `{}` : {}", project_path, e)
+      format!("failed to read project at `{}` : {}", project_path.display(), e)
     })?;
 
     println!("Building project...\n");
@@ -60,7 +61,7 @@ impl<'command> Command<'command> for Test {
 
     println!("\nExecuting tests...\n");
 
-    let test_executable_path = format!("{}test/target/{}.test", &project_path, project.name());
+    let test_executable_path = format!("{}test/target/{}.test", project_path.display(), project.name());
 
     let test_arguments = parse_test_arguments_from_cli(args);
 
