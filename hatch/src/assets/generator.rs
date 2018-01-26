@@ -1,7 +1,6 @@
 use assets::{ Asset, ProjectAsset };
 use hatch_error::{ HatchResult, ResultExt };
 use std::fs;
-use std::io::prelude::*;
 use std::io::Write;
 
 pub fn generate_one(asset: &ProjectAsset) -> HatchResult<()> {

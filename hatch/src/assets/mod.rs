@@ -6,6 +6,8 @@ pub mod platform;
 pub mod tuprules;
 pub mod test_tupfile;
 pub mod tupfile_ini;
+
+#[cfg(test)]
 mod tests;
 
 use std::fmt;
