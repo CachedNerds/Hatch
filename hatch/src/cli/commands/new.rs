@@ -4,7 +4,6 @@ use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
 use project::{ Project, ProjectKind, LibraryKind, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
-use std::path::PathBuf;
 use task;
 
 // Must use qualified names to avoid conflict.
@@ -42,12 +41,12 @@ impl<'new> New {
     }
   }
 
-  fn construct_deps_string(&self, deps: &Vec<(String, String)>) -> String {
+  fn construct_deps_string(&self, deps: &Vec<Dependency>) -> String {
     if deps.is_empty() {
       String::new()
     } else {
-      String::from("deps:\n") + deps.iter().map(|&(ref url, ref name)| {
-        format!("  {}: {}\n", &name[..], &url[..])
+      String::from("deps:\n") + deps.iter().map(|d| {
+        format!("  {}: {}\n", d.name(), d.url())
       }).collect::<String>().as_str()
     }
   }
@@ -56,7 +55,7 @@ impl<'new> New {
                         name: &str,
                         version: &str,
                         kind: &ProjectKind,
-                        includes: &str)-> String
+                        includes: &str) -> String
   {
     let mut yaml_output = String::new();
 
@@ -93,7 +92,7 @@ impl<'command> Command<'command> for New {
 
       .arg(Arg::with_name(INCLUDE)
            .help("List URLs to git repositories")
-           .long("include").short("i").multiple(true).number_of_values(2).takes_value(true)
+           .long("include").short("i").multiple(true).number_of_values(1).takes_value(true)
            .required(false))
   }
 
@@ -106,8 +105,8 @@ impl<'command> Command<'command> for New {
     let version = self.project_version(args);
     let kind = self.project_kind(args);
 
-    let dir_path = PathBuf::from(self.project_path(args) + &name[..]);
-    let hatch_file = PathBuf::from(hatchfile_path(&dir_path));
+    let dir_path = self.project_path(args).join(&name);
+    let hatch_file = hatchfile_path(&dir_path);
 
     let deps_from_cli = parse_deps_from_cli(args);
     
@@ -122,21 +121,21 @@ impl<'command> Command<'command> for New {
       fs::create_dir_all(dir_path.join("test").join("src"))?;
       fs::create_dir(dir_path.join("test").join("target"))?;
 
-      let deps = deps_from_cli.iter().map(|repo| {
-        Dependency::new(repo.1.clone(), repo.0.clone())
+      let deps = deps_from_cli.into_iter().map(|repo| {
+        Dependency::new(repo)
       }).collect::<Vec<_>>();
 
       if !deps.is_empty() {
         clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
       }
 
-      let includes = self.construct_deps_string(&deps_from_cli);
+      let includes = self.construct_deps_string(&deps);
       let yaml_output = self.hatch_yml_contents(&name, &version, &kind, &includes);
 
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
-      let project = Project::new(name, kind, version, deps, dir_path.to_path_buf());
+      let project = Project::new(name, kind, version, deps, dir_path.to_owned());
       task::generate_assets(&project)?;
 
       Ok(project)

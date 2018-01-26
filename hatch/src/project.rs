@@ -1,5 +1,7 @@
 use std::fmt;
 use std::path::PathBuf;
+use std::ffi::OsString;
+
 
 #[derive(Debug)]
 pub struct Project {
@@ -65,17 +67,36 @@ impl fmt::Display for ProjectKind {
 
 #[derive(Debug)]
 pub struct Dependency {
-  name: String,
   url: String,
+  name: String,
 }
 
 impl Dependency {
-  pub fn new(name: String, url: String) -> Dependency {
-    Dependency { name, url }
+  pub fn new(url: String) -> Dependency {
+    Dependency {
+      name: PathBuf::from(OsString::from(url.clone()))
+        .components()
+        .last()
+        .unwrap()
+        .as_os_str()
+        .to_string_lossy()
+        .into_owned()
+        .as_str()
+        .replace(".git", ""),
+      url,
+    }
   }
 
   pub fn as_pair(&self) -> (String, String) {
     (self.url.to_owned(), self.name.to_owned())
+  }
+
+  pub fn name(&self) -> &str {
+    self.name.as_ref()
+  }
+
+  pub fn url(&self) -> &str {
+    self.url.as_ref()
   }
 }
 
