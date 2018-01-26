@@ -6,7 +6,6 @@ use assets::tupfile::Tupfile;
 use assets::platform::{ Linux, MacOS, Windows };
 use assets::tupfile_ini::TupfileIni;
 use project::{ Project, ProjectKind };
-use std::path::PathBuf;
 use task;
 
 pub struct Builder {

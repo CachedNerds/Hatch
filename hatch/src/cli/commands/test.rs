@@ -3,7 +3,6 @@ use cli::commands::Command;
 use cli::commands::build::Build;
 use cli::commands::ARGS;
 use hatch_error::{ HatchResult, ResultExt };
-use project::Project;
 use task;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 
@@ -71,7 +70,7 @@ impl<'command> Command<'command> for Test {
         .spawn().with_context(|e| {
           format!("failed to execute test executable `{}` : {}", &test_executable_path, e)
         })?;
-    child.wait();
+    child.wait()?;
 
     Ok(())
   }

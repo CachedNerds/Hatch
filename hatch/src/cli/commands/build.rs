@@ -1,5 +1,5 @@
 use hatch_error::{ HatchResult, ResultExt };
-use clap::{ App, SubCommand, Arg, ArgMatches };
+use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
 use project::Project;
 use assets::PlatformKind;
@@ -33,7 +33,7 @@ impl<'build> Build {
               .spawn().with_context(|e| {
               format!("failed to build project at `{}` : {}", &path, e)
             })?;
-          child.wait();
+          child.wait()?;
         },
         _ => {
           let mut child =
@@ -43,7 +43,7 @@ impl<'build> Build {
               .spawn().with_context(|e| {
               format!("failed to build project at `{}` : {}", &path, e)
             })?;
-          child.wait();
+          child.wait()?;
         }
       }
     }

@@ -5,7 +5,6 @@ pub mod update;
 pub mod build;
 pub mod test;
 
-use project::Project;
 use clap::{ ArgMatches, App };
 
 static ARGS: &str = "ARGS";

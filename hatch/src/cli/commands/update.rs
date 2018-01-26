@@ -1,7 +1,6 @@
 use hatch_error::HatchResult;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
-use project::Project;
 use task;
 
 use cli::commands::PROJECT_NAMES;
@@ -36,7 +35,7 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    task::read_project(&self.project_path(args));
+    task::read_project(&self.project_path(args))?;
 
     Ok(())
   }
