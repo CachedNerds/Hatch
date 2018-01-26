@@ -35,7 +35,9 @@ impl<'command> Command<'command> for Update {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
-    task::read_project(&self.project_path(args))
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
+    task::read_project(&self.project_path(args));
+
+    Ok(())
   }
 }

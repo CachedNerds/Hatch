@@ -1,6 +1,5 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
-<<<<<<< HEAD
 use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
 use project::{ Project, ProjectKind, LibraryKind, Dependency };
@@ -12,7 +11,7 @@ use task;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAMES };
+use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAME };
 
 pub struct New {
   name: &'static str,
@@ -72,7 +71,7 @@ impl<'command> Command<'command> for New {
     SubCommand::with_name(&self.name)
       .about("Creates a new project. (default = shared library)")
 
-      .arg(Arg::with_name(PROJECT_NAMES)
+      .arg(Arg::with_name(PROJECT_NAME)
            .help("Name of project")
            .takes_value(true)
            .required(true))
@@ -102,7 +101,7 @@ impl<'command> Command<'command> for New {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
     let name = self.project_name(args).unwrap();
     let version = self.project_version(args);
     let kind = self.project_kind(args);
@@ -112,7 +111,7 @@ impl<'command> Command<'command> for New {
 
     let deps_from_cli = parse_deps_from_cli(args);
     
-    let res = (|| -> HatchResult<_> {
+    let res = (|| -> HatchResult<()> {
       // create directory for new project
       fs::create_dir(&dir_path)?;
       // create the hatch_modules directory inside the project directory
@@ -140,7 +139,7 @@ impl<'command> Command<'command> for New {
       let project = Project::new(name, kind, version, deps, dir_path.to_path_buf());
       task::generate_assets(&project)?;
 
-      Ok(project)
+      Ok(())
     })().with_context(|e| {
       format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;

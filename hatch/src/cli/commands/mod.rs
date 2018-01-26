@@ -8,10 +8,12 @@ pub mod test;
 use project::Project;
 use clap::{ ArgMatches, App };
 
+static ARGS: &str = "ARGS";
 static INCLUDE: &str = "INCLUDE";
 static VERSION: &str = "VERSION";
 static BIN: &str = "BIN";
 static STATIC: &str = "STATIC";
+static PROJECT_NAME: &str = "PROJECT_NAME";
 static PROJECT_NAMES: &str = "PROJECT_NAMES";
 static PROJECT_PATH: &str = "PROJECT_PATH";
 
@@ -20,10 +22,10 @@ pub trait Command<'command> {
   
   fn subcommand_name(&self) -> &'static str;
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project>;
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
  
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
-    value_t!(args, PROJECT_NAMES, String).ok()
+    value_t!(args, PROJECT_NAME, String).ok()
   }
   
   fn project_path(&self, args: &ArgMatches<'command>) -> String {
