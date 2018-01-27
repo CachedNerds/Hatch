@@ -1,5 +1,7 @@
 use std::fmt;
 use std::path::PathBuf;
+use std::ffi::OsString;
+
 
 #[derive(Debug)]
 pub struct Project {
@@ -7,15 +9,17 @@ pub struct Project {
   kind: ProjectKind,
   version: String,
   deps: Vec<Dependency>,
+  path: PathBuf
 }
 
 impl Project {
   pub fn new(name: String,
              kind: ProjectKind,
              version: String,
-             deps: Vec<Dependency>) -> Project
+             deps: Vec<Dependency>,
+             path: PathBuf) -> Project
   {
-    Project { name, kind, version, deps: deps }
+    Project { name, kind, version, deps, path }
   }
 
   pub fn name(&self) -> &str {
@@ -32,6 +36,10 @@ impl Project {
 
   pub fn deps(&self) -> &Vec<Dependency> {
     self.deps.as_ref()
+  }
+
+  pub fn path(&self) -> &PathBuf {
+    &self.path
   }
 }
 
@@ -59,17 +67,36 @@ impl fmt::Display for ProjectKind {
 
 #[derive(Debug)]
 pub struct Dependency {
-  name: String,
   url: String,
+  name: String,
 }
 
 impl Dependency {
-  pub fn new(name: String, url: String) -> Dependency {
-    Dependency { name, url }
+  pub fn new(url: String) -> Dependency {
+    Dependency {
+      name: PathBuf::from(OsString::from(url.clone()))
+        .components()
+        .last()
+        .unwrap()
+        .as_os_str()
+        .to_string_lossy()
+        .into_owned()
+        .as_str()
+        .replace(".git", ""),
+      url,
+    }
   }
 
   pub fn as_pair(&self) -> (String, String) {
     (self.url.to_owned(), self.name.to_owned())
+  }
+
+  pub fn name(&self) -> &str {
+    self.name.as_ref()
+  }
+
+  pub fn url(&self) -> &str {
+    self.url.as_ref()
   }
 }
 

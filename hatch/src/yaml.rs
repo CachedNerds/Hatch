@@ -1,6 +1,5 @@
 use std::fs;
 use std::io::Read;
-use std::ffi::OsStr;
 use std::path::{ Path, PathBuf };
 
 use yaml_rust::{ Yaml, YamlLoader };
@@ -9,37 +8,16 @@ use project::{ Project, LibraryKind, ProjectKind, Dependency };
 use hatch_error::{
   HatchResult,
   ResultExt,
-  HatchError,
   MissingNameError,
   MissingBuildError,
   MissingVersionError,
-  EmptyConfigError
+  EmptyConfigError,
 };
 
-pub fn parse(path: &Path) -> HatchResult<Project> {
-  let yaml_vec = do_parse(from_file(path)?)?;
-  Ok(yaml_vec)
-}
+pub fn parse(file_path: &Path) -> HatchResult<Project> {
+  let yml_vec = from_file(&file_path)?;
 
-fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
-  let mut file = fs::File::open(&file_name).with_context(|_| {
-    format!("failed to open file: `{}`", &file_name.display())
-  })?;
-
-  let mut contents = String::new();
-  file.read_to_string(&mut contents).with_context(|_| {
-    format!("failed to read contents of: `{}`", file_name.display())
-  })?;
-
-  let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
-    format!("Parsing error: `{}`", e)
-  })?;
-
-  Ok(res)
-}
-
-fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
-  if yml_vec.len() == 0 {
+  if yml_vec.is_empty() {
     return Err(EmptyConfigError)?;
   }
 
@@ -73,15 +51,29 @@ fn do_parse(yml_vec: Vec<Yaml>) -> HatchResult<Project> {
   if let Some(d) = yml_vec[0]["deps"].as_hash() {
     deps = d
       .iter()
-      .map(|(k, v)| (k.as_str(), v.as_str()))
-      .filter(|&(k, v)| k.is_some() && v.is_some())
-      .map(|(k, v)| Dependency::new(k.unwrap().to_owned(), v.unwrap().to_owned()))
+      .filter_map(|(_k, v)| v.as_str())
+      .map(|v| Dependency::new(v.to_owned()))
       .collect();
   } else {
     deps = Vec::new();
   }
 
-  Ok(Project::new(name, kind, version, deps))
+  Ok(Project::new(name, kind, version, deps, PathBuf::from(file_path)))
 }
 
+fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
+  let mut file = fs::File::open(&file_name).with_context(|_| {
+    format!("failed to open file: `{}`", &file_name.display())
+  })?;
 
+  let mut contents = String::new();
+  file.read_to_string(&mut contents).with_context(|_| {
+    format!("failed to read contents of: `{}`", file_name.display())
+  })?;
+
+  let res = YamlLoader::load_from_str(&contents).compat().with_context(|e| {
+    format!("Parsing error: `{}`", e)
+  })?;
+
+  Ok(res)
+}

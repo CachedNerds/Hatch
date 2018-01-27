@@ -1,29 +1,11 @@
-use HatchResult;
+use hatch_error::{ HatchResult, ResultExt };
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
-use cli::commands::ops::ProjectOps;
-use yaml;
-use project::Project;
-
 use cli::commands::PROJECT_NAMES;
-
-struct ImplicitBuilder;
-struct ExplicitBuilder;
-
-impl ProjectOps for ImplicitBuilder {
-  fn execute(&self, path: String, _: Vec<String>) -> Vec<HatchResult<Project>> {
-    match yaml::parse_one(&path) {
-      Ok(project) => vec![Ok(project)],
-      Err(_) => yaml::parse_all(&path),
-    }
-  }
-}
-
-impl ProjectOps for ExplicitBuilder {
-  fn execute(&self, path: String, project_names: Vec<String>) -> Vec<HatchResult<Project>> {
-    yaml::parse_many(&path, project_names)
-  }
-}
+use project::Project;
+use assets::PlatformKind;
+use task;
+use std::process;
 
 pub struct Build {
   name: &'static str
@@ -54,15 +36,38 @@ impl<'command> Command<'command> for Build {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> Vec<HatchResult<Project>> {
-    let builder: Box<ProjectOps>;
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
+    let project_path = self.project_path(args);
+    let project = task::read_project(&project_path).with_context(|e| {
+      format!("Failed to read project `{}` : {}", project_path.display(), e)
+    })?;
 
-    if args.is_present(PROJECT_NAMES) {
-      builder = Box::new(ExplicitBuilder);
-    } else {
-      builder = Box::new(ImplicitBuilder);
+    task::generate_assets(&project).with_context(|e| {
+      format!("Failed to generate assets : {}", e)
+    })?;
+
+    if let Some(path) = project.path().to_str() {
+      let command = format!("cd {} && tup", path);
+      match task::platform_type() {
+        PlatformKind::Windows => {
+          let mut child = process::Command::new("cmd")
+                                            .arg("/C")
+                                            .arg(command)
+                                            .spawn()
+                                            .expect("failed to build project.");
+          child.wait();
+        },
+        _ => {
+          let mut child = process::Command::new("sh")
+                                            .arg("-c")
+                                            .arg(command)
+                                            .spawn()
+                                            .expect("failed to build project.");
+          child.wait();
+        }
+      }
     }
 
-    builder.execute(self.project_path(args), self.project_names(args))
+    Ok(project)
   }
 }

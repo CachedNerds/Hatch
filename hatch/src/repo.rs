@@ -1,10 +1,10 @@
-use hatch_error::{ HatchResult, ResultExt };
+use hatch_error::HatchResult;
 use git2::Repository;
 use std::collections::HashSet;
-use project::{ Project, Dependency };
+use project::Dependency;
 use std::fs;
-use std::path::{ Path, PathBuf, Component };
-use yaml;
+use std::path::{ Path, PathBuf };
+use task;
 
 pub fn modules_path(base: &Path) -> PathBuf {
   base.join("hatch_modules")
@@ -14,8 +14,8 @@ pub fn hatchfile_path(base: &Path) -> PathBuf {
   base.join("Hatch.yml")
 }
 
-pub fn clone_dep(repo: &(String, String), path: &Path) {
-  Repository::clone(&repo.0, path.join(&repo.1));
+pub fn clone_dep(url: &str, path: &Path) {
+  Repository::clone(url, path);
 }
 
 fn walk(path: &Path, callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchResult<()> {
@@ -41,7 +41,7 @@ pub fn clone_project_deps(path: &Path,
 
   // Clone the dependencies specified on the command line
   user_defined_deps.iter().for_each(|dep| {
-    clone_dep(&dep.as_pair(), path);
+    clone_dep(&dep.url(), &path.join(&dep.name()));
   });
 
   // Clone the dependencies dependencies
@@ -65,11 +65,11 @@ pub fn clone_project_deps(path: &Path,
 }
 
 fn clone_nested_project_deps(path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
-  let current_project = yaml::parse(hatchfile_path(path).as_path())?;
+  let current_project = task::read_project(path)?;
   current_project.deps().iter().for_each(|dep| {
     // If we have already pulled in a dep, dont do it again
     if !visited.insert(current_project.name().to_owned()) {
-      clone_dep(&dep.as_pair(), &modules_path(path).as_path());
+      clone_dep(&dep.url(), &modules_path(path).join(dep.name()).as_path());
     }
   });
   Ok(true)

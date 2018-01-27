@@ -26,6 +26,10 @@ before_script:
   - cargo install cargo-travis || echo "cargo-travis already installed"
   - cargo install-update -a # update outdated cached binaries
 
+os:
+  - linux
+  - osx
+
 script:
   - |
       cd hatch &&
