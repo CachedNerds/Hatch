@@ -18,34 +18,28 @@ impl<'build> Build {
   }
 
   pub fn execute(&self, project: &Project) -> HatchResult<()> {
-    let res = (|| -> HatchResult<()> {
-      if let Some(path) = project.path().to_str() {
-        let command = format!("cd {} && tup", path);
-        let mut shell: String;
-        let mut args: Vec<String>;
-        match task::platform_type() {
-          PlatformKind::Windows => {
-            shell = String::from("cmd");
-            args = vec![String::from("/C"), command];
-          },
-          _ => {
-            shell = String::from("sh");
-            args = vec![String::from("-c"), command];
-          }
+    if let Some(path) = project.path().to_str() {
+      let command = format!("cd {} && tup", path);
+      let mut shell: String;
+      let mut args: Vec<String>;
+      match task::platform_type() {
+        PlatformKind::Windows => {
+          shell = String::from("cmd");
+          args = vec![String::from("/C"), command];
+        },
+        _ => {
+          shell = String::from("sh");
+          args = vec![String::from("-c"), command];
         }
-
-        let mut child = process::Command::new(shell).args(args).spawn()?;
-        child.wait()?;
-
-        Ok(())
-      } else {
-        Err(InvalidPathError)?
       }
-    })().with_context(|e| {
-      format!("Failed to build project : {}", e)
-    })?;
 
-    Ok(res)
+      let mut child = process::Command::new(shell).args(args).spawn()?;
+      child.wait()?;
+
+      Ok(())
+    } else {
+      Err(InvalidPathError)?
+    }
   }
 }
 
@@ -61,15 +55,21 @@ impl<'command> Command<'command> for Build {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let project_path = self.project_path(args);
-    let project = task::read_project(&project_path)?;
+    let res = (|| -> HatchResult<()> {
+      let project_path = self.project_path(args);
+      let project = task::read_project(&project_path)?;
 
-    println!("Generating assets...\n");
+      println!("Generating assets...\n");
 
-    task::generate_assets(&project)?;
+      task::generate_assets(&project)?;
 
-    println!("\nBuilding project...\n");
+      println!("\nBuilding project...\n");
 
-    self.execute(&project)
+      self.execute(&project)
+    })().with_context(|e| {
+      format!("Failed to build project : {}", e)
+    })?;
+
+    Ok(res)
   }
 }
