@@ -20,14 +20,11 @@ impl<'test> Test {
 }
 
 fn parse_test_arguments_from_cli<'command>(cli_args: &ArgMatches<'command>) -> Vec<String> {
-  let mut parsed_arguments = Vec::new();
   if let Some(arguments) = cli_args.values_of(ARGS) {
-    let mut args = arguments.map(String::from).collect::<Vec<String>>().into_iter();
-    while args.len() != 0 {
-      parsed_arguments.push(args.next().unwrap());
-    }
+    arguments.map(String::from).collect()
+  } else {
+    Vec::new()
   }
-  parsed_arguments
 }
 
 impl<'command> Command<'command> for Test {
@@ -47,32 +44,31 @@ impl<'command> Command<'command> for Test {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let project_path = self.project_path(args);
+    let res = (|| -> HatchResult<()> {
+      let project_path = self.project_path(args);
+      let project = task::read_project(&project_path)?;
 
-    let project = task::read_project(&project_path).with_context(|e| {
-      format!("failed to read project at `{}` : {}", project_path.display(), e)
+      println!("Generating assets...\n");
+
+      task::generate_assets(&project)?;
+
+      println!("\nBuilding project...\n");
+
+      Build::new().execute(&project)?;
+
+      println!("\nExecuting tests...\n");
+
+      let test_executable_path = format!("{}test/target/{}.test", project_path.display(), project.name());
+      let test_arguments = parse_test_arguments_from_cli(args);
+
+      let mut child = ProcessCommand::new(&test_executable_path).args(test_arguments).spawn()?;
+      child.wait()?;
+
+      Ok(())
+    })().with_context(|e| {
+      format!("Test execution has failed : {}", e)
     })?;
 
-    println!("Building project...\n");
-
-    Build::new().execute(&project).with_context(|e| {
-      format!("failed to build project `{}` : {}", project.name(), e)
-    })?;
-
-    println!("\nExecuting tests...\n");
-
-    let test_executable_path = format!("{}test/target/{}.test", project_path.display(), project.name());
-
-    let test_arguments = parse_test_arguments_from_cli(args);
-
-    let mut child =
-      ProcessCommand::new(&test_executable_path)
-        .args(test_arguments)
-        .spawn().with_context(|e| {
-          format!("failed to execute test executable `{}` : {}", &test_executable_path, e)
-        })?;
-    child.wait()?;
-
-    Ok(())
+    Ok(res)
   }
 }

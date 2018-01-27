@@ -1,4 +1,4 @@
-use hatch_error::{ HatchResult, ResultExt };
+use hatch_error::{ HatchResult, ResultExt, InvalidPathError };
 use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
 use project::Project;
@@ -18,37 +18,34 @@ impl<'build> Build {
   }
 
   pub fn execute(&self, project: &Project) -> HatchResult<()> {
-    task::generate_assets(&project).with_context(|e| {
-      format!("Failed to generate assets : {}", e)
+    let res = (|| -> HatchResult<()> {
+      if let Some(path) = project.path().to_str() {
+        let command = format!("cd {} && tup", path);
+        let mut shell: String;
+        let mut args: Vec<String>;
+        match task::platform_type() {
+          PlatformKind::Windows => {
+            shell = String::from("cmd");
+            args = vec![String::from("/C"), command];
+          },
+          _ => {
+            shell = String::from("sh");
+            args = vec![String::from("-c"), command];
+          }
+        }
+
+        let mut child = process::Command::new(shell).args(args).spawn()?;
+        child.wait()?;
+
+        Ok(())
+      } else {
+        Err(InvalidPathError)?
+      }
+    })().with_context(|e| {
+      format!("Failed to build project : {}", e)
     })?;
 
-    if let Some(path) = project.path().to_str() {
-      let command = format!("cd {} && tup", path);
-      match task::platform_type() {
-        PlatformKind::Windows => {
-          let mut child =
-            process::Command::new("cmd")
-              .arg("/C")
-              .arg(command)
-              .spawn().with_context(|e| {
-              format!("failed to build project at `{}` : {}", &path, e)
-            })?;
-          child.wait()?;
-        },
-        _ => {
-          let mut child =
-            process::Command::new("sh")
-              .arg("-c")
-              .arg(command)
-              .spawn().with_context(|e| {
-              format!("failed to build project at `{}` : {}", &path, e)
-            })?;
-          child.wait()?;
-        }
-      }
-    }
-
-    Ok(())
+    Ok(res)
   }
 }
 
@@ -65,15 +62,13 @@ impl<'command> Command<'command> for Build {
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
     let project_path = self.project_path(args);
-    let project = task::read_project(&project_path).with_context(|e| {
-      format!("Failed to read project at `{}` : {}", project_path.display(), e)
-    })?;
+    let project = task::read_project(&project_path)?;
 
-    task::generate_assets(&project).with_context(|e| {
-      format!("Failed to generate assets : {}", e)
-    })?;
+    println!("Generating assets...\n");
 
-    println!("Building project...\n");
+    task::generate_assets(&project)?;
+
+    println!("\nBuilding project...\n");
 
     self.execute(&project)
   }
