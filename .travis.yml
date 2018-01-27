@@ -1,4 +1,4 @@
-sudo: true
+sudo: required
 
 language: rust
 
@@ -10,6 +10,9 @@ addons:
       - libelf-dev
       - libdw-dev
       - binutils-dev # optional: only required for the --verify flag of coveralls
+      - cmake
+    sources:
+      - kalakris-cmake
 
 cache: cargo
 
@@ -18,18 +21,19 @@ rust:
 
 # load travis-cargo
 before_script:
-  - |
-      pip install 'travis-cargo<0.2' --user &&
-      export PATH=$HOME/.local/bin:$PATH
+  - export PATH=$HOME/.cargo/bin:$PATH
+  - cargo install cargo-update || echo "cargo-update already installed"
+  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - cargo install-update -a # update outdated cached binaries
 
 script:
   - |
       cd hatch &&
-      travis-cargo build &&
-      travis-cargo test
+      cargo build &&
+      cargo test
 
 after_success:
-  - travis-cargo coveralls --no-sudo --verify
+  - cargo coveralls
 
 branches:
   # This is where pull requests from "bors r+" are built.
