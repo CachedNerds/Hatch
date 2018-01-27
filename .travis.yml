@@ -6,7 +6,9 @@ os:
   - linux
   - osx
 script:
-  - cd hatch && cargo test --verbose --all
+  - |
+      cd hatch &&
+      cargo test --verbose --all
 branches:
   # This is where pull requests from "bors r+" are built.
   - staging
