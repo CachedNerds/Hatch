@@ -69,11 +69,11 @@ pub fn clone_project_deps(path: &Path,
 
 fn clone_nested_project_deps(registry: &Path, path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
   let current_project = task::read_project(path)?;
-  current_project.deps().iter().for_each(|dep| {
-    // If we have already pulled in a dep, dont do it again
-    if !visited.insert(current_project.name().to_owned()) {
+  if !visited.contains(&current_project.name().to_owned()) {
+    current_project.deps().iter().for_each(|dep| {
       clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-    }
-  });
+    });
+    let _ = visited.insert(current_project.name().to_owned());
+  }
   Ok(true)
 }
