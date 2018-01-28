@@ -2,7 +2,7 @@ use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
-use project::{ Project, ProjectKind, LibraryKind, Dependency };
+use project::{ Project, ProjectKind, LibraryKind, Arch, Target, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
 use task;
 
@@ -55,12 +55,35 @@ impl<'new> New {
                         name: &str,
                         version: &str,
                         kind: &ProjectKind,
+                        compiler: &str,
+                        compiler_flags: &Vec<String>,
+                        linker_flags: &Vec<String>,
+                        arch: &Arch,
+                        target: &Target,
                         includes: &str) -> String
   {
     let mut yaml_output = String::new();
 
-    let _ = write!(&mut yaml_output, "name: {}\nversion: {}\nbuild: {}\n{}",
-                   &name, &version, &kind, &includes);
+    let _ = write!(&mut yaml_output,
+"name: {}
+version: {}
+build:
+  kind: {}
+  compiler: {}
+  compiler_flags: {}
+  linker_flags: {}
+  arch: {}
+  target: {}
+{}",
+                   &name,
+                   &version,
+                   &kind,
+                   &compiler,
+                   compiler_flags.join(" "),
+                   linker_flags.join(" "),
+                   &arch,
+                   &target,
+                   &includes);
     yaml_output
   }
 }
@@ -130,12 +153,39 @@ impl<'command> Command<'command> for New {
       }
 
       let includes = self.construct_deps_string(&deps);
-      let yaml_output = self.hatch_yml_contents(&name, &version, &kind, &includes);
+
+      let compiler: String = String::from("g++");
+      let compiler_flags: Vec<String> = vec![String::from("-c")];
+      let linker_flags: Vec<String> = vec![String::from("-v")];
+      let mut arch: Arch = Arch::X64;
+      if let Some(architecture) = task::architecture() {
+        arch = architecture;
+      }
+      let target: Target = Target::Debug;
+
+      let yaml_output = self.hatch_yml_contents(&name,
+                                                &version,
+                                                kind.as_ref(),
+                                                compiler.as_str(),
+                                                &compiler_flags,
+                                                &linker_flags,
+                                                arch.as_ref(),
+                                                target.as_ref(),
+                                                &includes);
 
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
-      let project = Project::new(name, kind, version, deps, dir_path.to_owned());
+      let project = Project::new(name,
+                                 version,
+                                 kind,
+                                 compiler,
+                                 compiler_flags,
+                                 linker_flags,
+                                 arch,
+                                 target,
+                                 deps,
+                                 dir_path.to_owned());
       task::generate_assets(&project)?;
 
       Ok(())

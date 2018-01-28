@@ -1,5 +1,4 @@
-use assets::Arch;
-use project::LibraryKind;
+use project::{ LibraryKind, Arch };
 
 pub struct Tuprules {
   compiler: String,

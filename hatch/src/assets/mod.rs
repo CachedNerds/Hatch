@@ -38,9 +38,6 @@ pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile, TupfileIni }
 #[derive(Debug)]
 pub enum PlatformKind { Linux, MacOS, Windows }
 
-#[derive(Debug)]
-pub enum Arch { X64, X32 }
-
 pub struct ProjectAsset {
   path: PathBuf,
   name: String,

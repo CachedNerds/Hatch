@@ -1,11 +1,11 @@
-use assets::{ TupKind, PlatformKind, Arch, ProjectAsset };
+use assets::{ TupKind, PlatformKind, ProjectAsset };
 use assets::config::Config;
 use assets::tuprules::Tuprules;
 use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
 use assets::platform::{ Linux, MacOS, Windows };
 use assets::tupfile_ini::TupfileIni;
-use project::{ Project, ProjectKind };
+use project::{ Project, ProjectKind, Arch };
 use task;
 
 pub struct Builder {

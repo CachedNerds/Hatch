@@ -1,9 +1,9 @@
 use std::fs;
 use std::io::Read;
 use std::path::{ Path, PathBuf };
-
 use yaml_rust::{ Yaml, YamlLoader };
-use project::{ Project, LibraryKind, ProjectKind, Dependency };
+use project::{ Project, LibraryKind, ProjectKind, Arch, Target, Dependency };
+use task;
 
 use hatch_error::{
   HatchResult,
@@ -22,8 +22,16 @@ pub fn parse(file_path: &Path) -> HatchResult<Project> {
   }
 
   let name: String;
-  let kind: ProjectKind;
-  let version: String;
+  let mut version: String = String::from("0.0.1");
+  let mut kind: ProjectKind = ProjectKind::Library(LibraryKind::Static);
+  let mut compiler: String = String::from("g++");
+  let mut compiler_flags: Vec<String> = vec![String::from("-c")];
+  let mut linker_flags: Vec<String> = vec![String::from("-v")];
+  let mut arch: Arch = Arch::X64;
+  if let Some(architecture) = task::architecture() {
+    arch = architecture;
+  }
+  let mut target: Target = Target::Debug;
   let deps: Vec<Dependency>;
 
   if let Some(n) = yml_vec[0]["name"].as_str() {
@@ -32,20 +40,84 @@ pub fn parse(file_path: &Path) -> HatchResult<Project> {
     return Err(MissingNameError)?;
   }
 
-  if let Some(b) = yml_vec[0]["build"].as_str() {
-    kind = match b {
-      "static-lib" => ProjectKind::Library(LibraryKind::Shared),
-      "shared-lib" => ProjectKind::Library(LibraryKind::Static),
-      _ => ProjectKind::Binary
-    }
-  } else {
-    return Err(MissingBuildError)?;
-  }
-
   if let Some(v) = yml_vec[0]["version"].as_str() {
     version = v.to_owned();
   } else {
     return Err(MissingVersionError)?;
+  }
+
+  if let Some(configurations) = yml_vec[0]["build"].as_hash() {
+    let items = configurations
+      .iter()
+      .map(|(k, v)| {
+        (k.as_str(), v.as_str())
+      })
+      .filter(|&(k, v)| {
+        k.is_some() && v.is_some()
+      })
+      .map(|(k, v)| {
+        (k.unwrap(), v.unwrap())
+      }).collect::<Vec<(&str, &str)>>();
+
+    for (key, value) in items {
+      match key {
+        "kind" => {
+          kind = match value {
+            "static-lib" => ProjectKind::Library(LibraryKind::Shared),
+            "shared-lib" => ProjectKind::Library(LibraryKind::Static),
+            _ => ProjectKind::Binary
+          }
+        },
+        "compiler" => {
+          compiler = String::from(value);
+        },
+        "compiler_flags" => {
+          compiler_flags =
+            String::from(value)
+              .split_whitespace()
+              .map(String::from)
+              .collect();
+        },
+        "linker_flags" => {
+          linker_flags =
+            String::from(value)
+              .split_whitespace()
+              .map(String::from)
+              .collect();
+        },
+        "arch" => {
+          match value {
+            "x64" => {
+              arch =Arch::X64
+            },
+            "x32" => {
+              arch = Arch::X32
+            },
+            _ => {
+              // use default
+            }
+          }
+        },
+        "target" => {
+          match value {
+            "debug" => {
+              target = Target::Debug
+            },
+            "release" => {
+              target = Target::Release
+            },
+            _ => {
+              // use default
+            }
+          }
+        },
+        _ => {}
+      }
+    }
+
+
+  } else {
+    return Err(MissingBuildError)?;
   }
 
   if let Some(d) = yml_vec[0]["deps"].as_hash() {
@@ -58,7 +130,16 @@ pub fn parse(file_path: &Path) -> HatchResult<Project> {
     deps = Vec::new();
   }
 
-  Ok(Project::new(name, kind, version, deps, PathBuf::from(file_path)))
+  Ok(Project::new(name,
+                  version,
+                  kind,
+                  compiler,
+                  compiler_flags,
+                  linker_flags,
+                  arch,
+                  target,
+                  deps,
+                  PathBuf::from(file_path)))
 }
 
 fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
