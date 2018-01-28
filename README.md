@@ -3,8 +3,9 @@
 <h1 align="center">Hatch</h1>
 <p align="center">The project manager for CachedNerds/Toolbox et;al</p>
 
-[![Build Status](https://travis-ci.org/CachedNerds/Hatch.svg?branch=dev)](https://travis-ci.org/CachedNerds/Hatch)
-[![Build status](https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/dev?svg=true)](https://ci.appveyor.com/project/DannyPeck/hatch/branch/dev)
+[![Travis Build](https://travis-ci.org/CachedNerds/Hatch.svg?branch=dev)](https://travis-ci.org/CachedNerds/Hatch)
+[![Appveyor Build](https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/dev?svg=true)](https://ci.appveyor.com/project/DannyPeck/hatch/branch/dev)
+[![Coverage Status](https://coveralls.io/repos/github/CachedNerds/Hatch/badge.svg?branch=dev)](https://coveralls.io/github/CachedNerds/Hatch?branch=dev)
 [![license](https://img.shields.io/github/license/CachedNerds/Hatch.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # [Workflow Standards](https://github.com/CachedNerds/Hatch/blob/master/WORKFLOW.md)

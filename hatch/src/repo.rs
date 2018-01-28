@@ -39,6 +39,9 @@ pub fn clone_project_deps(path: &Path,
 {
   let mut visited: HashSet<String> = HashSet::new();
 
+  // All dependencies are cloned into here
+  let registry = &path;
+
   // Clone the dependencies specified on the command line
   user_defined_deps.iter().for_each(|dep| {
     clone_dep(&dep.url(), &path.join(&dep.name()));
@@ -56,7 +59,7 @@ pub fn clone_project_deps(path: &Path,
     let hatchfile = hatchfile_path(dir);
 
     if hatchfile.exists() {
-      return clone_nested_project_deps(&dir, &mut visited);
+      return clone_nested_project_deps(&registry, &dir, &mut visited);
     }
     Ok(true)
   })?;
@@ -64,13 +67,13 @@ pub fn clone_project_deps(path: &Path,
   Ok(())
 }
 
-fn clone_nested_project_deps(path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
+fn clone_nested_project_deps(registry: &Path, path: &Path, visited: &mut HashSet<String>) -> HatchResult<bool> {
   let current_project = task::read_project(path)?;
-  current_project.deps().iter().for_each(|dep| {
-    // If we have already pulled in a dep, dont do it again
-    if !visited.insert(current_project.name().to_owned()) {
-      clone_dep(&dep.url(), &modules_path(path).join(dep.name()).as_path());
-    }
-  });
+  if !visited.contains(&current_project.name().to_owned()) {
+    current_project.deps().iter().for_each(|dep| {
+      clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+    });
+    let _ = visited.insert(current_project.name().to_owned());
+  }
   Ok(true)
 }

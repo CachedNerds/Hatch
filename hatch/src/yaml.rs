@@ -14,8 +14,8 @@ use hatch_error::{
   EmptyConfigError,
 };
 
-pub fn parse(file_path: &Path) -> HatchResult<Project> {
-  let yml_vec = from_file(&file_path)?;
+pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
+  let yml_vec = from_file(path.join(name).as_path())?;
 
   if yml_vec.is_empty() {
     return Err(EmptyConfigError)?;
