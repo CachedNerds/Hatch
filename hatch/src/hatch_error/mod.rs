@@ -20,5 +20,9 @@ pub struct MissingNameError;
 pub struct MissingVersionError;
 
 #[derive(Fail, Debug)]
+#[fail(display = "Invalid path")]
+pub struct InvalidPathError;
+
+#[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct NullError;
