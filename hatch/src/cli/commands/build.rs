@@ -1,7 +1,6 @@
-use hatch_error::{ HatchResult, ResultExt };
-use clap::{ App, SubCommand, Arg, ArgMatches };
+use hatch_error::{ HatchResult, ResultExt, InvalidPathError };
+use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
-use cli::commands::PROJECT_NAMES;
 use project::Project;
 use assets::PlatformKind;
 use task;
@@ -17,6 +16,31 @@ impl<'build> Build {
       name: "build"
     }
   }
+
+  pub fn execute(&self, project: &Project) -> HatchResult<()> {
+    if let Some(path) = project.path().to_str() {
+      let command = format!("cd {} && tup", path);
+      let mut shell: String;
+      let mut args: Vec<String>;
+      match task::platform_type() {
+        PlatformKind::Windows => {
+          shell = String::from("cmd");
+          args = vec![String::from("/C"), command];
+        },
+        _ => {
+          shell = String::from("sh");
+          args = vec![String::from("-c"), command];
+        }
+      }
+
+      let mut child = process::Command::new(shell).args(args).spawn()?;
+      child.wait()?;
+
+      Ok(())
+    } else {
+      Err(InvalidPathError)?
+    }
+  }
 }
 
 impl<'command> Command<'command> for Build {
@@ -24,50 +48,28 @@ impl<'command> Command<'command> for Build {
     SubCommand::with_name(&self.name)
       .about("Builds a project.")
       .author("Josh Gould <mrgould93@gmail.com>")
-
-      .arg(Arg::with_name(PROJECT_NAMES)
-           .help("The projects to be built.")
-           .required(false)
-           .min_values(0)
-           .value_delimiter(" "))
   }
 
   fn subcommand_name(&self) -> &'static str {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<Project> {
-    let project_path = self.project_path(args);
-    let project = task::read_project(&project_path).with_context(|e| {
-      format!("Failed to read project `{}` : {}", project_path.display(), e)
+  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
+    let res = (|| -> HatchResult<()> {
+      let project_path = self.project_path(args);
+      let project = task::read_project(&project_path)?;
+
+      println!("Generating assets...\n");
+
+      task::generate_assets(&project)?;
+
+      println!("\nBuilding project...\n");
+
+      self.execute(&project)
+    })().with_context(|e| {
+      format!("Failed to build project : {}", e)
     })?;
 
-    task::generate_assets(&project).with_context(|e| {
-      format!("Failed to generate assets : {}", e)
-    })?;
-
-    if let Some(path) = project.path().to_str() {
-      let command = format!("cd {} && tup", path);
-      match task::platform_type() {
-        PlatformKind::Windows => {
-          let mut child = process::Command::new("cmd")
-                                            .arg("/C")
-                                            .arg(command)
-                                            .spawn()
-                                            .expect("failed to build project.");
-          child.wait();
-        },
-        _ => {
-          let mut child = process::Command::new("sh")
-                                            .arg("-c")
-                                            .arg(command)
-                                            .spawn()
-                                            .expect("failed to build project.");
-          child.wait();
-        }
-      }
-    }
-
-    Ok(project)
+    Ok(res)
   }
 }
