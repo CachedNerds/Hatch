@@ -63,7 +63,7 @@ impl<'command> Command<'command> for Build {
 
       task::generate_assets(&project)?;
 
-      println!("\nBuilding project...\n");
+      println!("Building project...\n");
 
       self.execute(&project)
     })().with_context(|e| {

@@ -5,8 +5,14 @@ use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
 use assets::platform::{ Linux, MacOS, Windows };
 use assets::tupfile_ini::TupfileIni;
+use assets::catch_header::CatchHeader;
+use assets::catch_definition::CatchDefinition;
+use hatch_error::{ HatchResult, ResultExt, NullError };
 use project::{ Project, ProjectKind };
 use task;
+use reqwest;
+
+static CATCH_HEADER_URL: &str = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";
 
 pub struct Builder {
   assets: Vec<ProjectAsset>,
@@ -29,11 +35,22 @@ impl Builder {
     let platform_type = task::platform_type();
     builder.platform(&platform_type, project);
 
+    if let Ok(catch_header) = builder.catch_header(project) {
+      builder.add_asset(catch_header);
+    }
+
+    let catch_definition = builder.catch_definition(project);
+    builder.add_asset(catch_definition);
+
     builder
   }
 
   pub fn assets(&mut self) -> &Vec<ProjectAsset> {
     &self.assets.as_ref()
+  }
+
+  pub fn add_asset(&mut self, asset: ProjectAsset) {
+    self.assets.push(asset);
   }
 
   pub fn project(&mut self, asset_kind: &TupKind, project: &Project) {
@@ -118,5 +135,31 @@ impl Builder {
     let contents = Windows::new().to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Windows::name(), contents)
+  }
+
+  pub fn catch_header(&self, project: &Project) -> HatchResult<ProjectAsset> {
+    let test_src_path = project.path().join("test/src");
+    let file_name = CatchHeader::name();
+    if !test_src_path.join(file_name).exists() {
+      let res = (|| -> HatchResult<ProjectAsset> {
+        let mut resp = reqwest::get(CATCH_HEADER_URL)?;
+        let content = resp.text()?;
+
+        Ok(ProjectAsset::new(test_src_path, CatchHeader::name(), content))
+      })().with_context(|e| {
+        format!("failed to generate catch.hpp : {}", e)
+      })?;
+
+      Ok(res)
+    } else {
+      Err(NullError)?
+    }
+  }
+
+  pub fn catch_definition(&self, project: &Project) -> ProjectAsset {
+    let test_src_path = project.path().join("test/src");
+    let contents = CatchDefinition::new().to_string();
+
+    ProjectAsset::new(test_src_path, CatchDefinition::name(), contents)
   }
 }

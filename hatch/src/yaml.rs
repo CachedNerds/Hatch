@@ -14,8 +14,8 @@ use hatch_error::{
   EmptyConfigError,
 };
 
-pub fn parse(file_path: &Path) -> HatchResult<Project> {
-  let yml_vec = from_file(&file_path)?;
+pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
+  let yml_vec = from_file(path.join(name).as_path())?;
 
   if yml_vec.is_empty() {
     return Err(EmptyConfigError)?;
@@ -58,7 +58,7 @@ pub fn parse(file_path: &Path) -> HatchResult<Project> {
     deps = Vec::new();
   }
 
-  Ok(Project::new(name, kind, version, deps, PathBuf::from(file_path)))
+  Ok(Project::new(name, kind, version, deps, PathBuf::from(path)))
 }
 
 fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {

@@ -35,7 +35,9 @@ impl<'command> Command<'command> for Update {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    task::read_project(&self.project_path(args))?;
+    let project = task::read_project(&self.project_path(args))?;
+
+    task::generate_assets(&project)?;
 
     Ok(())
   }
