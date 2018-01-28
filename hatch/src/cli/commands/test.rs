@@ -5,7 +5,6 @@ use cli::commands::ARGS;
 use hatch_error::{ HatchResult, ResultExt };
 use task;
 use clap::{ App, SubCommand, Arg, ArgMatches };
-use std::path::PathBuf;
 
 pub struct Test {
   name: &'static str,

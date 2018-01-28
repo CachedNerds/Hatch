@@ -10,8 +10,9 @@ use assets::catch_definition::CatchDefinition;
 use hatch_error::{ HatchResult, ResultExt, NullError };
 use project::{ Project, ProjectKind };
 use task;
-use std::io::Read;
 use reqwest;
+
+static CATCH_HEADER_URL: &str = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";
 
 pub struct Builder {
   assets: Vec<ProjectAsset>,
@@ -140,14 +141,16 @@ impl Builder {
     let test_src_path = project.path().join("test/src");
     let file_name = CatchHeader::name();
     if !test_src_path.join(file_name).exists() {
-      let catch_header_url = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";
-      let mut resp = reqwest::get(catch_header_url).with_context(|e| {
-        format!("failed to retrieve catch.hpp : {}", e)
-      })?;
-      let mut content = String::new();
-      resp.read_to_string(&mut content);
+      let res = (|| -> HatchResult<ProjectAsset> {
+        let mut resp = reqwest::get(CATCH_HEADER_URL)?;
+        let content = resp.text()?;
 
-      Ok(ProjectAsset::new(test_src_path, CatchHeader::name(), content))
+        Ok(ProjectAsset::new(test_src_path, CatchHeader::name(), content))
+      })().with_context(|e| {
+        format!("failed to generate catch.hpp : {}", e)
+      })?;
+
+      Ok(res)
     } else {
       Err(NullError)?
     }
