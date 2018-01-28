@@ -8,7 +8,7 @@ use assets::tupfile_ini::TupfileIni;
 use assets::catch_header::CatchHeader;
 use assets::catch_definition::CatchDefinition;
 use hatch_error::{ HatchResult, ResultExt, NullError };
-use project::{ Project, ProjectKind };
+use project::Project;
 use task;
 use reqwest;
 
@@ -77,7 +77,7 @@ impl Builder {
 
   pub fn config(&self, project: &Project) -> ProjectAsset {
     let project_path = project.path();
-    let contents = Config::new(project.name(), project.kind()).to_string();
+    let contents = Config::new(project.name(), project.config().kind()).to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Config::name(), contents)
   }
@@ -91,13 +91,8 @@ impl Builder {
 
   pub fn tuprules(&self, project: &Project) -> ProjectAsset {
     let project_path = project.path();
-    let project_kind = project.kind();
-    let contents = match *project_kind {
-      ProjectKind::Library(ref lib_type) => {
-        Tuprules::new(String::from("g++"), false, Arch::X64, String::from("c++1z"), lib_type).to_string()
-      },
-      _ => String::new()
-    };
+    let config = project.config();
+    let contents = Tuprules::new(config).to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Tuprules::name(), contents)
   }

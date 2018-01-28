@@ -2,7 +2,7 @@ use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
 use repo::{ modules_path, hatchfile_path, clone_project_deps };
-use project::{ Project, ProjectKind, LibraryKind, Arch, Target, Dependency };
+use project::{ Project, BuildConfig, ProjectKind, LibraryKind, Arch, Target, Dependency };
 use hatch_error::{ HatchResult, ResultExt };
 use task;
 
@@ -54,12 +54,7 @@ impl<'new> New {
   fn hatch_yml_contents(&self,
                         name: &str,
                         version: &str,
-                        kind: &ProjectKind,
-                        compiler: &str,
-                        compiler_flags: &Vec<String>,
-                        linker_flags: &Vec<String>,
-                        arch: &Arch,
-                        target: &Target,
+                        config: &BuildConfig,
                         includes: &str) -> String
   {
     let mut yaml_output = String::new();
@@ -77,12 +72,12 @@ build:
 {}",
                    &name,
                    &version,
-                   &kind,
-                   &compiler,
-                   compiler_flags.join(" "),
-                   linker_flags.join(" "),
-                   &arch,
-                   &target,
+                   config.kind(),
+                   config.compiler(),
+                   config.compiler_flags().join(" "),
+                   config.linker_flags().join(" "),
+                   config.arch(),
+                   config.target(),
                    &includes);
     yaml_output
   }
@@ -163,14 +158,11 @@ impl<'command> Command<'command> for New {
       }
       let target: Target = Target::Debug;
 
+      let config = BuildConfig::new(kind, compiler, compiler_flags, linker_flags, arch, target);
+
       let yaml_output = self.hatch_yml_contents(&name,
                                                 &version,
-                                                kind.as_ref(),
-                                                compiler.as_str(),
-                                                &compiler_flags,
-                                                &linker_flags,
-                                                arch.as_ref(),
-                                                target.as_ref(),
+                                                config.as_ref(),
                                                 &includes);
 
       let mut file = fs::File::create(hatch_file)?;
@@ -178,12 +170,7 @@ impl<'command> Command<'command> for New {
 
       let project = Project::new(name,
                                  version,
-                                 kind,
-                                 compiler,
-                                 compiler_flags,
-                                 linker_flags,
-                                 arch,
-                                 target,
+                                 config,
                                  deps,
                                  dir_path.to_owned());
       task::generate_assets(&project)?;

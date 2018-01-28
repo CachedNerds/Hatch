@@ -7,12 +7,7 @@ use std::ffi::OsString;
 pub struct Project {
   name: String,
   version: String,
-  kind: ProjectKind,
-  compiler: String,
-  compiler_flags: Vec<String>,
-  linker_flags: Vec<String>,
-  arch: Arch,
-  target: Target,
+  config: BuildConfig,
   deps: Vec<Dependency>,
   path: PathBuf
 }
@@ -20,24 +15,14 @@ pub struct Project {
 impl Project {
   pub fn new(name: String,
              version: String,
-             kind: ProjectKind,
-             compiler: String,
-             compiler_flags: Vec<String>,
-             linker_flags: Vec<String>,
-             arch: Arch,
-             target: Target,
+             config: BuildConfig,
              deps: Vec<Dependency>,
              path: PathBuf) -> Project
   {
     Project {
       name,
       version,
-      kind,
-      compiler,
-      compiler_flags,
-      linker_flags,
-      arch,
-      target,
+      config,
       deps,
       path
     }
@@ -51,28 +36,8 @@ impl Project {
     self.version.as_ref()
   }
 
-  pub fn kind(&self) -> &ProjectKind {
-    self.kind.as_ref()
-  }
-
-  pub fn compiler(&self) -> &str {
-    self.compiler.as_ref()
-  }
-
-  pub fn compiler_flags(&self) -> &Vec<String> {
-    self.compiler_flags.as_ref()
-  }
-
-  pub fn linker_flags(&self) -> &Vec<String> {
-    self.linker_flags.as_ref()
-  }
-
-  pub fn arch(&self) -> &Arch {
-    self.arch.as_ref()
-  }
-
-  pub fn target(&self) -> &Target {
-    self.target.as_ref()
+  pub fn config(&self) -> &BuildConfig {
+    self.config.as_ref()
   }
 
   pub fn deps(&self) -> &Vec<Dependency> {
@@ -141,6 +106,71 @@ impl fmt::Display for Target {
     }
   }
 }
+
+#[derive(Debug)]
+pub struct BuildConfig {
+  kind: ProjectKind,
+  compiler: String,
+  compiler_flags: Vec<String>,
+  linker_flags: Vec<String>,
+  arch: Arch,
+  target: Target
+}
+
+impl BuildConfig {
+  pub fn new(kind: ProjectKind,
+             compiler: String,
+             compiler_flags: Vec<String>,
+             linker_flags: Vec<String>,
+             arch: Arch,
+             target: Target) -> BuildConfig
+  {
+    BuildConfig {
+      kind,
+      compiler,
+      compiler_flags,
+      linker_flags,
+      arch,
+      target
+    }
+  }
+
+  pub fn kind(&self) -> &ProjectKind {
+    self.kind.as_ref()
+  }
+
+  pub fn compiler(&self) -> &str {
+    self.compiler.as_ref()
+  }
+
+  pub fn compiler_flags(&self) -> &Vec<String> {
+    self.compiler_flags.as_ref()
+  }
+
+  pub fn linker_flags(&self) -> &Vec<String> {
+    self.linker_flags.as_ref()
+  }
+
+  pub fn arch(&self) -> &Arch {
+    self.arch.as_ref()
+  }
+
+  pub fn target(&self) -> &Target {
+    self.target.as_ref()
+  }
+}
+
+impl AsRef<BuildConfig> for BuildConfig {
+  fn as_ref(&self) -> &BuildConfig {
+    &self
+  }
+}
+
+//impl Clone for BuildConfig {
+//  fn clone(&self) -> BuildConfig {
+//    *self
+//  }
+//}
 
 #[derive(Debug)]
 pub struct Dependency {

@@ -2,7 +2,7 @@ use std::fs;
 use std::io::Read;
 use std::path::{ Path, PathBuf };
 use yaml_rust::{ Yaml, YamlLoader };
-use project::{ Project, LibraryKind, ProjectKind, Arch, Target, Dependency };
+use project::{ Project, BuildConfig, LibraryKind, ProjectKind, Arch, Target, Dependency };
 use task;
 
 use hatch_error::{
@@ -22,7 +22,7 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
   }
 
   let name: String;
-  let mut version: String = String::from("0.0.1");
+  let version: String;
   let mut kind: ProjectKind = ProjectKind::Library(LibraryKind::Static);
   let mut compiler: String = String::from("g++");
   let mut compiler_flags: Vec<String> = vec![String::from("-c")];
@@ -63,8 +63,8 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
       match key {
         "kind" => {
           kind = match value {
-            "static-lib" => ProjectKind::Library(LibraryKind::Shared),
-            "shared-lib" => ProjectKind::Library(LibraryKind::Static),
+            "static-lib" => ProjectKind::Library(LibraryKind::Static),
+            "shared-lib" => ProjectKind::Library(LibraryKind::Shared),
             _ => ProjectKind::Binary
           }
         },
@@ -114,8 +114,6 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
         _ => {}
       }
     }
-
-
   } else {
     return Err(MissingBuildError)?;
   }
@@ -130,16 +128,8 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
     deps = Vec::new();
   }
 
-  Ok(Project::new(name,
-                  version,
-                  kind,
-                  compiler,
-                  compiler_flags,
-                  linker_flags,
-                  arch,
-                  target,
-                  deps,
-                  PathBuf::from(file_path)))
+  let config = BuildConfig::new(kind, compiler, compiler_flags, linker_flags, arch, target);
+  Ok(Project::new(name, version, config, deps, PathBuf::from(path)))
 }
 
 fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {

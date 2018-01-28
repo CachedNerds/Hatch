@@ -1,21 +1,40 @@
-use project::{ LibraryKind, Arch };
+use project::{ ProjectKind, LibraryKind, BuildConfig, Arch, Target };
 
 pub struct Tuprules {
+  kind: ProjectKind,
   compiler: String,
-  debug: bool,
+  compiler_flags: String,
+  linker_flags: String,
   arch: Arch,
-  compiler_version: String,
-  lib_type: LibraryKind,
+  target: Target
 }
 
 impl Tuprules {
-  pub fn new(compiler: String, debug: bool, arch: Arch, compiler_version: String, lib_type: &LibraryKind) -> Tuprules {
-    let copy_lib_type = match *lib_type {
-      LibraryKind::Static => LibraryKind::Static,
-      LibraryKind::Shared => LibraryKind::Shared
+  pub fn new(config: &BuildConfig) -> Tuprules {
+    let copy_kind = match *config.kind() {
+      ProjectKind::Binary => ProjectKind::Binary,
+      ProjectKind::Library(LibraryKind::Static) => ProjectKind::Library(LibraryKind::Static),
+      ProjectKind::Library(LibraryKind::Shared) => ProjectKind::Library(LibraryKind::Shared)
     };
 
-    Tuprules { compiler, debug, arch, compiler_version, lib_type: copy_lib_type }
+    let copy_arch = match *config.arch() {
+      Arch::X64 => Arch::X64,
+      Arch::X32 => Arch::X32
+    };
+
+    let copy_target = match *config.target() {
+      Target::Debug => Target::Debug,
+      Target::Release => Target::Release
+    };
+
+    Tuprules {
+      kind: copy_kind,
+      compiler: String::from(config.compiler()),
+      compiler_flags: config.compiler_flags().join(" "),
+      linker_flags: config.linker_flags().join(" "),
+      arch: copy_arch,
+      target: copy_target
+    }
   }
 
   pub fn name() -> String {
@@ -45,9 +64,12 @@ impl ToString for Tuprules {
     let compiler_token = format!("CC = {}", self.compiler);
     tokens.push(compiler_token);
 
-    if self.debug {
-      let debug_token = String::from("CFLAGS += -g");
-      tokens.push(debug_token);
+    match self.target {
+      Target::Debug => {
+        let debug_token = String::from("CFLAGS += -g");
+        tokens.push(debug_token);
+      },
+      _ => {}
     }
 
     let arch_flag = Tuprules::arch_flag(&self.arch);
@@ -55,24 +77,29 @@ impl ToString for Tuprules {
     tokens.push(arch_token);
 
     tokens.push(String::from("CFLAGS += $(ARCH)"));
-
-    let cflags_version = format!("CFLAGS += -std={}", self.compiler_version);
-    tokens.push(cflags_version);
-
-    tokens.push(String::from("CFLAGS += -c"));
-    tokens.push(String::from("CFLAGS += -I ../../"));
+    let compiler_flags = format!("CFLAGS += {}", self.compiler_flags);
+    tokens.push(compiler_flags);
 
     tokens.push(String::from("LINKFLAGS += $(ARCH)"));
+    let linker_flags = format!("LINKFLAGS += {}", self.linker_flags);
+    tokens.push(linker_flags);
 
-    let link_flags_type = format!(
+    match self.kind {
+      ProjectKind::Library(ref lib_kind) => {
+        let link_flags_type = format!(
 "ifneq (@(TUP_PLATFORM),macosx)
   LINKFLAGS += {}
-endif", Tuprules::type_flag(&self.lib_type));
-    tokens.push(link_flags_type);
+endif", Tuprules::type_flag(lib_kind));
+
+        tokens.push(link_flags_type);
+      },
+      ProjectKind::Binary => {
+
+      }
+    }
 
     tokens.push(String::from(
-"LINKFLAGS += -v
-SOURCE = src
+"SOURCE = src
 TARGET = target
 SOURCE_TARGET = $(TARGET)
 SOURCE_FILES = $(SOURCE)/*.cpp
