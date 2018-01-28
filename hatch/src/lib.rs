@@ -8,6 +8,7 @@ pub extern crate git2;
 #[macro_use]
 pub extern crate failure;
 pub extern crate os_info;
+pub extern crate reqwest;
 
 pub mod project;
 pub mod cli;

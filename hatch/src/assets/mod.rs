@@ -6,6 +6,8 @@ pub mod platform;
 pub mod tuprules;
 pub mod test_tupfile;
 pub mod tupfile_ini;
+pub mod catch_header;
+pub mod catch_definition;
 
 #[cfg(test)]
 mod tests;

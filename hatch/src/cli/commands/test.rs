@@ -52,13 +52,13 @@ impl<'command> Command<'command> for Test {
 
       task::generate_assets(&project)?;
 
-      println!("\nBuilding project...\n");
+      println!("Building project...\n");
 
       Build::new().execute(&project).with_context(|e| {
         format!("Failed to build project : {}", e)
       })?;
 
-      println!("\nExecuting tests...\n");
+      println!("Executing tests...\n");
 
       let test_executable_path = format!("{}test/target/{}.test", project_path.display(), project.name());
       let test_arguments = parse_test_arguments_from_cli(args);
