@@ -72,7 +72,7 @@ impl<'command> Command<'command> for Run {
         },
         _ => {
           Err(NullError).with_context(|_e| {
-          format!("Project must be a Binary project.")
+            format!("Project must be a Binary project.")
           })?
         }
       }
