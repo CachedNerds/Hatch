@@ -1,4 +1,4 @@
-use project::Project;
+use project::{ Project, Arch };
 use assets::builder::Builder as AssetBuilder;
 use std::path::Path;
 use hatch_error::{ HatchResult, ResultExt };
@@ -7,6 +7,8 @@ use assets::PlatformKind;
 use yaml;
 use os_info;
 use os_info::Type::{ Macos, Windows };
+use std::option::Option;
+use std::mem::size_of;
 
 
 pub fn read_project(path: &Path) -> HatchResult<Project> {
@@ -33,6 +35,15 @@ pub fn platform_type() -> PlatformKind {
   }
 }
 
+pub fn architecture() -> Option<Arch> {
+  match size_of::<&char>() {
+    32 => Some(Arch::X32),
+    64 => Some(Arch::X64),
+    _ => None
+  }
+}
+
 #[cfg(test)]
 mod tests {
+
 }
