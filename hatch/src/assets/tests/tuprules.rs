@@ -1,6 +1,5 @@
-use assets::Arch;
 use assets::tuprules::Tuprules;
-use project::LibraryKind;
+use project::{ ProjectKind, Arch, BuildConfig, Target, LibraryKind };
 
 #[test]
 fn build_tuprules() {
@@ -9,14 +8,12 @@ fn build_tuprules() {
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
-CFLAGS += -std=c++1z
-CFLAGS += -c
-CFLAGS += -I ../../
+CFLAGS += -c --std=c++1z
 LINKFLAGS += $(ARCH)
+LINKFLAGS += -v
 ifneq (@(TUP_PLATFORM),macosx)
   LINKFLAGS += -dynamic
 endif
-LINKFLAGS += -v
 SOURCE = src
 TARGET = target
 SOURCE_TARGET = $(TARGET)
@@ -45,7 +42,14 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let tuprules = Tuprules::new(String::from("g++"), false, Arch::X64, String::from("c++1z"), &LibraryKind::Shared);
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
+  let tuprules = Tuprules::new(&config);
 
   assert_eq!(contents, tuprules.to_string());
 }
