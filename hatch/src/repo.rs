@@ -80,4 +80,7 @@ fn clone_nested_project_deps(registry: &Path, path: &Path, visited: &mut HashSet
 
 #[cfg(test)]
 mod tests {
+  #[test]
+  fn it_works() {
+  }
 }

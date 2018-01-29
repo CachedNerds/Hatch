@@ -151,4 +151,7 @@ fn from_file(file_name: &Path) -> HatchResult<Vec<Yaml>> {
 
 #[cfg(test)]
 mod tests {
+  #[test]
+  fn it_works() {
+  }
 }

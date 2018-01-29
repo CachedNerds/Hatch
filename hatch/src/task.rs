@@ -45,5 +45,7 @@ pub fn architecture() -> Option<Arch> {
 
 #[cfg(test)]
 mod tests {
-
+  #[test]
+  fn it_works() {
+  }
 }
