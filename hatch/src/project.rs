@@ -2,7 +2,6 @@ use std::fmt;
 use std::path::PathBuf;
 use std::ffi::OsString;
 
-
 #[derive(Debug)]
 pub struct Project {
   name: String,
@@ -105,3 +104,8 @@ impl fmt::Display for Dependency {
     write!(f, "{}: {}", self.name, self.url)
   }
 }
+
+#[cfg(test)]
+mod tests {
+}
+

@@ -1,6 +1,9 @@
 pub use failure::ResultExt;
 pub use failure::Error as HatchError;
 
+#[cfg(test)]
+mod tests;
+
 pub type HatchResult<T> = Result<T, HatchError>;
 
 #[derive(Fail, Debug)]

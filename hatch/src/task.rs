@@ -32,3 +32,7 @@ pub fn platform_type() -> PlatformKind {
     _ => PlatformKind::Linux
   }
 }
+
+#[cfg(test)]
+mod tests {
+}
