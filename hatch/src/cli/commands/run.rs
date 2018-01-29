@@ -48,7 +48,7 @@ impl<'command> Command<'command> for Run {
       let project_path = self.project_path(args);
       let project = task::read_project(&project_path)?;
 
-      match *project.kind() {
+      match *project.config().kind() {
         ProjectKind::Binary => {
           println!("Generating assets...\n");
 
