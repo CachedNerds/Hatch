@@ -1,13 +1,20 @@
 use assets::builder::Builder as AssetBuilder;
 use assets::ProjectAsset;
-use project::{ Project, ProjectKind, LibraryKind };
+use project::{ Project, Arch, Target, BuildConfig, ProjectKind, LibraryKind };
 use std::path::PathBuf;
 
 #[test]
 fn build_config_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -22,9 +29,16 @@ fn build_config_asset() {
 
 #[test]
 fn build_test_tupfile_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -39,9 +53,16 @@ fn build_test_tupfile_asset() {
 
 #[test]
 fn build_tuprules_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Shared),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -53,14 +74,12 @@ fn build_tuprules_asset() {
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
-CFLAGS += -std=c++1z
-CFLAGS += -c
-CFLAGS += -I ../../
+CFLAGS += -c --std=c++1z
 LINKFLAGS += $(ARCH)
+LINKFLAGS += -v
 ifneq (@(TUP_PLATFORM),macosx)
   LINKFLAGS += -dynamic
 endif
-LINKFLAGS += -v
 SOURCE = src
 TARGET = target
 SOURCE_TARGET = $(TARGET)
@@ -95,9 +114,16 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
 #[test]
 fn build_tupfile_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -131,9 +157,16 @@ include_rules
 
 #[test]
 fn build_tupfile_ini_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -148,9 +181,16 @@ fn build_tupfile_ini_asset() {
 
 #[test]
 fn build_linux_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -165,9 +205,16 @@ fn build_linux_asset() {
 
 #[test]
 fn build_macos_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
@@ -182,9 +229,16 @@ fn build_macos_asset() {
 
 #[test]
 fn build_windows_asset() {
+  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X64,
+                                Target::Release);
+
   let project = Project::new(String::from("test"),
-                             ProjectKind::Library(LibraryKind::Static),
                              String::from("0.1.0"),
+                             config,
                              Vec::new(),
                              PathBuf::from("./"));
 
