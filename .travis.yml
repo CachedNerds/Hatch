@@ -23,7 +23,7 @@ rust:
 before_script:
   - export PATH=$HOME/.cargo/bin:$PATH
   - cargo install cargo-update || echo "cargo-update already installed"
-  - cargo install cargo-travis || echo "cargo-travis already installed"
+  - if [[ "TRAVIS_OS_NAME" == "linux" ]]; then cargo install cargo-travis || echo "cargo-travis already installed"; fi
   - cargo install-update -a # update outdated cached binaries
 
 os:
@@ -37,7 +37,7 @@ script:
       cargo test
 
 after_success:
-  - cargo coveralls
+  - if [[ "TRAVIS_OS_NAME" == "linux" ]]; then cargo coveralls; fi
 
 branches:
   # This is where pull requests from "bors r+" are built.
