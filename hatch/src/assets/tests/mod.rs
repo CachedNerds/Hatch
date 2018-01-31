@@ -5,3 +5,6 @@ mod platform;
 mod test_tupfile;
 mod tupfile;
 mod tuprules;
+mod catch_header;
+mod catch_definition;
+mod fixtures;

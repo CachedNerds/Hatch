@@ -37,7 +37,7 @@ pub fn platform_type() -> PlatformKind {
 
 pub fn architecture() -> Option<Arch> {
   match size_of::<&char>() {
-    32 => Some(Arch::X32),
+    32 => Some(Arch::X86),
     64 => Some(Arch::X64),
     _ => None
   }
