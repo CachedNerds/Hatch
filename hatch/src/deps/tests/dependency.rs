@@ -2,7 +2,9 @@ use project::Dependency;
 
 #[test]
 fn dependency_name() {
-  let dep = Dependency::new("https://github.com/CachedNerds/TestProject.git".to_owned());
+  let dep =
+    Dependency::new("https://github.com/CachedNerds/TestProject.git".to_owned());
+
   let expected_name = "TestProject";
   let actual_name = dep.name();
 
@@ -11,7 +13,9 @@ fn dependency_name() {
 
 #[test]
 fn dependency_url() {
-  let dep = Dependency::new("https://github.com/CachedNerds/TestProject.git".to_owned());
+  let dep =
+    Dependency::new("https://github.com/CachedNerds/TestProject.git".to_owned());
+
   let expected_url = "https://github.com/CachedNerds/TestProject.git";
   let actual_url = "https://github.com/CachedNerds/TestProject.git";
 
