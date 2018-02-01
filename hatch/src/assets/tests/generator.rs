@@ -31,13 +31,13 @@ fn generate_one_without_directories() {
 
 #[test]
 fn generate_one_with_directories() {
-  let test_asset = ProjectAsset::new(PathBuf::from("./test/"), String::from("test.test"), String::from("test"));
+  let test_asset = ProjectAsset::new(PathBuf::from("./foo/"), String::from("test.test"), String::from("test"));
 
   if let Err(e) = generate_one(&test_asset) {
     panic!(e);
   }
 
-  match fs::File::open("./test/test.test") {
+  match fs::File::open("./foo/test.test") {
     Ok(mut file) => {
       let mut contents = String::new();
       if let Err(e) = file.read_to_string(&mut contents) {
@@ -45,12 +45,12 @@ fn generate_one_with_directories() {
       }
     
       assert_eq!(contents, "test");
-      
-      if let Err(e) = fs::remove_file("./test/test.test") {
+
+      if let Err(e) = fs::remove_file("./foo/test.test") {
         panic!(e);
       }
 
-      if let Err(e) = fs::remove_dir("./test/") {
+      if let Err(e) = fs::remove_dir("./foo/") {
         panic!(e);
       }
     },
