@@ -15,6 +15,8 @@ use project::{ ProjectKind, Arch, BuildConfig, Target, LibraryKind };
  * (Shared,  X86, Release,        Present,      Present)
  * (Binary,  X64, Release,           None,         None)
  * (Binary,  X86,   Debug,        Present,      Present)
+ * (Binary,  X64, Release,        Present,         None)
+ * (Binary,  X86,   Debug,           None,      Present)
  */
 
 #[test]
@@ -295,6 +297,87 @@ include @(TUP_PLATFORM).tup");
   let config = BuildConfig::new(ProjectKind::Binary,
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
+                                vec![String::from("-v")],
+                                Arch::X86,
+                                Target::Debug);
+
+  let tuprules = Tuprules::new(&config);
+
+  assert_eq!(contents, tuprules.to_string());
+}
+
+#[test]
+fn build_binary_x64_release_with_cflags_without_lflags_tuprules() {
+  let contents = String::from(
+    ".gitignore
+CC = g++
+ARCH = -m64
+CFLAGS += $(ARCH)
+CFLAGS += -c --std=c++1z
+LINKFLAGS += $(ARCH)
+SOURCE = src
+TARGET = target
+SOURCE_TARGET = $(TARGET)
+SOURCE_FILES = $(SOURCE)/*.cpp
+SOURCE_OBJ_FILES = $(SOURCE_TARGET)/*.o
+
+TEST = test
+TEST_TARGET = $(TEST)/$(TARGET)
+TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
+TEST_OBJ_FILES = $(TEST_TARGET)/*.o
+
+# macros
+!compile = |> $(CC) $(CFLAGS) %f -o %o |>
+!archive = |> ar crs %o %f |>
+!link = |> $(CC) $(LINKFLAGS) %f -o %o |>
+
+# includes the STATIC and SHARED variables for the target platform
+include @(TUP_PLATFORM).tup");
+
+  let config = BuildConfig::new(ProjectKind::Binary,
+                                String::from("g++"),
+                                vec![String::from("-c"), String::from("--std=c++1z")],
+                                Vec::new(),
+                                Arch::X64,
+                                Target::Release);
+
+  let tuprules = Tuprules::new(&config);
+
+  assert_eq!(contents, tuprules.to_string());
+}
+
+#[test]
+fn build_binary_x86_debug_without_cflags_with_lflags_tuprules() {
+  let contents = String::from(
+    ".gitignore
+CC = g++
+CFLAGS += -g
+ARCH = -m32
+CFLAGS += $(ARCH)
+LINKFLAGS += $(ARCH)
+LINKFLAGS += -v
+SOURCE = src
+TARGET = target
+SOURCE_TARGET = $(TARGET)
+SOURCE_FILES = $(SOURCE)/*.cpp
+SOURCE_OBJ_FILES = $(SOURCE_TARGET)/*.o
+
+TEST = test
+TEST_TARGET = $(TEST)/$(TARGET)
+TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
+TEST_OBJ_FILES = $(TEST_TARGET)/*.o
+
+# macros
+!compile = |> $(CC) $(CFLAGS) %f -o %o |>
+!archive = |> ar crs %o %f |>
+!link = |> $(CC) $(LINKFLAGS) %f -o %o |>
+
+# includes the STATIC and SHARED variables for the target platform
+include @(TUP_PLATFORM).tup");
+
+  let config = BuildConfig::new(ProjectKind::Binary,
+                                String::from("g++"),
+                                Vec::new(),
                                 vec![String::from("-v")],
                                 Arch::X86,
                                 Target::Debug);
