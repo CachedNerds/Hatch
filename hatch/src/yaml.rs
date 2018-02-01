@@ -90,8 +90,8 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
             "x64" => {
               arch =Arch::X64
             },
-            "x32" => {
-              arch = Arch::X32
+            "x86" => {
+              arch = Arch::X86
             },
             _ => {
               // use default

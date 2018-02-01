@@ -1,22 +1,25 @@
 use assets::builder::Builder as AssetBuilder;
-use assets::ProjectAsset;
-use project::{ Project, Arch, Target, BuildConfig, ProjectKind, LibraryKind };
+use assets::{ Asset, ProjectAsset };
 use std::path::PathBuf;
+use assets::tests::fixtures;
+use project::{ ProjectKind, LibraryKind };
+
+#[test]
+fn add_asset() {
+  let mut asset_builder = AssetBuilder::new();
+  let asset = ProjectAsset::new(PathBuf::from("./"), String::from("test"), String::from("test"));
+  asset_builder.add_asset(asset);
+
+  let assets = asset_builder.assets();
+
+  assert_eq!(assets.len(), 1);
+
+  assert_eq!(assets[0].name(), "test");
+}
 
 #[test]
 fn build_config_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.config(&project);
@@ -29,18 +32,7 @@ fn build_config_asset() {
 
 #[test]
 fn build_test_tupfile_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.test_tupfile(&project);
@@ -53,18 +45,7 @@ fn build_test_tupfile_asset() {
 
 #[test]
 fn build_tuprules_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tuprules(&project);
@@ -78,21 +59,24 @@ CFLAGS += -c --std=c++1z
 LINKFLAGS += $(ARCH)
 LINKFLAGS += -v
 ifneq (@(TUP_PLATFORM),macosx)
-  LINKFLAGS += -dynamic
+  LINKFLAGS += -static
 endif
 SOURCE = src
 TARGET = target
 SOURCE_TARGET = $(TARGET)
 SOURCE_FILES = $(SOURCE)/*.cpp
 SOURCE_OBJ_FILES = $(SOURCE_TARGET)/*.o
+
 TEST = test
 TEST_TARGET = $(TEST)/$(TARGET)
 TEST_FILES = $(TEST)/$(SOURCE)/*.cpp
 TEST_OBJ_FILES = $(TEST_TARGET)/*.o
+
 # macros
 !compile = |> $(CC) $(CFLAGS) %f -o %o |>
 !archive = |> ar crs %o %f |>
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
+
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup
 ifeq ($(LIB_TYPE),static)
@@ -100,10 +84,6 @@ ifeq ($(LIB_TYPE),static)
 else
   ifeq ($(LIB_TYPE),shared)
     EXTENSION = $(SHARED)
-  else
-    ifeq ($(LIB_TYPE),both)
-      EXTENSION = both
-    endif
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
@@ -114,18 +94,7 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
 #[test]
 fn build_tupfile_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Shared));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile(&project);
@@ -134,21 +103,12 @@ fn build_tupfile_asset() {
 "include config.tup
 include_rules
 
-# override build variables
-# VARIABLE = new_value
-
-# define custom build variables
-
-# Compile Source
 : foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_TARGET)/%B.o
 
-# Archive Source
 : $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_TARGET)/$(PROJECT_LIB) <$(PROJECT)>
 
-# Compile Tests
 : foreach $(TEST_FILES) |> !compile |> $(TEST_TARGET)/%B.o
 
-# Create Link Executable
 : $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test");
   let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tupfile"), expected_contents);
 
@@ -157,18 +117,7 @@ include_rules
 
 #[test]
 fn build_tupfile_ini_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile_ini(&project);
@@ -181,18 +130,7 @@ fn build_tupfile_ini_asset() {
 
 #[test]
 fn build_linux_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.linux(&project);
@@ -205,18 +143,7 @@ fn build_linux_asset() {
 
 #[test]
 fn build_macos_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.macos(&project);
@@ -229,18 +156,7 @@ fn build_macos_asset() {
 
 #[test]
 fn build_windows_asset() {
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
-
-  let project = Project::new(String::from("test"),
-                             String::from("0.1.0"),
-                             config,
-                             Vec::new(),
-                             PathBuf::from("./"));
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.windows(&project);
@@ -253,6 +169,19 @@ CC = clang++.exe
 # Use llvm-lib for static libraries
 !archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>");
   let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("win32.tup"), expected_contents);
+
+  assert_eq!(actual_asset, expected_asset);
+}
+
+#[test]
+fn build_catch_definition() {
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+
+  let asset_builder = AssetBuilder::new();
+  let actual_asset = asset_builder.catch_definition(&project);
+
+  let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
+  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("catch.cpp"), expected_contents);
 
   assert_eq!(actual_asset, expected_asset);
 }

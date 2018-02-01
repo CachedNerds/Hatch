@@ -16,7 +16,7 @@ pub fn generate_one(asset: &ProjectAsset) -> HatchResult<()> {
 
   let contents = asset.contents();
   file.write_all(contents.as_bytes()).with_context(|e| {
-   format!("Failed to write contents to file: `{}` : {}", file_path.display(), e)
+    format!("Failed to write contents to file: `{}` : {}", file_path.display(), e)
   })?;
 
   Ok(())

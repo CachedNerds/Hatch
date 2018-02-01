@@ -99,7 +99,7 @@ impl Builder {
 
   pub fn tupfile(&self, project: &Project) -> ProjectAsset {
     let project_path = project.path();
-    let contents = Tupfile::new().to_string();
+    let contents = Tupfile::new(project.config().kind()).to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Tupfile::name(), contents)
   }
