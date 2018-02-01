@@ -1,9 +1,10 @@
 use assets::tupfile::Tupfile;
 use assets::tests::fixtures;
+use project::{ ProjectKind, LibraryKind };
 
 #[test]
 fn build_library_tupfile() {
-  let project = fixtures::library_project();
+  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
   let contents = String::from(
 "include config.tup
@@ -22,7 +23,7 @@ include_rules
 
 #[test]
 fn build_binary_tupfile() {
-  let project = fixtures::binary_project();
+  let project = fixtures::project(ProjectKind::Binary);
 
   let contents = String::from(
 "include config.tup
