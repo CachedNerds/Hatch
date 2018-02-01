@@ -50,9 +50,7 @@ fn generate_one_with_directories() {
         panic!(e);
       }
 
-      if let Err(e) = fs::remove_dir("./foo/") {
-        panic!(e);
-      }
+      fs::remove_dir("./foo/");
     },
     Err(e) => panic!(e)
   }
