@@ -6,7 +6,6 @@ use project::{ Project, LibraryKind, ProjectKind };
 use project::build::{ Target, Config };
 use deps::dependency::Dependency;
 use platform::arch::Arch;
-use task;
 
 use hatch_error::{
   HatchResult,
