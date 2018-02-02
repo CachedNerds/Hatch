@@ -17,6 +17,8 @@ pub mod yaml;
 pub mod assets;
 pub mod task;
 pub mod deps;
+pub mod platform;
+pub mod locations;
 
 #[cfg(test)]
 mod tests {
