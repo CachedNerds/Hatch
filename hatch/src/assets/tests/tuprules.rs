@@ -1,5 +1,7 @@
 use assets::tuprules::Tuprules;
-use project::{ ProjectKind, Arch, BuildConfig, Target, LibraryKind };
+use project::{ ProjectKind, LibraryKind };
+use project::build::{ Target, Config };
+use platform::arch::Arch;
 
 /**
  * These tests were created using All-Pairs testing.
@@ -59,7 +61,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
                                 vec![String::from("-v")],
@@ -110,7 +112,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Static),
+  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
                                 String::from("g++"),
                                 Vec::new(),
                                 Vec::new(),
@@ -161,7 +163,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
                                 String::from("g++"),
                                 Vec::new(),
                                 Vec::new(),
@@ -213,7 +215,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = BuildConfig::new(ProjectKind::Library(LibraryKind::Shared),
+  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
                                 vec![String::from("-v")],
@@ -252,7 +254,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = BuildConfig::new(ProjectKind::Binary,
+  let config = Config::new(ProjectKind::Binary,
                                 String::from("g++"),
                                 Vec::new(),
                                 Vec::new(),
@@ -294,7 +296,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = BuildConfig::new(ProjectKind::Binary,
+  let config = Config::new(ProjectKind::Binary,
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
                                 vec![String::from("-v")],
@@ -334,7 +336,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = BuildConfig::new(ProjectKind::Binary,
+  let config = Config::new(ProjectKind::Binary,
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
                                 Vec::new(),
@@ -375,7 +377,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = BuildConfig::new(ProjectKind::Binary,
+  let config = Config::new(ProjectKind::Binary,
                                 String::from("g++"),
                                 Vec::new(),
                                 vec![String::from("-v")],

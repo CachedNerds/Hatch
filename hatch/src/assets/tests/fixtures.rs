@@ -1,8 +1,10 @@
-use project::{ Project, Arch, Target, BuildConfig, ProjectKind };
+use project::{ Project, ProjectKind };
+use project::build::{ Config, Target };
+use platform::arch::Arch;
 use std::path::PathBuf;
 
 pub fn project(kind: ProjectKind) -> Project {
-  let config = BuildConfig::new(kind,
+  let config = Config::new(kind,
                                 String::from("g++"),
                                 vec![String::from("-c"), String::from("--std=c++1z")],
                                 vec![String::from("-v")],

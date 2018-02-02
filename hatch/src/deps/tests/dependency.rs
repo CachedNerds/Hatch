@@ -1,4 +1,4 @@
-use project::Dependency;
+use deps::dependency::Dependency;
 
 #[test]
 fn dependency_name() {
