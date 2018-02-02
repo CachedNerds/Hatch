@@ -1,22 +1,16 @@
 #[cfg(test)]
 mod tests;
 
+pub mod dependency;
 
 use hatch_error::HatchResult;
 use git2::Repository;
 use std::collections::HashSet;
-use project::Dependency;
 use std::fs;
-use std::path::{ Path, PathBuf };
+use std::path::Path;
 use task;
-
-pub fn modules_path(base: &Path) -> PathBuf {
-  base.join("hatch_modules")
-}
-
-pub fn hatchfile_path(base: &Path) -> PathBuf {
-  base.join("Hatch.yml")
-}
+use self::dependency::Dependency;
+use locations::hatchfile_path;
 
 pub fn clone_dep(url: &str, path: &Path) {
   Repository::clone(url, path);
