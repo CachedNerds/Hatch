@@ -17,7 +17,7 @@ fn dependency_url() {
     Dependency::new("https://github.com/CachedNerds/TestProject.git".to_owned());
 
   let expected_url = "https://github.com/CachedNerds/TestProject.git";
-  let actual_url = "https://github.com/CachedNerds/TestProject.git";
+  let actual_url = dep.url();
 
   assert_eq!(expected_url, actual_url); 
 }
