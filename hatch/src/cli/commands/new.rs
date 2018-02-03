@@ -1,8 +1,12 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
-use repo::{ modules_path, hatchfile_path, clone_project_deps };
-use project::{ Project, BuildConfig, ProjectKind, LibraryKind, Arch, Target, Dependency };
+use deps::clone_project_deps;
+use project::{ Project, ProjectKind, LibraryKind };
+use project::build::{ Target, Config };
+use platform::arch::Arch;
+use deps::dependency::Dependency;
+use locations::{ hatchfile_path, modules_path };
 use hatch_error::{ HatchResult, ResultExt };
 use task;
 
@@ -41,11 +45,11 @@ impl<'new> New {
     }
   }
 
-  fn construct_deps_string(&self, deps: &Vec<Dependency>) -> String {
-    if deps.is_empty() {
+  fn construct_deps_string(&self, project_deps: &Vec<Dependency>) -> String {
+    if project_deps.is_empty() {
       String::new()
     } else {
-      String::from("deps:\n") + deps.iter().map(|d| {
+      String::from("deps:\n") + project_deps.iter().map(|d| {
         format!("  {}: {}\n", d.name(), d.url())
       }).collect::<String>().as_str()
     }
@@ -54,7 +58,7 @@ impl<'new> New {
   fn hatch_yml_contents(&self,
                         name: &str,
                         version: &str,
-                        config: &BuildConfig,
+                        config: &Config,
                         includes: &str) -> String
   {
     let mut yaml_output = String::new();
@@ -139,26 +143,26 @@ impl<'command> Command<'command> for New {
       fs::create_dir_all(dir_path.join("test").join("src"))?;
       fs::create_dir(dir_path.join("test").join("target"))?;
 
-      let deps = deps_from_cli.into_iter().map(|repo| {
+      let project_deps = deps_from_cli.into_iter().map(|repo| {
         Dependency::new(repo)
       }).collect::<Vec<_>>();
 
-      if !deps.is_empty() {
-        clone_project_deps(modules_path(&dir_path).as_path(), &deps)?;
+      if !project_deps.is_empty() {
+        clone_project_deps(modules_path(&dir_path).as_path(), &project_deps)?;
       }
 
-      let includes = self.construct_deps_string(&deps);
+      let includes = self.construct_deps_string(&project_deps);
 
       let compiler: String = String::from("g++");
       let compiler_flags: Vec<String> = vec![String::from("-c")];
       let linker_flags: Vec<String> = vec![String::from("-v")];
       let mut arch: Arch = Arch::X64;
-      if let Some(architecture) = task::architecture() {
+      if let Some(architecture) = Arch::architecture() {
         arch = architecture;
       }
       let target: Target = Target::Debug;
 
-      let config = BuildConfig::new(kind, compiler, compiler_flags, linker_flags, arch, target);
+      let config = Config::new(kind, compiler, compiler_flags, linker_flags, arch, target);
 
       let yaml_output = self.hatch_yml_contents(&name,
                                                 &version,
@@ -171,7 +175,7 @@ impl<'command> Command<'command> for New {
       let project = Project::new(name,
                                  version,
                                  config,
-                                 deps,
+                                 project_deps,
                                  dir_path.to_owned());
       task::generate_assets(&project)?;
 

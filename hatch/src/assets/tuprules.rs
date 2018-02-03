@@ -1,4 +1,6 @@
-use project::{ ProjectKind, LibraryKind, BuildConfig, Arch, Target };
+use project::{ ProjectKind, LibraryKind };
+use project::build::{ Config, Target };
+use platform::arch::Arch;
 
 pub struct Tuprules {
   kind: ProjectKind,
@@ -10,7 +12,7 @@ pub struct Tuprules {
 }
 
 impl Tuprules {
-  pub fn new(config: &BuildConfig) -> Tuprules {
+  pub fn new(config: &Config) -> Tuprules {
     let copy_kind = match *config.kind() {
       ProjectKind::Binary => ProjectKind::Binary,
       ProjectKind::Library(LibraryKind::Static) => ProjectKind::Library(LibraryKind::Static),

@@ -16,7 +16,9 @@ pub mod hatch_error;
 pub mod yaml;
 pub mod assets;
 pub mod task;
-pub mod repo;
+pub mod deps;
+pub mod platform;
+pub mod locations;
 
 #[cfg(test)]
 mod tests {

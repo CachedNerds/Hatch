@@ -2,8 +2,10 @@ use std::fs;
 use std::io::Read;
 use std::path::{ Path, PathBuf };
 use yaml_rust::{ Yaml, YamlLoader };
-use project::{ Project, BuildConfig, LibraryKind, ProjectKind, Arch, Target, Dependency };
-use task;
+use project::{ Project, LibraryKind, ProjectKind };
+use project::build::{ Target, Config };
+use deps::dependency::Dependency;
+use platform::arch::Arch;
 
 use hatch_error::{
   HatchResult,
@@ -28,7 +30,7 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
   let mut compiler_flags: Vec<String> = vec![String::from("-c")];
   let mut linker_flags: Vec<String> = vec![String::from("-v")];
   let mut arch: Arch = Arch::X64;
-  if let Some(architecture) = task::architecture() {
+  if let Some(architecture) = Arch::architecture() {
     arch = architecture;
   }
   let mut target: Target = Target::Debug;
@@ -128,7 +130,7 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
     deps = Vec::new();
   }
 
-  let config = BuildConfig::new(kind, compiler, compiler_flags, linker_flags, arch, target);
+  let config = Config::new(kind, compiler, compiler_flags, linker_flags, arch, target);
   Ok(Project::new(name, version, config, deps, PathBuf::from(path)))
 }
 
