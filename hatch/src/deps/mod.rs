@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests;
 
-
 use hatch_error::HatchResult;
 use git2::Repository;
 use std::collections::HashSet;
