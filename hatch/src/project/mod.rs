@@ -72,5 +72,3 @@ impl fmt::Display for ProjectKind {
     }
   }
 }
-
-
