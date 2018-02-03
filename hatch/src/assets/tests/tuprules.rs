@@ -61,12 +61,13 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X64,
-                                Target::Release);
+  let config = Config::new(
+                            ProjectKind::Library(LibraryKind::Static),
+                            String::from("g++"),
+                            vec![String::from("-c"), String::from("--std=c++1z")],
+                            vec![String::from("-v")],
+                            Arch::X64,
+                            Target::Release);
 
   let tuprules = Tuprules::new(&config);
 
@@ -111,13 +112,13 @@ else
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
-                                String::from("g++"),
-                                Vec::new(),
-                                Vec::new(),
-                                Arch::X86,
-                                Target::Debug);
+  let config = Config::new(
+                            ProjectKind::Library(LibraryKind::Static),
+                            String::from("g++"),
+                            Vec::new(),
+                            Vec::new(),
+                            Arch::X86,
+                            Target::Debug); 
 
   let tuprules = Tuprules::new(&config);
 
@@ -163,12 +164,13 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                Vec::new(),
-                                Vec::new(),
-                                Arch::X64,
-                                Target::Debug);
+  let config = Config::new(
+                            ProjectKind::Library(LibraryKind::Shared),
+                            String::from("g++"),
+                            Vec::new(),
+                            Vec::new(),
+                            Arch::X64,
+                            Target::Debug);
 
   let tuprules = Tuprules::new(&config);
 
@@ -215,12 +217,13 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X86,
-                                Target::Release);
+  let config = Config::new(
+                            ProjectKind::Library(LibraryKind::Shared),
+                            String::from("g++"),
+                            vec![String::from("-c"), String::from("--std=c++1z")],
+                            vec![String::from("-v")],
+                            Arch::X86,
+                            Target::Release);
 
   let tuprules = Tuprules::new(&config);
 
@@ -254,12 +257,13 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = Config::new(ProjectKind::Binary,
-                                String::from("g++"),
-                                Vec::new(),
-                                Vec::new(),
-                                Arch::X64,
-                                Target::Release);
+  let config = Config::new(
+                            ProjectKind::Binary,
+                            String::from("g++"),
+                            Vec::new(),
+                            Vec::new(),
+                            Arch::X64,
+                            Target::Release);
 
   let tuprules = Tuprules::new(&config);
 
@@ -296,12 +300,12 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = Config::new(ProjectKind::Binary,
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                vec![String::from("-v")],
-                                Arch::X86,
-                                Target::Debug);
+  let config = Config::new(
+                            ProjectKind::Binary, String::from("g++"),
+                            vec![String::from("-c"), String::from("--std=c++1z")],
+                            vec![String::from("-v")],
+                            Arch::X86,
+                            Target::Debug);
 
   let tuprules = Tuprules::new(&config);
 
@@ -336,12 +340,13 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = Config::new(ProjectKind::Binary,
-                                String::from("g++"),
-                                vec![String::from("-c"), String::from("--std=c++1z")],
-                                Vec::new(),
-                                Arch::X64,
-                                Target::Release);
+  let config = Config::new(
+                            ProjectKind::Binary,
+                            String::from("g++"),
+                            vec![String::from("-c"), String::from("--std=c++1z")],
+                            Vec::new(),
+                            Arch::X64,
+                            Target::Release);
 
   let tuprules = Tuprules::new(&config);
 
@@ -377,12 +382,13 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 # includes the STATIC and SHARED variables for the target platform
 include @(TUP_PLATFORM).tup");
 
-  let config = Config::new(ProjectKind::Binary,
-                                String::from("g++"),
-                                Vec::new(),
-                                vec![String::from("-v")],
-                                Arch::X86,
-                                Target::Debug);
+  let config = Config::new(
+                            ProjectKind::Binary,
+                            String::from("g++"),
+                            Vec::new(),
+                            vec![String::from("-v")],
+                            Arch::X86,
+                            Target::Debug);
 
   let tuprules = Tuprules::new(&config);
 
