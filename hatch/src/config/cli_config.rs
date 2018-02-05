@@ -14,7 +14,7 @@ impl<'loader> CliConfigLoader<'loader> {
 }
 
 impl<'config> ConfigLoader for CliConfigLoader<'config> {
-  pub fn getConfig(&self, subcommand: String) -> HashMap<String, String> {
+  fn getConfig(&self, subcommand: &str) -> HashMap<String, String> {
     // parse the arguments from self.args for the specified subcommand into a
     // hashmap
     HashMap::new()
