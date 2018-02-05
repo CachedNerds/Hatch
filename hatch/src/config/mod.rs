@@ -1,5 +1,6 @@
 pub mod env_config;
 pub mod file_config;
+pub mod cli_config;
 
 use std::collections::HashMap;
 use std::path::Path;
