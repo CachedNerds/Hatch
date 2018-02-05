@@ -13,7 +13,7 @@ impl EnvironmentVariableConfigLoader {
   }
 }
 
-impl Config for EnvironmentVariableConfigLoader {
+impl ConfigLoader for EnvironmentVariableConfigLoader {
   pub fn getConfig(&self, file: String) -> HashMap<String, String> {
     self.getConfigImpl(env::var(self.var), file)
   }
@@ -22,5 +22,6 @@ impl Config for EnvironmentVariableConfigLoader {
 impl ConfigFileLoader for EnvironmentVariableConfigLoader {
   fn getConfigImpl(&self, path: String, file: String) -> HashMap<String, String> {
     // parse config file at path.join(file) into hashmap
-  }  
+    HashMap::new()
+  }
 }
