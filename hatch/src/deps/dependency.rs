@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use std::ffi::OsString;
+use std::ffi::OsStr;
 use std::fmt;
 
 #[derive(Debug)]
@@ -11,15 +11,9 @@ pub struct Dependency {
 impl Dependency {
   pub fn new(url: String) -> Dependency {
     Dependency {
-      name: PathBuf::from(OsString::from(url.clone()))
-        .components()
-        .last()
-        .unwrap()
-        .as_os_str()
-        .to_string_lossy()
-        .into_owned()
-        .as_str()
-        .replace(".git", ""),
+      name: (|u: &OsStr| -> String {
+        String::from(u.to_string_lossy())[..].replace(".git", "")
+      })(PathBuf::from(url.clone()).iter().last().unwrap()),
       url,
     }
   }
