@@ -1,26 +1,30 @@
 use config::{ ConfigLoader, ConfigFileLoader };
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{ Path, PathBuf };
 use std::env;
 
 pub struct EnvironmentVariableConfigLoader {
-  var: Path
+  var: String
 }
 
 impl EnvironmentVariableConfigLoader {
-  pub fn new(var: Path) -> EnvironmentVariableConfigLoader {
-    EnvironmentVariableConfigLoader { var }
+  pub fn new(var: &str) -> EnvironmentVariableConfigLoader {
+    EnvironmentVariableConfigLoader { var: var.to_owned() }
   }
 }
 
 impl ConfigLoader for EnvironmentVariableConfigLoader {
-  pub fn getConfig(&self, file: String) -> HashMap<String, String> {
-    self.getConfigImpl(env::var(self.var), file)
+  fn getConfig(&self, file: &str) -> HashMap<String, String> {
+    if let Ok(ev) = env::var(self.var.as_ref() as &str) {
+      self.getConfigImpl(&PathBuf::from(ev), file)
+    } else {
+      panic!("better death tbd, operation failed");
+    }
   }
 }
 
 impl ConfigFileLoader for EnvironmentVariableConfigLoader {
-  fn getConfigImpl(&self, path: String, file: String) -> HashMap<String, String> {
+  fn getConfigImpl(&self, path: &Path, file: &str) -> HashMap<String, String> {
     // parse config file at path.join(file) into hashmap
     HashMap::new()
   }
