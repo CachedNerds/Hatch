@@ -12,7 +12,7 @@ impl FileConfigLoader {
   }
 }
 
-impl Config for FileConfigLoader {
+impl ConfigLoader for FileConfigLoader {
   pub fn getConfig(&self, file: String) -> HashMap<String, String> {
     self.getConfigImpl(self.file_path, file)
   }
@@ -21,5 +21,6 @@ impl Config for FileConfigLoader {
 impl ConfigFileLoader for FileConfigLoader {
   fn getConfigImpl(&self, path: String, file: String) -> HashMap<String, String> {
     // parse config file at path.join(file) into hashmap
+    HashMap::new()
   }
 }
