@@ -20,6 +20,7 @@ pub mod deps;
 pub mod platform;
 pub mod locations;
 pub mod config;
+pub mod visitor;
 
 #[cfg(test)]
 mod tests {
