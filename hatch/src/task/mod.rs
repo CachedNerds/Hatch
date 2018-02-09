@@ -1,3 +1,6 @@
+#[cfg(test)]
+pub mod tests;
+
 use project::Project;
 use assets::builder::Builder as AssetBuilder;
 use std::path::Path;
