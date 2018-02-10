@@ -1,6 +1,7 @@
 use hatch_error::{ HatchResult, ResultExt, InvalidPathError };
 use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
+use platform::os;
 use project::Project;
 use assets::PlatformKind;
 use task;
@@ -22,7 +23,7 @@ impl<'build> Build {
       let command = format!("cd {} && tup", path);
       let mut shell: String;
       let mut args: Vec<String>;
-      match task::platform_type() {
+      match os::platform_type() {
         PlatformKind::Windows => {
           shell = String::from("cmd");
           args = vec![String::from("/C"), command];
