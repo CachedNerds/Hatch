@@ -13,15 +13,15 @@
 <table>
   <tr>
     <th >Master</th>
-    <th align="center">[![Travis Build][1]][2]</th>
-    <th align="center">[![Appveyor Build][3]][4]</th>
-    <th align="center">[![Coverage Status][5]][6]</th>
+    <th align="center"><a href="https://travis-ci.org/CachedNerds/Hatch"><img src="https://travis-ci.org/CachedNerds/Hatch.svg?branch=master"></a></th>
+    <th align="center"><a href="https://ci.appveyor.com/project/DannyPeck/hatch/branch/master"><img src="https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/master?svg=true"></a></th>
+    <th align="center"><a href="https://coveralls.io/repos/github/CachedNerds/Hatch/badge.svg?branch=master"><img src="https://coveralls.io/repos/github/CachedNerds/Hatch/badge.svg?branch=master"></a></th>
   </tr>
   <tr>
-    <th >Dev</th>
-    <th align="center">[![Travis Build][7]][8]</th>
-    <th align="center">[![Appveyor Build][9]][10]</th>
-    <th align="center">[![Coverage Status][11]][12]</th>
+    <th >Dev</a></th>
+    <th align="center"><a href="https://travis-ci.org/CachedNerds/Hatch"><img src="https://travis-ci.org/CachedNerds/Hatch.svg?branch=dev"></a></th>
+    <th align="center"><a href="https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/dev?svg=true"><img src="https://ci.appveyor.com/api/projects/status/ca0p5xwqjva7w6b2/branch/dev?svg=true"></a></th>
+    <th align="center"><a href="https://coveralls.io/repos/github/CachedNerds/Hatch/badge.svg?branch=dev"><img src="https://coveralls.io/repos/github/CachedNerds/Hatch/badge.svg?branch=dev"></a></th>
   </tr>
 </table>
 </div>
