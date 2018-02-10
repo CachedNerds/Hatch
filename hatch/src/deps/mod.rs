@@ -81,10 +81,3 @@ fn clone_nested_project_deps(registry: &Path,
   }
   Ok(true)
 }
-
-#[cfg(test)]
-mod tests {
-  #[test]
-  fn it_works() {
-  }
-}
