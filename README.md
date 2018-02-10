@@ -20,7 +20,7 @@
 </table>
 </div>
 
-[![license](https://img.shields.io/github/license/CachedNerds/Hatch.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+<p align="center"><a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/CachedNerds/Hatch.svg"></a></p>
 
 # [Workflow Standards](https://github.com/CachedNerds/Hatch/blob/master/WORKFLOW.md)
 
