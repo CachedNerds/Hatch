@@ -21,22 +21,6 @@ pub fn generate_assets(project: &Project) -> HatchResult<()> {
   Ok(())
 }
 
-pub fn platform_type() -> PlatformKind {
-  match *os_info::get().os_type() {
-    Macos => PlatformKind::MacOS,
-    Windows => PlatformKind::Windows,
-    _ => PlatformKind::Linux
-  }
-}
-
-pub fn architecture() -> Option<Arch> {
-  match size_of::<&char>() {
-    32 => Some(Arch::X32),
-    64 => Some(Arch::X64),
-    _ => None
-  }
-}
-
 #[cfg(test)]
 mod tests {
   #[test]
