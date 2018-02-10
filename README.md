@@ -9,7 +9,8 @@
 | **Dev** | [![Travis Build][7]][8] | [![Appveyor Build][9]][10] | [![Coverage Status][11]][12] |
 
 
-<table align="center" style="display: table; width: auto;">
+<div align="center">
+<table>
   <tr>
     <th >Master</th>
     <th align="center">[![Travis Build][1]][2]</th>
@@ -23,6 +24,7 @@
     <th align="center">[![Coverage Status][11]][12]</th>
   </tr>
 </table>
+</div>
 
 [![license](https://img.shields.io/github/license/CachedNerds/Hatch.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
