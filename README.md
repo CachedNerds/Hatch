@@ -8,6 +8,22 @@
 |---------|:-----------------------:|:--------------------------:|:----------------------------:|
 | **Dev** | [![Travis Build][7]][8] | [![Appveyor Build][9]][10] | [![Coverage Status][11]][12] |
 
+
+<table align="center">
+  <tr>
+    <th >Master</th>
+    <th align="center">[![Travis Build][1]][2]</th>
+    <th align="center">[![Appveyor Build][3]][4]</th>
+    <th align="center">[![Coverage Status][5]][6]</th>
+  </tr>
+  <tr>
+    <th >Dev</th>
+    <th align="center">[![Travis Build][7]][8]</th>
+    <th align="center">[![Appveyor Build][9]][10]</th>
+    <th align="center">[![Coverage Status][11]][12]</th>
+  </tr>
+</table>
+
 [![license](https://img.shields.io/github/license/CachedNerds/Hatch.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # [Workflow Standards](https://github.com/CachedNerds/Hatch/blob/master/WORKFLOW.md)
