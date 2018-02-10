@@ -9,7 +9,7 @@ use assets::catch_header::CatchHeader;
 use assets::catch_definition::CatchDefinition;
 use hatch_error::{ HatchResult, ResultExt, NullError };
 use project::Project;
-use task;
+use platform::os;
 use reqwest;
 
 static CATCH_HEADER_URL: &str = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";
@@ -32,7 +32,7 @@ impl Builder {
     builder.project(&TupKind::Tupfile, project);
     builder.project(&TupKind::TupfileIni, project);
 
-    let platform_type = task::platform_type();
+    let platform_type = os::platform_type();
     builder.platform(&platform_type, project);
 
     if let Ok(catch_header) = builder.catch_header(project) {
@@ -99,7 +99,7 @@ impl Builder {
 
   pub fn tupfile(&self, project: &Project) -> ProjectAsset {
     let project_path = project.path();
-    let contents = Tupfile::new().to_string();
+    let contents = Tupfile::new(project.config().kind()).to_string();
 
     ProjectAsset::new(project_path.to_path_buf(), Tupfile::name(), contents)
   }

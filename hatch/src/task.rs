@@ -1,15 +1,9 @@
-use project::{ Project, Arch };
+use project::Project;
 use assets::builder::Builder as AssetBuilder;
 use std::path::Path;
 use hatch_error::{ HatchResult, ResultExt };
 use assets::generator;
-use assets::PlatformKind;
 use yaml;
-use os_info;
-use os_info::Type::{ Macos, Windows };
-use std::option::Option;
-use std::mem::size_of;
-
 
 pub fn read_project(path: &Path) -> HatchResult<Project> {
   let project = yaml::parse(path, String::from("Hatch.yml")).with_context(|e| {
