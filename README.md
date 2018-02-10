@@ -9,7 +9,7 @@
 | **Dev** | [![Travis Build][7]][8] | [![Appveyor Build][9]][10] | [![Coverage Status][11]][12] |
 
 
-<table align="center">
+<table align="center" style="display: table; width: auto;">
   <tr>
     <th >Master</th>
     <th align="center">[![Travis Build][1]][2]</th>
