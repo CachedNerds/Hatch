@@ -3,13 +3,10 @@
 <h1 align="center">Hatch</h1>
 <p align="center">The project manager for CachedNerds/Toolbox et;al</p>
 
-<center>
 
 | Master  | [![Travis Build][1]][2] | [![Appveyor Build][3]][4]  | [![Coverage Status][5]][6]   |
-|---------|-------------------------|----------------------------|------------------------------|
+|---------|:-----------------------:|:--------------------------:|:----------------------------:|
 | **Dev** | [![Travis Build][7]][8] | [![Appveyor Build][9]][10] | [![Coverage Status][11]][12] |
-
-</center>
 
 [![license](https://img.shields.io/github/license/CachedNerds/Hatch.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
