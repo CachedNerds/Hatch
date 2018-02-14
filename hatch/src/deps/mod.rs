@@ -85,7 +85,6 @@ fn clone_nested_project_deps(registry: &Path,
         return Ok(true);
       },
       Ok(current_project) => {
-
         if !visited.contains(&current_project.name().to_owned()) {
           current_project.deps().iter().for_each(|dep| {
             clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
