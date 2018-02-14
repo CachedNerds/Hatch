@@ -11,13 +11,17 @@ pub struct Dependency {
 impl Dependency {
   pub fn new(url: String) -> Dependency {
     Dependency {
-      name: (|u: &OsStr| -> String {
-        String::from(u.to_string_lossy())[..].replace(".git", "")
-      })(PathBuf::from(url.clone()).iter().last().unwrap()),
+      name: Dependency::extract_name(url.clone()),
       url,
     }
   }
 
+  fn extract_name(url: String) -> String {
+    let url_path = PathBuf::from(url);
+    let last_element = url_path.iter().last().unwrap();
+    (last_element.as_ref() as &OsStr).to_string_lossy()[..].replace(".git", "")
+  }
+  
   pub fn name(&self) -> &str {
     self.name.as_ref()
   }
