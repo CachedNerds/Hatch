@@ -64,6 +64,19 @@ impl<'new> New {
     }
   }
 
+  fn construct_config(&self, kind: ProjectKind) -> Config {
+    let compiler: String = String::from("g++");
+    let compiler_flags: Vec<String> = vec![String::from("-c")];
+    let linker_flags: Vec<String> = vec![String::from("-v")];
+    let mut arch: Arch = Arch::X64;
+    if let Some(architecture) = Arch::architecture() {
+      arch = architecture;
+    }
+    let target: Target = Target::Debug;
+
+    Config::new(kind, compiler, compiler_flags, linker_flags, arch, target)
+  }
+
   fn hatch_yml_contents(&self,
                         name: &str,
                         version: &str,
@@ -139,11 +152,11 @@ impl<'command> Command<'command> for New {
     let deps_from_cli = parse_deps_from_cli(args);
     
     let res = (|| -> HatchResult<()> {
-      // create directory for new project
-      fs::create_dir(&dir_path)?;
-      // create the hatch_modules directory inside the project directory
-      fs::create_dir(modules_path(&dir_path))?;
+      println!("Creating directory structure...");
 
+      // create the hatch project file structure
+      fs::create_dir(&dir_path)?;
+      fs::create_dir(modules_path(&dir_path))?;
       fs::create_dir(dir_path.join("src"))?;
       fs::create_dir(dir_path.join("target"))?;
       fs::create_dir_all(dir_path.join("test").join("src"))?;
@@ -154,27 +167,18 @@ impl<'command> Command<'command> for New {
       }).collect::<Vec<_>>();
 
       if !project_deps.is_empty() {
+        println!("Installing project dependencies...");
         clone_project_deps(modules_path(&dir_path).as_path(), &project_deps)?;
       }
 
       let includes = self.construct_deps_string(&project_deps);
-
-      let compiler: String = String::from("g++");
-      let compiler_flags: Vec<String> = vec![String::from("-c")];
-      let linker_flags: Vec<String> = vec![String::from("-v")];
-      let mut arch: Arch = Arch::X64;
-      if let Some(architecture) = Arch::architecture() {
-        arch = architecture;
-      }
-      let target: Target = Target::Debug;
-
-      let config = Config::new(kind, compiler, compiler_flags, linker_flags, arch, target);
-
+      let config = self.construct_config(kind);
       let yaml_output = self.hatch_yml_contents(&name,
                                                 &version,
                                                 config.as_ref(),
                                                 &includes);
 
+      println!("Creating Hatch.yml file...");
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
@@ -183,12 +187,17 @@ impl<'command> Command<'command> for New {
                                  config,
                                  project_deps,
                                  dir_path.to_owned());
+
+      println!("Generating assets...");
       task::generate_assets(&project)?;
+
+      println!("Finished");
 
       Ok(())
     })().with_context(|e| {
       format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;
+
     Ok(res)
   }
 }
