@@ -19,7 +19,7 @@ impl Dependency {
   fn extract_name(url: String) -> String {
     let url_path = PathBuf::from(url);
     let last_element = url_path.iter().last().unwrap();
-    (last_element.as_ref() as &OsStr).to_string_lossy()[..].replace(".git", "")
+    last_element.to_string_lossy()[..].replace(".git", "")
   }
   
   pub fn name(&self) -> &str {
