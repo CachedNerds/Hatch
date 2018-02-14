@@ -14,7 +14,7 @@ use task;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAME };
+use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, PROJECT_NAME };
 
 pub struct New {
   name: &'static str,
@@ -36,12 +36,21 @@ impl<'new> New {
   }
 
   fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
-    if args.is_present(BIN) {
-      ProjectKind::Binary
-    } else if args.is_present(STATIC) {
-      ProjectKind::Library(LibraryKind::Static)
+    if args.is_present(TYPE) {
+      let type_arg: String = value_t!(args, TYPE, String).unwrap();
+
+      // we cannot use the static variables BIN, STATIC, or SHARED because it is illegal in Rust
+      // to pattern match on a static value
+      let kind = match type_arg.as_ref() {
+        "bin" => ProjectKind::Binary,
+        "static" => ProjectKind::Library(LibraryKind::Static),
+        "shared" => ProjectKind::Library(LibraryKind::Shared),
+        _ => ProjectKind::Library(LibraryKind::Static),
+      };
+
+      kind
     } else {
-      ProjectKind::Library(LibraryKind::Shared)
+      ProjectKind::Library(LibraryKind::Static)
     }
   }
 
@@ -90,22 +99,19 @@ build:
 impl<'command> Command<'command> for New {
   fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
-      .about("Creates a new project. (default = shared library)")
+      .about("Creates a new project. (default = static library)")
 
       .arg(Arg::with_name(PROJECT_NAME)
            .help("Name of project")
            .takes_value(true)
            .required(true))
 
-      .arg(Arg::with_name(BIN)
-           .help("Generate a stand alone executable")
-           .long("bin").short("b")
-           .required(false)) 
-
-      .arg(Arg::with_name(STATIC)
-           .help("Generate a static library")
-           .long("static").short("s").conflicts_with("bin")
-           .required(false))
+      .arg(Arg::with_name(TYPE)
+           .help("Determines the type of the project")
+           .long("type").short("t")
+           .takes_value(true)
+           .possible_values(&[BIN, STATIC, SHARED])
+           .required(true))
 
       .arg(Arg::with_name(VERSION)
            .help("Set the project version")
