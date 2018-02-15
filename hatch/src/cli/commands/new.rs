@@ -39,16 +39,14 @@ impl<'new> New {
     if args.is_present(TYPE) {
       let type_arg: String = value_t!(args, TYPE, String).unwrap();
 
-      // we cannot use the static variables BIN, STATIC, or SHARED because it is illegal in Rust
-      // to pattern match on a static value
-      let kind = match type_arg.as_ref() {
-        "bin" => ProjectKind::Binary,
-        "static" => ProjectKind::Library(LibraryKind::Static),
-        "shared" => ProjectKind::Library(LibraryKind::Shared),
-        _ => ProjectKind::Library(LibraryKind::Static),
-      };
-
-      kind
+      // we cannot use the static variables BIN, STATIC, or SHARED directly because it is illegal in
+      // Rust to pattern match on a static variable
+      match type_arg.as_str() {
+        value if (value == BIN) => ProjectKind::Binary,
+        value if (value == STATIC) => ProjectKind::Library(LibraryKind::Static),
+        value if (value == SHARED) => ProjectKind::Library(LibraryKind::Shared),
+        _ => ProjectKind::Library(LibraryKind::Static)
+      }
     } else {
       ProjectKind::Library(LibraryKind::Static)
     }
