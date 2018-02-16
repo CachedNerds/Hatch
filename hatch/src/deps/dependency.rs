@@ -11,15 +11,19 @@ pub struct Dependency {
 impl Dependency {
   pub fn new(url: String) -> Dependency {
     Dependency {
-      name: Dependency::extract_name(url.clone()),
+      name: Dependency::without_dot_git(Dependency::extract_name(url.clone())),
       url,
     }
+  }
+
+  fn without_dot_git(name: String) -> String {
+    name[..].replace(".git", "")
   }
 
   fn extract_name(url: String) -> String {
     let url_path = PathBuf::from(url);
     let last_element = url_path.iter().last().unwrap();
-    last_element.to_string_lossy()[..].replace(".git", "")
+    last_element.to_string_lossy().into()
   }
   
   pub fn name(&self) -> &str {
