@@ -60,7 +60,7 @@ pub fn clone_project_deps(path: &Path,
     let hatchfile = hatchfile_path(dir);
 
     if hatchfile.exists() {
-      return clone_nested_project_deps(&registry, &dir, &mut errored, &mut visited);
+      clone_nested_project_deps(&registry, &dir, &mut errored, &mut visited);
     }
     Ok(true)
   })?;
@@ -77,21 +77,19 @@ pub fn clone_project_deps(path: &Path,
 fn clone_nested_project_deps(registry: &Path,
                              path: &Path,
                              errored: &mut Vec<HatchError>,
-                             visited: &mut HashSet<String>) -> HatchResult<bool>
+                             visited: &mut HashSet<String>)
 {
-    match task::read_project(path) {
-      Err(e) => {
-        errored.push(e);
-        return Ok(true);
-      },
-      Ok(current_project) => {
-        if !visited.contains(&current_project.name().to_owned()) {
-          current_project.deps().iter().for_each(|dep| {
-            clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-          });
-          let _ = visited.insert(current_project.name().to_owned());
-        }
+  match task::read_project(path) {
+    Err(e) => {
+      errored.push(e);
+    },
+    Ok(current_project) => {
+      if !visited.contains(&current_project.name().to_owned()) {
+        current_project.deps().iter().for_each(|dep| {
+          clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+        });
+        let _ = visited.insert(current_project.name().to_owned());
       }
     }
-    Ok(true)
+  }
 }
