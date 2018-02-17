@@ -42,9 +42,9 @@ impl<'new> New {
       // we cannot use the static variables BIN, STATIC, or SHARED directly because it is illegal in
       // Rust to pattern match on a static variable
       match type_arg.as_str() {
-        value if (value == BIN) => ProjectKind::Binary,
-        value if (value == STATIC) => ProjectKind::Library(LibraryKind::Static),
-        value if (value == SHARED) => ProjectKind::Library(LibraryKind::Shared),
+        arg if arg == BIN => ProjectKind::Binary,
+        arg if arg == STATIC => ProjectKind::Library(LibraryKind::Static),
+        arg if arg == SHARED => ProjectKind::Library(LibraryKind::Shared),
         _ => ProjectKind::Library(LibraryKind::Static)
       }
     } else {
