@@ -3,11 +3,11 @@ mod tests;
 
 pub mod dependency;
 
-use hatch_error::HatchResult;
+use hatch_error::{ HatchResult, HatchError };
 use git2::Repository;
 use std::collections::HashSet;
 use std::fs;
-use std::path::Path;
+use std::path::{ PathBuf, Path };
 use task;
 use self::dependency::Dependency;
 use locations::hatchfile_path;
@@ -38,6 +38,7 @@ pub fn clone_project_deps(path: &Path,
                           user_defined_deps: &Vec<Dependency>) -> HatchResult<()> 
 {
   let mut visited: HashSet<String> = HashSet::new();
+  let mut errored: Vec<HatchError> = Vec::new();
 
   // All dependencies are cloned into here
   let registry = &path;
@@ -59,25 +60,36 @@ pub fn clone_project_deps(path: &Path,
     let hatchfile = hatchfile_path(dir);
 
     if hatchfile.exists() {
-      return clone_nested_project_deps(&registry, &dir, &mut visited);
+      clone_nested_project_deps(&registry, &dir, &mut errored, &mut visited);
     }
     Ok(true)
   })?;
+
+  if !errored.is_empty() {
+    errored.into_iter().for_each(|e| {
+      println!("ERROR: {}", e)
+    });
+  }
 
   Ok(())
 }
 
 fn clone_nested_project_deps(registry: &Path,
                              path: &Path,
-                             visited: &mut
-                             HashSet<String>) -> HatchResult<bool>
+                             errored: &mut Vec<HatchError>,
+                             visited: &mut HashSet<String>)
 {
-  let current_project = task::read_project(path)?;
-  if !visited.contains(&current_project.name().to_owned()) {
-    current_project.deps().iter().for_each(|dep| {
-      clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-    });
-    let _ = visited.insert(current_project.name().to_owned());
+  match task::read_project(path) {
+    Err(e) => {
+      errored.push(e);
+    },
+    Ok(current_project) => {
+      if !visited.contains(&current_project.name().to_owned()) {
+        current_project.deps().iter().for_each(|dep| {
+          clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+        });
+        let _ = visited.insert(current_project.name().to_owned());
+      }
+    }
   }
-  Ok(true)
 }
