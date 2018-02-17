@@ -2,28 +2,21 @@ sudo: required
 
 language: rust
 
-# necessary for `travis-cargo coveralls --no-sudo`
 addons:
   apt:
     packages:
-      - libcurl4-openssl-dev
-      - libelf-dev
-      - libdw-dev
-      - binutils-dev # optional: only required for the --verify flag of coveralls
-      - cmake
-    sources:
-      - kalakris-cmake
+      - libssl-dev
 
 cache: cargo
 
 rust:
   - stable
+  - nightly
 
 # load travis-cargo
 before_script:
   - export PATH=$HOME/.cargo/bin:$PATH
   - cargo install cargo-update || echo "cargo-update already installed"
-  - cargo install cargo-travis || echo "cargo-travis already installed"
   - cargo install-update -a # update outdated cached binaries
 
 os:
@@ -33,11 +26,16 @@ os:
 script:
   - |
       cd hatch &&
+      cargo clean &&
       cargo build &&
       cargo test
 
 after_success:
-  - cargo coveralls
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
+      cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID;
+    fi
 
 branches:
   # This is where pull requests from "bors r+" are built.
