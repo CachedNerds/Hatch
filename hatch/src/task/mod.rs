@@ -1,3 +1,6 @@
+#[cfg(test)]
+pub mod tests;
+
 use project::Project;
 use assets::builder::Builder as AssetBuilder;
 use std::path::Path;
@@ -19,11 +22,4 @@ pub fn generate_assets(project: &Project) -> HatchResult<()> {
   })?;
 
   Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-  #[test]
-  fn it_works() {
-  }
 }
