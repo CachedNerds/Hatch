@@ -5,3 +5,8 @@ authors = ["technetos <mrgould93@gmail.com>"]
 
 [dependencies]
 clap = "2"
+yaml-rust = "0.3"
+git2 = "0.6"
+failure = "0.1.1"
+os_info = "0.7.0"
+reqwest = "0.8.4"

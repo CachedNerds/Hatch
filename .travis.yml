@@ -1,9 +1,45 @@
-lanugage: rust
+sudo: required
+
+language: rust
+
+addons:
+  apt:
+    packages:
+      - libssl-dev
+
 cache: cargo
+
+rust:
+  - stable
+  - nightly
+
+# load travis-cargo
+before_script:
+  - export PATH=$HOME/.cargo/bin:$PATH
+  - cargo install cargo-update || echo "cargo-update already installed"
+  - cargo install-update -a # update outdated cached binaries
+
+os:
+  - linux
+  - osx
+
 script:
-  - ./.ci_helper.sh
+  - |
+      cd hatch &&
+      cargo clean &&
+      cargo build &&
+      cargo test
+
+after_success:
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+      bash <(curl https://raw.githubusercontent.com/xd009642/tarpaulin/master/travis-install.sh)
+      cargo tarpaulin --ciserver travis-ci --coveralls $TRAVIS_JOB_ID;
+    fi
+
 branches:
   # This is where pull requests from "bors r+" are built.
   - staging
   # This is where pull requests from "bors try" are built.
   - trying
+  - dev
