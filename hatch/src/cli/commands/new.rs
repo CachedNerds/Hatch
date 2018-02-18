@@ -14,7 +14,7 @@ use task;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, STATIC, BIN, PROJECT_NAME };
+use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, PROJECT_NAME };
 
 pub struct New {
   name: &'static str,
@@ -36,12 +36,19 @@ impl<'new> New {
   }
 
   fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
-    if args.is_present(BIN) {
-      ProjectKind::Binary
-    } else if args.is_present(STATIC) {
-      ProjectKind::Library(LibraryKind::Static)
+    if args.is_present(TYPE) {
+      let type_arg: String = value_t!(args, TYPE, String).unwrap();
+
+      // we cannot use the static variables BIN, STATIC, or SHARED directly because it is illegal in
+      // Rust to pattern match on a static variable
+      match type_arg.as_str() {
+        arg if arg == BIN => ProjectKind::Binary,
+        arg if arg == STATIC => ProjectKind::Library(LibraryKind::Static),
+        arg if arg == SHARED => ProjectKind::Library(LibraryKind::Shared),
+        _ => ProjectKind::Library(LibraryKind::Static)
+      }
     } else {
-      ProjectKind::Library(LibraryKind::Shared)
+      ProjectKind::Library(LibraryKind::Static)
     }
   }
 
@@ -53,6 +60,19 @@ impl<'new> New {
         format!("  {}: {}\n", d.name(), d.url())
       }).collect::<String>().as_str()
     }
+  }
+
+  fn construct_config(&self, kind: ProjectKind) -> Config {
+    let compiler: String = String::from("g++");
+    let compiler_flags: Vec<String> = vec![String::from("-c")];
+    let linker_flags: Vec<String> = vec![String::from("-v")];
+    let mut arch: Arch = Arch::X64;
+    if let Some(architecture) = Arch::architecture() {
+      arch = architecture;
+    }
+    let target: Target = Target::Debug;
+
+    Config::new(kind, compiler, compiler_flags, linker_flags, arch, target)
   }
 
   fn hatch_yml_contents(&self,
@@ -90,22 +110,19 @@ build:
 impl<'command> Command<'command> for New {
   fn cli_subcommand(&self) -> App<'command, 'command> {
     SubCommand::with_name(&self.name)
-      .about("Creates a new project. (default = shared library)")
+      .about("Creates a new project. (default = static library)")
 
       .arg(Arg::with_name(PROJECT_NAME)
            .help("Name of project")
            .takes_value(true)
            .required(true))
 
-      .arg(Arg::with_name(BIN)
-           .help("Generate a stand alone executable")
-           .long("bin").short("b")
-           .required(false)) 
-
-      .arg(Arg::with_name(STATIC)
-           .help("Generate a static library")
-           .long("static").short("s").conflicts_with("bin")
-           .required(false))
+      .arg(Arg::with_name(TYPE)
+           .help("Determines the type of the project")
+           .long("type").short("t")
+           .takes_value(true)
+           .possible_values(&[BIN, STATIC, SHARED])
+           .required(true))
 
       .arg(Arg::with_name(VERSION)
            .help("Set the project version")
@@ -133,11 +150,11 @@ impl<'command> Command<'command> for New {
     let deps_from_cli = parse_deps_from_cli(args);
     
     let res = (|| -> HatchResult<()> {
-      // create directory for new project
-      fs::create_dir(&dir_path)?;
-      // create the hatch_modules directory inside the project directory
-      fs::create_dir(modules_path(&dir_path))?;
+      println!("Creating directory structure...");
 
+      // create the hatch project file structure
+      fs::create_dir(&dir_path)?;
+      fs::create_dir(modules_path(&dir_path))?;
       fs::create_dir(dir_path.join("src"))?;
       fs::create_dir(dir_path.join("target"))?;
       fs::create_dir_all(dir_path.join("test").join("src"))?;
@@ -148,27 +165,18 @@ impl<'command> Command<'command> for New {
       }).collect::<Vec<_>>();
 
       if !project_deps.is_empty() {
+        println!("Installing project dependencies...");
         clone_project_deps(modules_path(&dir_path).as_path(), &project_deps)?;
       }
 
       let includes = self.construct_deps_string(&project_deps);
-
-      let compiler: String = String::from("g++");
-      let compiler_flags: Vec<String> = vec![String::from("-c")];
-      let linker_flags: Vec<String> = vec![String::from("-v")];
-      let mut arch: Arch = Arch::X64;
-      if let Some(architecture) = Arch::architecture() {
-        arch = architecture;
-      }
-      let target: Target = Target::Debug;
-
-      let config = Config::new(kind, compiler, compiler_flags, linker_flags, arch, target);
-
+      let config = self.construct_config(kind);
       let yaml_output = self.hatch_yml_contents(&name,
                                                 &version,
                                                 config.as_ref(),
                                                 &includes);
 
+      println!("Creating Hatch.yml file...");
       let mut file = fs::File::create(hatch_file)?;
       file.write_all(yaml_output.as_bytes())?;
 
@@ -177,12 +185,17 @@ impl<'command> Command<'command> for New {
                                  config,
                                  project_deps,
                                  dir_path.to_owned());
+
+      println!("Generating assets...");
       task::generate_assets(&project)?;
+
+      println!("Finished");
 
       Ok(())
     })().with_context(|e| {
       format!("Failed to create project at: `{}` : {}", dir_path.display(), e)
     })?;
+
     Ok(res)
   }
 }
