@@ -1,6 +1,5 @@
 #![forbid(unsafe_code)]
 
-
 #[macro_use]
 pub extern crate clap;
 pub extern crate yaml_rust;

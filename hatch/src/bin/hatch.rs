@@ -9,6 +9,7 @@ use hatch::cli::commands::update::Update;
 use hatch::cli::commands::build::Build;
 use hatch::cli::commands::test::Test;
 use hatch::cli::commands::run::Run;
+use hatch::cli::commands::clean::Clean;
 
 fn main() {
   // create the subcommand to command map
@@ -28,6 +29,9 @@ fn main() {
 
   let run_command = Box::new(Run::new());
   subcommands.insert(run_command.subcommand_name(), run_command);
+
+  let clean_command = Box::new(Clean::new());
+  subcommands.insert(clean_command.subcommand_name(), clean_command);
 
   // initialize cli with the set of subcommand
   let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());

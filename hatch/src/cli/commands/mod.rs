@@ -3,6 +3,7 @@ pub mod update;
 pub mod build;
 pub mod test;
 pub mod run;
+pub mod clean;
 
 use hatch_error::HatchResult;
 use clap::{ ArgMatches, App };
