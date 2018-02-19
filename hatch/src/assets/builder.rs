@@ -45,7 +45,7 @@ impl Builder {
     builder
   }
 
-  pub fn assets(&mut self) -> &Vec<ProjectAsset> {
+  pub fn assets(&self) -> &Vec<ProjectAsset> {
     &self.assets.as_ref()
   }
 
