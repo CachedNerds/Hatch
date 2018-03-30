@@ -1,57 +1,69 @@
 use assets::builder::Builder as AssetBuilder;
-use assets::{ Asset, ProjectAsset };
+use assets::{Asset, ProjectAsset};
 use std::path::PathBuf;
 use assets::tests::fixtures;
-use project::{ ProjectKind, LibraryKind };
+use project::{LibraryKind, ProjectKind};
 
 #[test]
 fn add_asset() {
-  let mut asset_builder = AssetBuilder::new();
-  let asset = ProjectAsset::new(PathBuf::from("./"), String::from("test"), String::from("test"));
-  asset_builder.add_asset(asset);
+    let mut asset_builder = AssetBuilder::new();
+    let asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("test"),
+        String::from("test"),
+    );
+    asset_builder.add_asset(asset);
 
-  let assets = asset_builder.assets();
+    let assets = asset_builder.assets();
 
-  assert_eq!(assets.len(), 1);
+    assert_eq!(assets.len(), 1);
 
-  assert_eq!(assets[0].name(), "test");
+    assert_eq!(assets[0].name(), "test");
 }
 
 #[test]
 fn build_config_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.config(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.config(&project);
 
-  let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("config.tup"), expected_contents);
+    let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("config.tup"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_test_tupfile_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.test_tupfile(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.test_tupfile(&project);
 
-  let expected_contents = String::from(".gitignore");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./test/"), String::from("Tupfile"), expected_contents);
+    let expected_contents = String::from(".gitignore");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./test/"),
+        String::from("Tupfile"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_tuprules_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.tuprules(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.tuprules(&project);
 
-  let expected_contents = String::from(
-".gitignore
+    let expected_contents = String::from(
+        ".gitignore
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
@@ -86,21 +98,26 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tuprules.tup"), expected_contents);
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("Tuprules.tup"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_tupfile_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Shared));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Shared));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.tupfile(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.tupfile(&project);
 
-  let expected_contents = String::from(
-"include config.tup
+    let expected_contents = String::from(
+        "include config.tup
 include_rules
 
 : foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_TARGET)/%B.o
@@ -109,79 +126,105 @@ include_rules
 
 : foreach $(TEST_FILES) |> !compile |> $(TEST_TARGET)/%B.o
 
-: $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tupfile"), expected_contents);
+: $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
+    );
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("Tupfile"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_tupfile_ini_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.tupfile_ini(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.tupfile_ini(&project);
 
-  let expected_contents = String::from("");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("Tupfile.ini"), expected_contents);
+    let expected_contents = String::from("");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("Tupfile.ini"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_linux_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.linux(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.linux(&project);
 
-  let expected_contents = String::from("STATIC = a\nSHARED = so");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("linux.tup"), expected_contents);
+    let expected_contents = String::from("STATIC = a\nSHARED = so");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("linux.tup"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_macos_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.macos(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.macos(&project);
 
-  let expected_contents = String::from("STATIC = a\nSHARED = so");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("macosx.tup"), expected_contents);
+    let expected_contents = String::from("STATIC = a\nSHARED = so");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("macosx.tup"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_windows_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.windows(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.windows(&project);
 
-  let expected_contents = String::from(
-"STATIC = lib
+    let expected_contents = String::from(
+        "STATIC = lib
 SHARED = dll
 # Use clang for front-end
 CC = clang++.exe
 # Use llvm-lib for static libraries
-!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("win32.tup"), expected_contents);
+!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>",
+    );
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("win32.tup"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }
 
 #[test]
 fn build_catch_definition() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
 
-  let asset_builder = AssetBuilder::new();
-  let actual_asset = asset_builder.catch_definition(&project);
+    let asset_builder = AssetBuilder::new();
+    let actual_asset = asset_builder.catch_definition(&project);
 
-  let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
-  let expected_asset = ProjectAsset::new(PathBuf::from("./"), String::from("catch.cpp"), expected_contents);
+    let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
+    let expected_asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("catch.cpp"),
+        expected_contents,
+    );
 
-  assert_eq!(actual_asset, expected_asset);
+    assert_eq!(actual_asset, expected_asset);
 }

@@ -1,6 +1,6 @@
 use assets::tuprules::Tuprules;
-use project::{ ProjectKind, LibraryKind };
-use project::build::{ Target, Config };
+use project::{LibraryKind, ProjectKind};
+use project::build::{Config, Target};
 use platform::arch::Arch;
 
 /**
@@ -23,8 +23,8 @@ use platform::arch::Arch;
 
 #[test]
 fn build_static_x64_release_with_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
@@ -59,24 +59,27 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
-                           String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")],
-                           vec![String::from("-v")],
-                           Arch::X64,
-                           Target::Release);
+    let config = Config::new(
+        ProjectKind::Library(LibraryKind::Static),
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")],
+        vec![String::from("-v")],
+        Arch::X64,
+        Target::Release,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_static_x86_debug_without_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 CFLAGS += -g
 ARCH = -m32
@@ -110,23 +113,26 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
-                           String::from("g++"),
-                           Vec::new(),
-                           Vec::new(),
-                           Arch::X86,
-                           Target::Debug); 
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
+    let config = Config::new(
+        ProjectKind::Library(LibraryKind::Static),
+        String::from("g++"),
+        Vec::new(),
+        Vec::new(),
+        Arch::X86,
+        Target::Debug,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_shared_x64_debug_without_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 CFLAGS += -g
 ARCH = -m64
@@ -160,24 +166,27 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
-                           String::from("g++"),
-                           Vec::new(),
-                           Vec::new(),
-                           Arch::X64,
-                           Target::Debug);
+    let config = Config::new(
+        ProjectKind::Library(LibraryKind::Shared),
+        String::from("g++"),
+        Vec::new(),
+        Vec::new(),
+        Arch::X64,
+        Target::Debug,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_shared_x86_release_with_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 ARCH = -m32
 CFLAGS += $(ARCH)
@@ -212,24 +221,27 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
-                           String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")],
-                           vec![String::from("-v")],
-                           Arch::X86,
-                           Target::Release);
+    let config = Config::new(
+        ProjectKind::Library(LibraryKind::Shared),
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")],
+        vec![String::from("-v")],
+        Arch::X86,
+        Target::Release,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_binary_x64_release_without_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
@@ -251,24 +263,27 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
 
 # includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup");
+include @(TUP_PLATFORM).tup",
+    );
 
-  let config = Config::new(ProjectKind::Binary,
-                           String::from("g++"),
-                           Vec::new(),
-                           Vec::new(),
-                           Arch::X64,
-                           Target::Release);
+    let config = Config::new(
+        ProjectKind::Binary,
+        String::from("g++"),
+        Vec::new(),
+        Vec::new(),
+        Arch::X64,
+        Target::Release,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_binary_x86_debug_with_flags_tuprules() {
-  let contents = String::from(
-".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 CFLAGS += -g
 ARCH = -m32
@@ -293,23 +308,27 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
 
 # includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup");
+include @(TUP_PLATFORM).tup",
+    );
 
-  let config = Config::new(ProjectKind::Binary, String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")],
-                           vec![String::from("-v")],
-                           Arch::X86,
-                           Target::Debug);
+    let config = Config::new(
+        ProjectKind::Binary,
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")],
+        vec![String::from("-v")],
+        Arch::X86,
+        Target::Debug,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_binary_x64_release_with_cflags_without_lflags_tuprules() {
-  let contents = String::from(
-    ".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 ARCH = -m64
 CFLAGS += $(ARCH)
@@ -332,24 +351,27 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
 
 # includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup");
+include @(TUP_PLATFORM).tup",
+    );
 
-  let config = Config::new(ProjectKind::Binary,
-                           String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")],
-                           Vec::new(),
-                           Arch::X64,
-                           Target::Release);
+    let config = Config::new(
+        ProjectKind::Binary,
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")],
+        Vec::new(),
+        Arch::X64,
+        Target::Release,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
 
 #[test]
 fn build_binary_x86_debug_without_cflags_with_lflags_tuprules() {
-  let contents = String::from(
-    ".gitignore
+    let contents = String::from(
+        ".gitignore
 CC = g++
 CFLAGS += -g
 ARCH = -m32
@@ -373,16 +395,19 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
 
 # includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup");
+include @(TUP_PLATFORM).tup",
+    );
 
-  let config = Config::new(ProjectKind::Binary,
-                           String::from("g++"),
-                           Vec::new(),
-                           vec![String::from("-v")],
-                           Arch::X86,
-                           Target::Debug);
+    let config = Config::new(
+        ProjectKind::Binary,
+        String::from("g++"),
+        Vec::new(),
+        vec![String::from("-v")],
+        Arch::X86,
+        Target::Debug,
+    );
 
-  let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules::new(&config);
 
-  assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string());
 }
