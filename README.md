@@ -3,7 +3,10 @@
 <h1 align="center">Hatch</h1>
 <p align="center">The project manager for CachedNerds/Toolbox et;al</p>
 
-<p align="center"><a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/CachedNerds/Hatch.svg"></a></p>
+<p align="center">
+  <img src="https://img.shields.io/github/release/CachedNerds/hatch/all.svg?label=pre-release">
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/github/license/CachedNerds/Hatch.svg"></a>
+</p>
 
 <div align="center">
 <table>
