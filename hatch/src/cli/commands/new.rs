@@ -187,7 +187,7 @@ impl<'command> Command<'command> for New {
                                  project_deps,
                                  dir_path.to_owned());
 
-      match project.config().kind() {
+      match *project.config().kind() {
         ProjectKind::HeaderOnly => {
           println!("Skipping tup file generation because project is header-only.");
         }
