@@ -122,7 +122,7 @@ impl<'command> Command<'command> for New {
            .help("Determines the type of the project")
            .long("type").short("t")
            .takes_value(true)
-           .possible_values(&[BIN, STATIC, SHARED])
+           .possible_values(&[BIN, STATIC, SHARED, &HEADER])
            .required(true))
 
       .arg(Arg::with_name(VERSION)
