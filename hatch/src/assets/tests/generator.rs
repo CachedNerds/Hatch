@@ -16,7 +16,7 @@ fn generate_one_without_directories() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./test.test");
+      let _ = fs::remove_file("./test.test");
 
       if let Err(e) = result {
         panic!(e)
@@ -25,7 +25,7 @@ fn generate_one_without_directories() {
       assert_eq!(contents, "test");
     },
     Err(e) => {
-      fs::remove_file("./test.test");
+      let _ = fs::remove_file("./test.test");
       panic!(e)
     }
   }
@@ -43,16 +43,16 @@ fn generate_one_with_directories() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./foo/test.test");
-      fs::remove_dir("./foo/");
+      let _ = fs::remove_file("./foo/test.test");
+      let _ = fs::remove_dir("./foo/");
 
       if let Err(e) = result {
         panic!(e)
       }
     },
     Err(e) => {
-      fs::remove_file("./foo/test.test");
-      fs::remove_dir("./foo/");
+      let _ = fs::remove_file("./foo/test.test");
+      let _ = fs::remove_dir("./foo/");
       panic!(e)
     }
   }
@@ -71,7 +71,7 @@ fn generate_one_overwrites_file() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./test2.test");
+      let _ = fs::remove_file("./test2.test");
 
       if let Err(e) = result {
         panic!(e)
@@ -80,7 +80,7 @@ fn generate_one_overwrites_file() {
       assert_eq!(contents, "old");
     },
     Err(e) => {
-      fs::remove_file("./test2.test");
+      let _ = fs::remove_file("./test2.test");
       panic!(e)
     }
   }
@@ -88,7 +88,7 @@ fn generate_one_overwrites_file() {
   let test_asset = ProjectAsset::new(PathBuf::from("./"), String::from("test2.test"), String::from("new"));
 
   if let Err(e) = generate_one(&test_asset) {
-    fs::remove_file("./test2.test");
+    let _ = fs::remove_file("./test2.test");
     panic!(e);
   }
 
@@ -97,7 +97,7 @@ fn generate_one_overwrites_file() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./test2.test");
+      let _ = fs::remove_file("./test2.test");
 
       if let Err(e) = result {
         panic!(e)
@@ -106,7 +106,7 @@ fn generate_one_overwrites_file() {
       assert_eq!(contents, "new");
     },
     Err(e) => {
-      fs::remove_file("./test2.test");
+      let _ = fs::remove_file("./test2.test");
       panic!(e)
     }
   }
@@ -120,8 +120,8 @@ fn generate_all_assets() {
   let test_assets = vec![test_asset_one, test_asset_two];
 
   if let Err(e) = generate_all(&test_assets) {
-    fs::remove_file("./one.test");
-    fs::remove_file("./two.test");
+    let _ = fs::remove_file("./one.test");
+    let _ = fs::remove_file("./two.test");
     panic!(e);
   }
 
@@ -129,18 +129,18 @@ fn generate_all_assets() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./one.test");
+      let _ = fs::remove_file("./one.test");
 
       if let Err(e) = result {
-        fs::remove_file("./two.test");
+        let _ = fs::remove_file("./two.test");
         panic!(e)
       }
     
       assert_eq!(contents, "one");
     },
     Err(e) => {
-      fs::remove_file("./one.test");
-      fs::remove_file("./two.test");
+      let _ = fs::remove_file("./one.test");
+      let _ = fs::remove_file("./two.test");
       panic!(e)
     }
   }
@@ -149,7 +149,7 @@ fn generate_all_assets() {
     Ok(mut file) => {
       let mut contents = String::new();
       let result = file.read_to_string(&mut contents);
-      fs::remove_file("./two.test");
+      let _ = fs::remove_file("./two.test");
 
       if let Err(e) = result {
         panic!(e)
@@ -158,7 +158,7 @@ fn generate_all_assets() {
       assert_eq!(contents, "two");
     },
     Err(e) => {
-      fs::remove_file("./two.test");
+      let _ = fs::remove_file("./two.test");
       panic!(e)
     }
   }

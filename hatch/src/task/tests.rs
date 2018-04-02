@@ -25,13 +25,13 @@ fn assets_exist(path: &Path) -> bool {
 }
 
 fn remove_assets(path: &Path) {
-  fs::remove_dir_all(&path);
+  let _ = fs::remove_dir_all(&path);
 }
 
 #[test]
 fn generate_assets_success() {
   let path = PathBuf::from("./temp/");
-  fs::create_dir_all(&path);
+  let _ = fs::create_dir_all(&path);
 
   let config = Config::new(ProjectKind::Binary,
                            String::from("g++"),
