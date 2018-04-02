@@ -23,6 +23,7 @@ impl Config {
       ProjectKind::Binary => "binary",
       ProjectKind::Static => "static",
       ProjectKind::Shared => "shared",
+      ProjectKind::HeaderOnly => "header-only",
     };
 
     format!("LIB_TYPE = {}", kind)

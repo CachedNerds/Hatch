@@ -68,6 +68,7 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
             "static-lib" => ProjectKind::Static,
             "shared-lib" => ProjectKind::Shared,
             "binary" => ProjectKind::Binary,
+            "header-only" => ProjectKind::HeaderOnly,
             _ => ProjectKind::Static
           }
         },

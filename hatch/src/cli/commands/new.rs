@@ -14,7 +14,7 @@ use task;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, PROJECT_NAME };
+use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, HEADER, PROJECT_NAME };
 
 pub struct New {
   name: &'static str,
@@ -45,6 +45,7 @@ impl<'new> New {
         arg if arg == BIN => ProjectKind::Binary,
         arg if arg == STATIC => ProjectKind::Static,
         arg if arg == SHARED => ProjectKind::Shared,
+        arg if arg == HEADER => ProjectKind::HeaderOnly,
         _ => ProjectKind::Static,
       }
     } else {
@@ -186,10 +187,16 @@ impl<'command> Command<'command> for New {
                                  project_deps,
                                  dir_path.to_owned());
 
-      println!("Generating assets...");
-      task::generate_assets(&project)?;
-
-      println!("Finished");
+      match project.config().kind() {
+        ProjectKind::HeaderOnly => {
+          println!("Skipping tup file generation because project is header-only.");
+        }
+        _ => {
+          println!("Generating assets...");
+          task::generate_assets(&project)?;
+          println!("Finished");
+        }
+      }
 
       Ok(())
     })().with_context(|e| {

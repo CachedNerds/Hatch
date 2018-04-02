@@ -66,6 +66,7 @@ impl fmt::Display for ProjectKind {
       ProjectKind::Shared => write!(f, "shared-lib"),
       ProjectKind::Static => write!(f, "static-lib"),
       ProjectKind::Binary => write!(f, "binary"),
+      ProjectKind::HeaderOnly => write!(f, "header-only"),
     }
   }
 }
