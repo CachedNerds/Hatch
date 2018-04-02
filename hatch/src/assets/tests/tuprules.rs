@@ -1,5 +1,5 @@
 use assets::tuprules::Tuprules;
-use project::{ ProjectKind, LibraryKind };
+use project::ProjectKind;
 use project::build::{ Target, Config };
 use platform::arch::Arch;
 
@@ -61,7 +61,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
+  let config = Config::new(ProjectKind::Static,
                            String::from("g++"),
                            vec![String::from("-c"), String::from("--std=c++1z")],
                            vec![String::from("-v")],
@@ -111,7 +111,7 @@ else
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
+  let config = Config::new(ProjectKind::Static,
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
@@ -162,7 +162,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
+  let config = Config::new(ProjectKind::Shared,
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
@@ -214,7 +214,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
+  let config = Config::new(ProjectKind::Shared,
                            String::from("g++"),
                            vec![String::from("-c"), String::from("--std=c++1z")],
                            vec![String::from("-v")],

@@ -1,4 +1,4 @@
-use project::{ LibraryKind, ProjectKind };
+use project::ProjectKind;
 
 pub struct Config {
   project: String,
@@ -21,8 +21,8 @@ impl Config {
   pub fn lib_type(project_kind: &ProjectKind) -> String {
     let kind = match *project_kind {
       ProjectKind::Binary => "binary",
-      ProjectKind::Library(LibraryKind::Static) => "static",
-      ProjectKind::Library(LibraryKind::Shared) => "shared"
+      ProjectKind::Static => "static",
+      ProjectKind::Shared => "shared",
     };
 
     format!("LIB_TYPE = {}", kind)

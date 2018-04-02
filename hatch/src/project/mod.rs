@@ -51,11 +51,8 @@ impl Project {
   }
 }
 
-#[derive(Debug)]
-pub enum LibraryKind { Shared, Static }
-
-#[derive(Debug)]
-pub enum ProjectKind { Binary, Library(LibraryKind) }
+#[derive(Debug, Clone, Copy)]
+pub enum ProjectKind { Binary, Static, Shared, HeaderOnly }
 
 impl AsRef<ProjectKind> for ProjectKind {
   fn as_ref(&self) -> &ProjectKind {
@@ -66,8 +63,8 @@ impl AsRef<ProjectKind> for ProjectKind {
 impl fmt::Display for ProjectKind {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match *self {
-      ProjectKind::Library(LibraryKind::Shared) => write!(f, "shared-lib"),
-      ProjectKind::Library(LibraryKind::Static) => write!(f, "static-lib"),
+      ProjectKind::Shared => write!(f, "shared-lib"),
+      ProjectKind::Static => write!(f, "static-lib"),
       ProjectKind::Binary => write!(f, "binary"),
     }
   }

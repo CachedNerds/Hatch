@@ -2,7 +2,7 @@ use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
 use deps::clone_project_deps;
-use project::{ Project, ProjectKind, LibraryKind };
+use project::{ Project, ProjectKind };
 use project::build::{ Target, Config };
 use platform::arch::Arch;
 use deps::dependency::Dependency;
@@ -43,12 +43,12 @@ impl<'new> New {
       // Rust to pattern match on a static variable
       match type_arg.as_str() {
         arg if arg == BIN => ProjectKind::Binary,
-        arg if arg == STATIC => ProjectKind::Library(LibraryKind::Static),
-        arg if arg == SHARED => ProjectKind::Library(LibraryKind::Shared),
-        _ => ProjectKind::Library(LibraryKind::Static)
+        arg if arg == STATIC => ProjectKind::Static,
+        arg if arg == SHARED => ProjectKind::Shared,
+        _ => ProjectKind::Static,
       }
     } else {
-      ProjectKind::Library(LibraryKind::Static)
+      ProjectKind::Static
     }
   }
 

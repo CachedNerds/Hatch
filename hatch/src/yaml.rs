@@ -2,7 +2,7 @@ use std::fs;
 use std::io::Read;
 use std::path::{ Path, PathBuf };
 use yaml_rust::{ Yaml, YamlLoader };
-use project::{ Project, LibraryKind, ProjectKind };
+use project::{ Project, ProjectKind };
 use project::build::{ Target, Config };
 use deps::dependency::Dependency;
 use platform::arch::Arch;
@@ -25,7 +25,7 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
 
   let name: String;
   let version: String;
-  let mut kind: ProjectKind = ProjectKind::Library(LibraryKind::Static);
+  let mut kind: ProjectKind = ProjectKind::Static;
   let mut compiler: String = String::from("g++");
   let mut compiler_flags: Vec<String> = vec![String::from("-c")];
   let mut linker_flags: Vec<String> = vec![String::from("-v")];
@@ -65,9 +65,10 @@ pub fn parse(path: &Path, name: String) -> HatchResult<Project> {
       match key {
         "kind" => {
           kind = match value {
-            "static-lib" => ProjectKind::Library(LibraryKind::Static),
-            "shared-lib" => ProjectKind::Library(LibraryKind::Shared),
-            _ => ProjectKind::Binary
+            "static-lib" => ProjectKind::Static,
+            "shared-lib" => ProjectKind::Shared,
+            "binary" => ProjectKind::Binary,
+            _ => ProjectKind::Static
           }
         },
         "compiler" => {

@@ -1,4 +1,4 @@
-use project::{ ProjectKind, LibraryKind };
+use project::ProjectKind;
 use project::build::{ Config, Target };
 use platform::arch::Arch;
 
@@ -13,11 +13,6 @@ pub struct Tuprules {
 
 impl Tuprules {
   pub fn new(config: &Config) -> Tuprules {
-    let copy_kind = match *config.kind() {
-      ProjectKind::Binary => ProjectKind::Binary,
-      ProjectKind::Library(LibraryKind::Static) => ProjectKind::Library(LibraryKind::Static),
-      ProjectKind::Library(LibraryKind::Shared) => ProjectKind::Library(LibraryKind::Shared)
-    };
 
     let copy_arch = match *config.arch() {
       Arch::X64 => Arch::X64,
@@ -30,7 +25,7 @@ impl Tuprules {
     };
 
     Tuprules {
-      kind: copy_kind,
+      kind: config.kind().clone(),
       compiler: String::from(config.compiler()),
       compiler_flags: config.compiler_flags().join(" "),
       linker_flags: config.linker_flags().join(" "),
@@ -47,13 +42,6 @@ impl Tuprules {
     match *arch {
       Arch::X64 => String::from("-m64"),
       Arch::X86 => String::from("-m32"),
-    }
-  }
-
-  fn type_flag(lib_type: &LibraryKind) -> String {
-    match *lib_type {
-      LibraryKind::Static => String::from("-static"),
-      LibraryKind::Shared => String::from("-dynamic"),
     }
   }
 }
@@ -93,17 +81,21 @@ impl ToString for Tuprules {
     }
 
     match self.kind {
-      ProjectKind::Library(ref lib_kind) => {
-        let link_flags_type = format!(
+      ProjectKind::Static => {
+        let link_flags_type = String::from(
 "ifneq (@(TUP_PLATFORM),macosx)
-  LINKFLAGS += {}
-endif", Tuprules::type_flag(lib_kind));
-
+  LINKFLAGS += -static
+endif");
         tokens.push(link_flags_type);
-      },
-      ProjectKind::Binary => {
-
       }
+      ProjectKind::Shared => {
+        let link_flags_type = String::from(
+"ifneq (@(TUP_PLATFORM),macosx)
+  LINKFLAGS += -dynamic
+endif");
+        tokens.push(link_flags_type);
+      }
+      _ => ()
     }
 
     tokens.push(String::from(
@@ -127,7 +119,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup"));
 
     match self.kind {
-      ProjectKind::Library(ref _lib_kind) => {
+      ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(
 "ifeq ($(LIB_TYPE),static)
   EXTENSION = $(STATIC)
