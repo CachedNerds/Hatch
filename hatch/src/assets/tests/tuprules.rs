@@ -2,6 +2,8 @@ use assets::tuprules::Tuprules;
 use project::{ ProjectKind, LibraryKind };
 use project::build::{ Target, Config };
 use platform::arch::Arch;
+use configuration::CompilerOptions;
+use configuration::Target;
 
 /**
  * These tests were created using All-Pairs testing.
@@ -61,7 +63,7 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
+  let config = CompilerOptions::new(ProjectKind::Library(LibraryKind::Static),
                            String::from("g++"),
                            vec![String::from("-c"), String::from("--std=c++1z")],
                            vec![String::from("-v")],
@@ -111,7 +113,7 @@ else
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let config = Config::new(ProjectKind::Library(LibraryKind::Static),
+  let compiler_options = CompilerOptions::new(ProjectKind::Library(LibraryKind::Static),
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
@@ -162,14 +164,14 @@ else
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-  let config = Config::new(ProjectKind::Library(LibraryKind::Shared),
+  let compiler_options = CompilerOptions::new(ProjectKind::Library(LibraryKind::Shared),
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
                            Arch::X64,
                            Target::Debug);
 
-  let tuprules = Tuprules::new(&config);
+  let tuprules = Tuprules::new(&compiler_options);
 
   assert_eq!(contents, tuprules.to_string());
 }

@@ -8,7 +8,6 @@ use assets::tupfile_ini::TupfileIni;
 use assets::catch_header::CatchHeader;
 use assets::catch_definition::CatchDefinition;
 use hatch_error::{ HatchResult, ResultExt, NullError };
-use project::Project;
 use platform::os;
 use reqwest;
 

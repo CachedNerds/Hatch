@@ -1,8 +1,7 @@
 use std::path::PathBuf;
-use std::ffi::OsStr;
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Dependency {
   url: String,
   name: String,

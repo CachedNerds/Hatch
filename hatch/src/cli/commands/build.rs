@@ -2,7 +2,6 @@ use hatch_error::{ HatchResult, ResultExt, InvalidPathError };
 use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
 use platform::os;
-use project::Project;
 use assets::PlatformKind;
 use task;
 use std::process;

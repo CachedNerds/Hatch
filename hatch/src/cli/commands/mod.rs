@@ -7,14 +7,18 @@ pub mod run;
 use hatch_error::HatchResult;
 use clap::{ ArgMatches, App };
 use std::path::PathBuf;
+use deps::dependency::Dependency;
 
 static ARGS: &str = "ARGS";
 static INCLUDE: &str = "INCLUDE";
 static VERSION: &str = "VERSION";
 static TYPE: &str = "TYPE";
-static BIN: &str = "bin";
-static STATIC: &str = "static";
-static SHARED: &str = "shared";
+
+pub static BIN: &str = "bin";
+pub static STATIC: &str = "static";
+pub static SHARED: &str = "shared";
+pub static HEADER: &str = "header-only";
+
 static PROJECT_NAME: &str = "PROJECT_NAME";
 static PROJECT_NAMES: &str = "PROJECT_NAMES";
 static PROJECT_PATH: &str = "PROJECT_PATH";
@@ -42,6 +46,14 @@ pub trait Command<'command> {
 fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<String> {
   if let Some(values) = args.values_of(INCLUDE) {
     values.map(String::from).collect::<Vec<String>>()
+  } else {
+    Vec::new()
+  }
+}
+
+fn parse_dependencies<'func>(args: &ArgMatches<'func>) -> Vec<Dependency> {
+  if let Some(values) = args.values_of(INCLUDE) {
+    values.map(String::from).map(Dependency::new).collect::<Vec<Dependency>>()
   } else {
     Vec::new()
   }

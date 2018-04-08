@@ -1,4 +1,4 @@
-use project::{ ProjectKind, LibraryKind };
+use project::ProjectKind;
 
 pub struct Tupfile {
   kind: ProjectKind
@@ -8,8 +8,8 @@ impl Tupfile {
   pub fn new(kind: &ProjectKind) -> Tupfile {
     let copy_kind = match *kind {
       ProjectKind::Binary => ProjectKind::Binary,
-      ProjectKind::Library(LibraryKind::Static) => ProjectKind::Library(LibraryKind::Static),
-      ProjectKind::Library(LibraryKind::Shared) => ProjectKind::Library(LibraryKind::Shared)
+      ProjectKind::Static => ProjectKind::Static,
+      ProjectKind::Shared => ProjectKind::Shared
     };
 
     Tupfile { kind: copy_kind }
@@ -35,7 +35,7 @@ impl ToString for Tupfile {
       ProjectKind::Binary => {
         tokens.push(String::from(": $(SOURCE_OBJ_FILES) |> !link |> $(SOURCE_TARGET)/$(PROJECT)\n"));
       },
-      ProjectKind::Library(_) => {
+      ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(": $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_TARGET)/$(PROJECT_LIB) <$(PROJECT)>\n"));
       }
     }
@@ -46,7 +46,7 @@ impl ToString for Tupfile {
       ProjectKind::Binary => {
         tokens.push(String::from(": $(TEST_OBJ_FILES) |> !link |> $(TEST_TARGET)/$(PROJECT).test"));
       },
-      ProjectKind::Library(_) => {
+      ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(": $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test"));
       }
     }

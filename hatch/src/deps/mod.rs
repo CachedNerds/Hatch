@@ -7,13 +7,13 @@ use hatch_error::{ HatchResult, HatchError };
 use git2::Repository;
 use std::collections::HashSet;
 use std::fs;
-use std::path::{ PathBuf, Path };
+use std::path::Path;
 use task;
 use self::dependency::Dependency;
 use locations::hatchfile_path;
 
 pub fn clone_dep(url: &str, path: &Path) {
-  Repository::clone(url, path);
+  let _ = Repository::clone(url, path);
 }
 
 fn walk(path: &Path,
