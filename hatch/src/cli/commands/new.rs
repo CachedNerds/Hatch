@@ -1,23 +1,16 @@
 use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
-use cli::commands::{ Command, parse_deps_from_cli };
+use cli::commands::Command;
 use deps::clone_project_deps;
 use project::ProjectKind;
-use platform::arch::Arch;
 use deps::dependency::Dependency;
 use locations::{ hatchfile_path, modules_path };
 use hatch_error::{ HatchResult, ResultExt };
 use task;
-
-// Must use qualified names to avoid conflict.
-use std::fmt::Write as FmtWrite;
-use std::io::Write as IoWrite;
-
 use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, HEADER, PROJECT_NAME };
-use configuration::CompilerOptions;
-use configuration::Target;
 use cli::commands::parse_dependencies;
-use configuration::Project;
+use project::CompilerOptions;
+use project::Project;
 
 pub struct New {
   name: &'static str,
@@ -41,7 +34,7 @@ impl<'new> New {
   fn project_kind(&self, args: &ArgMatches<'new>) -> ProjectKind {
     if args.is_present(TYPE) {
       let type_arg: String = value_t!(args, TYPE, String).unwrap();
-      ProjectKind::from_str(type_arg)
+      ProjectKind::from_str(type_arg.as_str())
     } else {
       ProjectKind::default()
     }
@@ -56,26 +49,6 @@ impl<'new> New {
 //        format!("  {}: {}\n", d.name(), d.url())
 //      }).collect::<String>().as_str()
 //    }
-  }
-
-  fn construct_compiler_options(&self, kind: ProjectKind) -> CompilerOptions {
-    let compiler: String = String::from("g++");
-    let compiler_flags = String::from("-c");
-    let linker_flags = String::from("-v");
-    let mut arch: Arch = Arch::X64;
-    if let Some(architecture) = Arch::architecture() {
-      arch = architecture;
-    }
-    let target: Target = Target::Debug;
-
-    CompilerOptions {
-      kind,
-      compiler,
-      compiler_flags,
-      linker_flags,
-      arch,
-      target
-    }
   }
 
 //  fn hatch_yml_contents(&self,
@@ -172,7 +145,7 @@ impl<'command> Command<'command> for New {
       let includes = self.construct_deps_string(&deps_from_cli);
       // let config = self.construct_config(kind);
 
-      let compiler_options = CompilerOptions::default_for_kind(kind);
+      let compiler_options = CompilerOptions::default();
 
       // let config = Project::new(name, version, Some(compiler_options), deps_from_cli);
 
@@ -188,6 +161,7 @@ impl<'command> Command<'command> for New {
 
       let project = Project::new(name,
                                  version,
+                                 kind,
                                  Some(compiler_options),
                                  project_deps);
 

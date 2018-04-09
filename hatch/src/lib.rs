@@ -23,7 +23,6 @@ pub mod task;
 pub mod deps;
 pub mod platform;
 pub mod locations;
-pub mod configuration;
 
 #[cfg(test)]
 mod tests {

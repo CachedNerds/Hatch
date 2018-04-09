@@ -1,0 +1,43 @@
+use platform::arch::Arch;
+use project::Target;
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+pub struct CompilerOptions {
+  pub compiler: String,
+  pub compiler_flags: String,
+  pub linker_flags: String,
+  pub arch: Arch,
+  pub target: Target,
+}
+
+impl CompilerOptions {
+  pub fn new(compiler: String, compiler_flags: String, linker_flags: String,
+             arch: Arch, target: Target) -> CompilerOptions {
+    CompilerOptions {
+      compiler,
+      compiler_flags,
+      linker_flags,
+      arch,
+      target
+    }
+  }
+
+  pub fn default() -> CompilerOptions {
+    let compiler: String = String::from("g++");
+    let compiler_flags= String::from("-c");
+    let linker_flags= String::from("-v");
+    let mut arch: Arch = Arch::X64;
+    if let Some(architecture) = Arch::architecture() {
+      arch = architecture;
+    }
+    let target: Target = Target::Debug;
+
+    CompilerOptions {
+      compiler,
+      compiler_flags,
+      linker_flags,
+      arch,
+      target
+    }
+  }
+}
