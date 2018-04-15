@@ -3,6 +3,8 @@ pub use failure::Error as HatchError;
 
 pub type HatchResult<T> = Result<T, HatchError>;
 
+pub type Action = HatchResult<()>;
+
 #[derive(Fail, Debug)]
 #[fail(display = "No content in Hatch.yml")]
 pub struct EmptyConfigError;
@@ -26,3 +28,12 @@ pub struct InvalidPathError;
 #[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct NullError;
+
+#[derive(Fail, Debug)]
+#[fail(display = "")]
+pub struct MissingParameterError;
+
+
+#[derive(Fail, Debug)]
+#[fail(display = "Failed to do Serde Yaml stuff")]
+pub struct SerdeYamlError;

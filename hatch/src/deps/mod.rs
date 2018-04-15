@@ -35,7 +35,7 @@ fn walk(path: &Path,
 }
 
 pub fn clone_project_deps(path: &Path,
-                          user_defined_deps: &Vec<Dependency>) -> HatchResult<()> 
+                          dependencies: &Vec<Dependency>) -> HatchResult<()>
 {
   let mut visited: HashSet<String> = HashSet::new();
   let mut errored: Vec<HatchError> = Vec::new();
@@ -44,7 +44,7 @@ pub fn clone_project_deps(path: &Path,
   let registry = &path;
 
   // Clone the dependencies specified on the command line
-  user_defined_deps.iter().for_each(|dep| {
+  dependencies.iter().for_each(|dep| {
     clone_dep(&dep.url(), &path.join(&dep.name()));
   });
 
@@ -85,7 +85,7 @@ fn clone_nested_project_deps(registry: &Path,
     },
     Ok(current_project) => {
       if !visited.contains(&current_project.name().to_owned()) {
-        current_project.deps().iter().for_each(|dep| {
+        current_project.dependencies().iter().for_each(|dep| {
           clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
         });
         let _ = visited.insert(current_project.name().to_owned());

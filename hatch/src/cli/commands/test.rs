@@ -53,7 +53,7 @@ impl<'command> Command<'command> for Test {
 
       println!("Building project...\n");
 
-      Build::new().execute(&project).with_context(|e| {
+      Build::new().execute(&project_path, &project).with_context(|e| {
         format!("Failed to build project : {}", e)
       })?;
 

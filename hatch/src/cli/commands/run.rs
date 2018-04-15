@@ -1,11 +1,13 @@
 use std::process::Command as ProcessCommand;
 use cli::commands::Command;
-use cli::commands::build::Build;
+//use cli::commands::build::Build;
 use cli::commands::ARGS;
 use hatch_error::{ HatchResult, ResultExt, NullError };
 use task;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use project::ProjectKind;
+use hatch_error::Action;
+use cli::commands::build::Build;
 
 pub struct Run {
   name: &'static str,
@@ -43,41 +45,25 @@ impl<'command> Command<'command> for Run {
     self.name
   }
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let res = (|| -> HatchResult<()> {
-      let project_path = self.project_path(args);
-      let project = task::read_project(&project_path)?;
-
-      match *project.config().kind() {
-        ProjectKind::Binary => {
-          println!("Generating assets...\n");
-
-          task::generate_assets(&project)?;
-
-          println!("Building project...\n");
-
-          Build::new().execute(&project).with_context(|e| {
-            format!("Failed to build project : {}", e)
-          })?;
-
-          println!("Executing...\n");
-
-          let executable_path = format!("{}target/{}", project_path.display(), project.name());
-          let run_arguments = parse_run_arguments_from_cli(args);
-
-          let mut child = ProcessCommand::new(&executable_path).args(run_arguments).spawn()?;
-          child.wait()?;
-
-          Ok(())
-        },
-        _ => {
-          Err(NullError).context(format!("Project must be a Binary project."))?
-        }
+  fn execute(&self, args: &ArgMatches<'command>) -> Action {
+    let project_path = self.project_path(args);
+    let project = task::read_project(&project_path)?;
+    match *project.kind() {
+      ProjectKind::Binary => {
+        println!("Generating assets...\n");
+        task::generate_assets(&project)?;
+        println!("Building project...\n");
+        Build::new().execute(&project_path, &project).with_context(|e| {
+          format!("Failed to build project : {}", e)
+        })?;
+        println!("Executing...\n");
+        let executable_path = format!("{}target/{}", project_path.display(), project.name());
+        let run_arguments =  parse_run_arguments_from_cli(args);
+        let mut child = ProcessCommand::new(&executable_path).args(run_arguments).spawn()?;
+        child.wait()?;
+        Ok(())
       }
-    })().with_context(|e| {
-      format!("Execution has failed : {}", e)
-    })?;
-
-    Ok(res)
+      _ => Ok(())
+    }
   }
 }

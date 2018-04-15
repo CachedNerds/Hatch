@@ -2,9 +2,11 @@ use hatch_error::{ HatchResult, ResultExt, InvalidPathError };
 use clap::{ App, SubCommand, ArgMatches };
 use cli::commands::Command;
 use platform::os;
-use assets::PlatformKind;
 use task;
 use std::process;
+use project::Project;
+use assets::PlatformKind;
+use std::path::Path;
 
 pub struct Build {
   name: &'static str
@@ -17,8 +19,8 @@ impl<'build> Build {
     }
   }
 
-  pub fn execute(&self, project: &Project) -> HatchResult<()> {
-    if let Some(path) = project.path().to_str() {
+  pub fn execute(&self, project_path: &Path, project: &Project) -> HatchResult<()> {
+    if let Some(path) = project_path.to_str() {
       let command = format!("cd {} && tup", path);
       let mut shell: String;
       let mut args: Vec<String>;
@@ -55,21 +57,12 @@ impl<'command> Command<'command> for Build {
   }
 
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let res = (|| -> HatchResult<()> {
-      let project_path = self.project_path(args);
-      let project = task::read_project(&project_path)?;
-
-      println!("Generating assets...\n");
-
-      task::generate_assets(&project)?;
-
-      println!("Building project...\n");
-
-      self.execute(&project)
-    })().with_context(|e| {
-      format!("Failed to build project : {}", e)
-    })?;
-
-    Ok(res)
+    let project_path = self.project_path(args);
+    let project = task::read_project(&project_path)?;
+    println!("Generating assets...\n");
+    task::generate_assets(&project)?;
+    println!("Building project...\n");
+    self.execute(&project_path, &project)?;
+    Ok(())
   }
 }

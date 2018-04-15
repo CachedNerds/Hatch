@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["technetos <mrgould93@gmail.com>"]
 
 [dependencies]
-clap = "2"
+clap = {version = "2", features = ["yaml"]}
 yaml-rust = "0.3"
 git2 = "0.6"
 failure = "0.1.1"

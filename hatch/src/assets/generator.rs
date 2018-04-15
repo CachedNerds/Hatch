@@ -2,6 +2,7 @@ use assets::{ Asset, ProjectAsset };
 use hatch_error::{ HatchResult, ResultExt };
 use std::fs;
 use std::io::Write;
+use std::path::PathBuf;
 
 pub fn generate_one(asset: &ProjectAsset) -> HatchResult<()> {
   let path = asset.path();

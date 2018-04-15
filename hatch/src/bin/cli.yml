@@ -1,0 +1,54 @@
+---
+name: hatch
+version: "0.2-rc01"
+about: C++ build system
+subcommands:
+    - build:
+        about: Build a project
+    - new:
+        about: Creates a new project. (default = static library)
+        args:
+            - name:
+                help: Name of project
+                takes_value: true
+                required: true
+            - type:
+                help: Determines the type of the project
+                long: type
+                short: t
+                takes_value: true
+                possible_values:
+                    - BIN
+                    - STATIC
+                    - SHARED
+                required: true
+            - version:
+                help: Set the project version
+                long: version
+                short: v
+                takes_value: true
+                required: false
+            - include:
+                help: List URLs to git repositories
+                long: include
+                short: i
+                multiple: true
+                number_of_values: 1
+                takes_value: true
+                required: false
+    - run:
+        about: Executes a project
+        args:
+            - args:
+                help: The arguments forwarded to the executable
+                min_values: 0
+                value_delimiter: " "
+                required: false
+    - test:
+        about: Test project
+        args:
+            - args:
+                help: The arguments forwarded to the test executable
+                min_values: 0
+                value_delimiter: " "
+                required: false

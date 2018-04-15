@@ -8,6 +8,7 @@ use hatch_error::HatchResult;
 use clap::{ ArgMatches, App };
 use std::path::PathBuf;
 use deps::dependency::Dependency;
+use project::ProjectKind;
 
 static ARGS: &str = "ARGS";
 static INCLUDE: &str = "INCLUDE";
@@ -39,6 +40,23 @@ pub trait Command<'command> {
       PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
     } else {
       PathBuf::from("./")
+    }
+  }
+
+  fn project_version(&self, args: &ArgMatches<'command>) -> String {
+    if args.is_present(VERSION) {
+      value_t!(args, VERSION, String).unwrap()
+    } else {
+      "0.0.1".to_owned()
+    }
+  }
+
+  fn project_kind(&self, args: &ArgMatches<'command>) -> ProjectKind {
+    if args.is_present(TYPE) {
+      let type_arg: String = value_t!(args, TYPE, String).unwrap();
+      ProjectKind::from_str(type_arg.as_str())
+    } else {
+      ProjectKind::default()
     }
   }
 }

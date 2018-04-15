@@ -1,13 +1,14 @@
 use platform::arch::Arch;
 use project::Target;
+use project::ProjectKind;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct CompilerOptions {
-  pub compiler: String,
-  pub compiler_flags: String,
-  pub linker_flags: String,
-  pub arch: Arch,
-  pub target: Target,
+  compiler: String,
+  compiler_flags: String,
+  linker_flags: String,
+  arch: Arch,
+  target: Target,
 }
 
 impl CompilerOptions {
@@ -24,8 +25,8 @@ impl CompilerOptions {
 
   pub fn default() -> CompilerOptions {
     let compiler: String = String::from("g++");
-    let compiler_flags= String::from("-c");
-    let linker_flags= String::from("-v");
+    let compiler_flags = String::from("-c");
+    let linker_flags = String::from("-v");
     let mut arch: Arch = Arch::X64;
     if let Some(architecture) = Arch::architecture() {
       arch = architecture;
@@ -38,6 +39,13 @@ impl CompilerOptions {
       linker_flags,
       arch,
       target
+    }
+  }
+
+  pub fn default_from_kind(kind: &ProjectKind) -> Option<CompilerOptions> {
+    match kind {
+      ProjectKind::HeaderOnly => None,
+      _ => Some(CompilerOptions::default())
     }
   }
 }
