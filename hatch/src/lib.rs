@@ -12,8 +12,6 @@ pub extern crate failure;
 pub extern crate os_info;
 pub extern crate reqwest;
 
-
-
 pub mod project;
 pub mod cli;
 pub mod hatch_error;
@@ -23,6 +21,7 @@ pub mod task;
 pub mod deps;
 pub mod platform;
 pub mod locations;
+pub mod constants;
 
 #[cfg(test)]
 mod tests {

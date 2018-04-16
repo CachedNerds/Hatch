@@ -5,30 +5,18 @@ pub mod test;
 pub mod run;
 
 use hatch_error::HatchResult;
-use clap::{ ArgMatches, App };
+use clap::{ ArgMatches };
 use std::path::PathBuf;
 use deps::dependency::Dependency;
 use project::ProjectKind;
-
-static ARGS: &str = "ARGS";
-static INCLUDE: &str = "INCLUDE";
-static VERSION: &str = "VERSION";
-static TYPE: &str = "TYPE";
-
-pub static BIN: &str = "bin";
-pub static STATIC: &str = "static";
-pub static SHARED: &str = "shared";
-pub static HEADER: &str = "header-only";
-
-static PROJECT_NAME: &str = "PROJECT_NAME";
-static PROJECT_NAMES: &str = "PROJECT_NAMES";
-static PROJECT_PATH: &str = "PROJECT_PATH";
+use constants::{ ARGS, PROJECT_NAME, PROJECT_PATH, VERSION, TYPE, INCLUDE };
+use std::path::Path;
+use platform::os;
+use assets::PlatformKind;
+use std::process;
+use hatch_error::InvalidPathError;
 
 pub trait Command<'command> {
-  fn cli_subcommand(&self) -> App<'command, 'command>;
-  
-  fn subcommand_name(&self) -> &'static str;
-
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
  
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
@@ -59,13 +47,38 @@ pub trait Command<'command> {
       ProjectKind::default()
     }
   }
-}
 
-fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<String> {
-  if let Some(values) = args.values_of(INCLUDE) {
-    values.map(String::from).collect::<Vec<String>>()
-  } else {
-    Vec::new()
+  fn parse_arguments_from_cli(&self, cli_args: &ArgMatches<'command>) -> Vec<String> {
+    if let Some(arguments) = cli_args.values_of(ARGS) {
+      arguments.map(String::from).collect()
+    } else {
+      Vec::new()
+    }
+  }
+
+  fn build(&self, project_path: &Path) -> HatchResult<()> {
+    if let Some(path) = project_path.to_str() {
+      let command = format!("cd {} && tup", path);
+      let mut shell: String;
+      let mut args: Vec<String>;
+      match os::platform_type() {
+        PlatformKind::Windows => {
+          shell = String::from("cmd");
+          args = vec![String::from("/C"), command];
+        },
+        _ => {
+          shell = String::from("sh");
+          args = vec![String::from("-c"), command];
+        }
+      }
+
+      let mut child = process::Command::new(shell).args(args).spawn()?;
+      child.wait()?;
+
+      Ok(())
+    } else {
+      Err(InvalidPathError)?
+    }
   }
 }
 

@@ -1,16 +1,13 @@
 #[cfg(test)]
 pub mod tests;
 
-//use assets::builder::Builder as AssetBuilder;
 use std::path::Path;
 use hatch_error::{ HatchResult };
-//use assets::generator;
-//use yaml;
 use project::Project;
 use serde_yaml;
 use std::fs::File;
 use std::io::Read;
-use hatch_error::SerdeYamlError;
+//use hatch_error::SerdeYamlError;
 
 pub fn read_project(path: &Path) -> HatchResult<Project> {
   let mut data = String::new();

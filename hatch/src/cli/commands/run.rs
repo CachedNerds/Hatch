@@ -1,50 +1,19 @@
 use std::process::Command as ProcessCommand;
 use cli::commands::Command;
-//use cli::commands::build::Build;
-use cli::commands::ARGS;
-use hatch_error::{ HatchResult, ResultExt, NullError };
 use task;
-use clap::{ App, SubCommand, Arg, ArgMatches };
+use clap::{ ArgMatches };
 use project::ProjectKind;
 use hatch_error::Action;
-use cli::commands::build::Build;
 
-pub struct Run {
-  name: &'static str,
-}
+pub struct Run;
 
 impl<'run> Run {
   pub fn new() -> Run {
-    Run {
-      name: "run",
-    }
-  }
-}
-
-fn parse_run_arguments_from_cli<'command>(cli_args: &ArgMatches<'command>) -> Vec<String> {
-  if let Some(arguments) = cli_args.values_of(ARGS) {
-    arguments.map(String::from).collect()
-  } else {
-    Vec::new()
+    Run
   }
 }
 
 impl<'command> Command<'command> for Run {
-  fn cli_subcommand(&self) -> App<'command, 'command> {
-    SubCommand::with_name(&self.name)
-      .about("Executes a project.")
-      .author("Danny Peck <danieljpeck93@gmail.com>")
-
-      .arg(Arg::with_name(ARGS)
-        .help("The arguments forwarded to the executable.")
-        .min_values(0).value_delimiter(" ")
-        .required(false))
-  }
-
-  fn subcommand_name(&self) -> &'static str {
-    self.name
-  }
-
   fn execute(&self, args: &ArgMatches<'command>) -> Action {
     let project_path = self.project_path(args);
     let project = task::read_project(&project_path)?;
@@ -53,12 +22,10 @@ impl<'command> Command<'command> for Run {
         println!("Generating assets...\n");
         task::generate_assets(&project)?;
         println!("Building project...\n");
-        Build::new().execute(&project_path, &project).with_context(|e| {
-          format!("Failed to build project : {}", e)
-        })?;
+        self.build(&project_path)?;
         println!("Executing...\n");
         let executable_path = format!("{}target/{}", project_path.display(), project.name());
-        let run_arguments =  parse_run_arguments_from_cli(args);
+        let run_arguments =  self.parse_arguments_from_cli(args);
         let mut child = ProcessCommand::new(&executable_path).args(run_arguments).spawn()?;
         child.wait()?;
         Ok(())

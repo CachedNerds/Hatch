@@ -1,4 +1,4 @@
-use cli::commands::{ BIN, STATIC, SHARED, HEADER };
+use constants::{ BIN, STATIC, SHARED, HEADER };
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum ProjectKind { Binary, Static, Shared, HeaderOnly }

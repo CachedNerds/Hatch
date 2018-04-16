@@ -8,12 +8,12 @@ use hatch::cli::commands::Command;
 use hatch::cli::commands::run::Run;
 use clap::App;
 use yaml_rust::YamlLoader;
-use hatch::hatch_error::HatchResult;
-use hatch::hatch_error::MissingParameterError;
+use hatch::hatch_error::{ HatchResult, MissingParameterError };
 use hatch::cli::commands::new::New;
 use hatch::cli::commands::update::Update;
 use hatch::cli::commands::build::Build;
 use hatch::cli::commands::test::Test;
+use hatch::constants;
 
 fn do_me_a_hatch() -> HatchResult<()> {
   let cli = include_str!("cli.yml");
@@ -24,21 +24,23 @@ fn do_me_a_hatch() -> HatchResult<()> {
 
   let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
   let run_command = Box::new(Run::new());
-  subcommands.insert(run_command.subcommand_name(), run_command);
+  subcommands.insert(constants::RUN_NAME, run_command);
 
   let new_command = Box::new(New::new());
-  subcommands.insert(new_command.subcommand_name(), new_command);
+  subcommands.insert(constants::NEW_NAME, new_command);
 
   let update_command = Box::new(Update::new());
-  subcommands.insert(update_command.subcommand_name(), update_command);
+  subcommands.insert(constants::UPDATE_NAME, update_command);
 
   let build_command = Box::new(Build::new());
-  subcommands.insert(build_command.subcommand_name(), build_command);
+  subcommands.insert(constants::BUILD_NAME, build_command);
 
   let test_command = Box::new(Test::new());
-  subcommands.insert(test_command.subcommand_name(), test_command);
+  subcommands.insert(constants::TEST_NAME, test_command);
 
   let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
+
+  // TODO: args.unwrap is bad, don't do this, it should be resultified
   subcommand.execute(args.unwrap())?;
   Ok(())
 }
@@ -57,71 +59,4 @@ fn main() {
       ()
     }
   }
-
-  // create the subcommand to command map
-
-//  let new_command = Box::new(New::new());
-//  subcommands.insert(new_command.subcommand_name(), new_command);
-
-//  let update_command = Box::new(Update::new());
-//  subcommands.insert(update_command.subcommand_name(), update_command);
-//
-//  let build_command = Box::new(Build::new());
-//  subcommands.insert(build_command.subcommand_name(), build_command);
-//
-//  let test_command = Box::new(Test::new());
-//  subcommands.insert(test_command.subcommand_name(), test_command);
-//
-  //let run_command = Box::new(Run::new());
-  //subcommands.insert(run_command.subcommand_name(), run_command);
-
-
-  //let subcommand = subcommands.get(name).ok_or_else(|| 0)?;
-  //let subcommand = subcommands.get(name).unwrap();
-  //let res = subcommand.execute(args.unwrap());
-
-
-//  if let Some(cmd) = subcommands.get(name) {
-//    if let Err(e) = cmd.execute(args.unwrap()) {
-//      println!("{}", e);
-//    }
-//  }
-  //let deserialized_point: Point = serde_yaml::from_str(&s).unwrap();
-//  let docs = YamlLoader::load_from_str(cli).unwrap();
-//  let doc = &docs[0];
-//  let matches = App::from_yaml(doc).get_matches();
-//  let (name, args) = matches.subcommand();
-//  if let Some(cmd) = subcommands.get(name) {
-//    if let Err(e) = cmd.execute(args.unwrap()) {
-//      println!("{}", e);
-//    }
-//  }
-//  create the subcommand to command map
-//  let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
-//
-//  let new_command = Box::new(New::new());
-//  subcommands.insert(new_command.subcommand_name(), new_command);
-//
-//  let update_command = Box::new(Update::new());
-//  subcommands.insert(update_command.subcommand_name(), update_command);
-//
-//  let build_command = Box::new(Build::new());
-//  subcommands.insert(build_command.subcommand_name(), build_command);
-//
-//  let test_command = Box::new(Test::new());
-//  subcommands.insert(test_command.subcommand_name(), test_command);
-//
-//  let run_command = Box::new(Run::new());
-//  subcommands.insert(run_command.subcommand_name(), run_command);
-//
-//  // initialize cli with the set of subcommand
-//  let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
-//
-//  // execute selected subcommand
-//  let (name, args) = cli.subcommand();
-//  if let Some(cmd) = subcommands.get(name) {
-//    if let Err(e) = cmd.execute(args.unwrap()) {
-//      println!("{}", e);
-//    }
-//  }
 }
