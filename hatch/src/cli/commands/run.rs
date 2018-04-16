@@ -4,6 +4,7 @@ use task;
 use clap::{ ArgMatches };
 use project::ProjectKind;
 use hatch_error::Action;
+use generators::tup::Tup;
 
 pub struct Run;
 
@@ -20,7 +21,8 @@ impl<'command> Command<'command> for Run {
     match *project.kind() {
       ProjectKind::Binary => {
         println!("Generating assets...\n");
-        task::generate_assets(&project)?;
+        let generator = Tup::boxed(&project);
+        task::generate_assets(generator, &project)?;
         println!("Building project...\n");
         self.build(&project_path)?;
         println!("Executing...\n");

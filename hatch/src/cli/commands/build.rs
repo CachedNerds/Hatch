@@ -2,6 +2,7 @@ use hatch_error::{ HatchResult };
 use clap::{ ArgMatches };
 use cli::commands::Command;
 use task;
+use generators::tup::Tup;
 
 pub struct Build;
 
@@ -16,7 +17,8 @@ impl<'command> Command<'command> for Build {
     let project_path = self.project_path(args);
     let project = task::read_project(&project_path)?;
     println!("Generating assets...\n");
-    task::generate_assets(&project)?;
+    let generator = Tup::boxed(&project);
+    task::generate_assets(generator, &project)?;
     println!("Building project...\n");
     self.build(&project_path)?;
     Ok(())

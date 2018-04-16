@@ -8,6 +8,7 @@ use hatch_error::{ HatchResult };
 use task;
 use project::{ CompilerOptions, Project };
 use serde_yaml;
+use generators::tup::Tup;
 
 pub struct New;
 
@@ -42,7 +43,8 @@ impl<'command> Command<'command> for New {
     let mut file = fs::File::create(hatch_file)?;
     file.write_all(yaml_output.as_bytes())?;
     println!("Generating assets...");
-    task::generate_assets(&project)?;
+    let generator = Tup::boxed(&project);
+    task::generate_assets(generator, &project)?;
     println!("Finished");
     Ok(())
   }

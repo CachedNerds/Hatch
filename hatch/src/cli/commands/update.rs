@@ -2,6 +2,7 @@ use hatch_error::HatchResult;
 use clap::{ ArgMatches };
 use cli::commands::Command;
 use task;
+use generators::tup::Tup;
 
 pub struct Update;
 
@@ -14,9 +15,8 @@ impl<'update> Update {
 impl<'command> Command<'command> for Update {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
     let project = task::read_project(&self.project_path(args))?;
-
-    task::generate_assets(&project)?;
-
+    let generator = Tup::boxed(&project);
+    task::generate_assets(generator, &project)?;
     Ok(())
   }
 }

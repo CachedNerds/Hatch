@@ -10,7 +10,6 @@
 //use hatch_error::{ HatchResult, ResultExt, NullError };
 //use platform::os;
 //use reqwest;
-//use std::path::PathBuf;
 //use project::Project;
 //
 //static CATCH_HEADER_URL: &str = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";

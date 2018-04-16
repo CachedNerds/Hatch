@@ -13,16 +13,16 @@
 //}
 //
 //impl Tuprules {
-////  pub fn new(config: &Com) -> Tuprules {
-////    Tuprules {
-////      kind: copy_kind,
-////      compiler: String::from(config.compiler()),
-////      compiler_flags: config.compiler_flags().join(" "),
-////      linker_flags: config.linker_flags().join(" "),
-////      arch: copy_arch,
-////      target: copy_target
-////    }
-////  }
+//  pub fn new(config: &CompilerOptions) -> Tuprules {
+//    Tuprules {
+//      kind: copy_kind,
+//      compiler: String::from(config.compiler()),
+//      compiler_flags: config.compiler_flags().join(" "),
+//      linker_flags: config.linker_flags().join(" "),
+//      arch: config.arch(),
+//      target: copy_target
+//    }
+//  }
 //
 //  pub fn from_compiler_config(compiler_options: CompilerOptions) -> Tuprules {
 //    Tuprules {
@@ -46,10 +46,11 @@
 //    }
 //  }
 //
-//  fn type_flag(lib_type: &LibraryKind) -> String {
+//  fn type_flag(lib_type: &ProjectKind) -> String {
 //    match *lib_type {
-//      LibraryKind::Static => String::from("-static"),
-//      LibraryKind::Shared => String::from("-dynamic"),
+//      ProjectKind::Static => String::from("-static"),
+//      ProjectKind::Shared => String::from("-dynamic"),
+//      _ => String::from("")
 //    }
 //  }
 //}

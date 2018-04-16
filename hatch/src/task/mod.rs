@@ -7,6 +7,9 @@ use project::Project;
 use serde_yaml;
 use std::fs::File;
 use std::io::Read;
+//use assets::generator;
+//use assets::builder::Builder;
+use generators::Generator;
 //use hatch_error::SerdeYamlError;
 
 pub fn read_project(path: &Path) -> HatchResult<Project> {
@@ -26,10 +29,22 @@ pub fn read_project(path: &Path) -> HatchResult<Project> {
 //  realres
 }
 
-pub fn generate_assets(_project: &Project) -> HatchResult<()> {
-//  generator::generate_all(AssetBuilder::from(project).assets()).with_context(|e| {
+pub fn generate_assets(generator: Box<Generator>, project: &Project) -> HatchResult<()> {
+
+  // get all the assets
+  let assets = generator.asses();
+
+  //let assets = Builder::from(project).assets();
+
+  // generate those assets - this was a good idea!
+  // the generator is completely independent of the asset generators
+  // generator::generate_all(&assets);
+
+//  generator::generate_all(Builder::from(project).assets()).with_context(|e| {
 //    format!("asset generation failed : `{}`", e)
 //  })?;
+
+
 
   Ok(())
 }

@@ -48,4 +48,20 @@ impl CompilerOptions {
       _ => Some(CompilerOptions::default())
     }
   }
+
+  pub fn compiler(&self) -> &str {
+    &self.compiler
+  }
+  pub fn compiler_flags(&self) -> &str {
+    &self.compiler_flags
+  }
+  pub fn linker_flags(&self) -> &str {
+    &self.linker_flags
+  }
+  pub fn arch(&self) -> &Arch {
+    &self.arch
+  }
+  pub fn target(&self) -> &Target {
+    &self.target
+  }
 }

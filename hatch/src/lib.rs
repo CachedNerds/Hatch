@@ -22,6 +22,7 @@ pub mod deps;
 pub mod platform;
 pub mod locations;
 pub mod constants;
+pub mod generators;
 
 #[cfg(test)]
 mod tests {
