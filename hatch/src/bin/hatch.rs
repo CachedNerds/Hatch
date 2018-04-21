@@ -12,35 +12,40 @@ use hatch::cli::commands::run::Run;
 use hatch::cli::commands::clean::Clean;
 
 fn main() {
-  // create the subcommand to command map
-  let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
+    // create the subcommand to command map
+    let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
 
-  let new_command = Box::new(New::new());
-  subcommands.insert(new_command.subcommand_name(), new_command);
+    let new_command = Box::new(New::new());
+    subcommands.insert(new_command.subcommand_name(), new_command);
 
-  let update_command = Box::new(Update::new());
-  subcommands.insert(update_command.subcommand_name(), update_command);
+    let update_command = Box::new(Update::new());
+    subcommands.insert(update_command.subcommand_name(), update_command);
 
-  let build_command = Box::new(Build::new());
-  subcommands.insert(build_command.subcommand_name(), build_command);
+    let build_command = Box::new(Build::new());
+    subcommands.insert(build_command.subcommand_name(), build_command);
 
-  let test_command = Box::new(Test::new());
-  subcommands.insert(test_command.subcommand_name(), test_command);
+    let test_command = Box::new(Test::new());
+    subcommands.insert(test_command.subcommand_name(), test_command);
 
-  let run_command = Box::new(Run::new());
-  subcommands.insert(run_command.subcommand_name(), run_command);
+    let run_command = Box::new(Run::new());
+    subcommands.insert(run_command.subcommand_name(), run_command);
 
-  let clean_command = Box::new(Clean::new());
-  subcommands.insert(clean_command.subcommand_name(), clean_command);
+    let clean_command = Box::new(Clean::new());
+    subcommands.insert(clean_command.subcommand_name(), clean_command);
 
-  // initialize cli with the set of subcommand
-  let cli = Cli::new(subcommands.values().map(|v| v.cli_subcommand()).collect::<Vec<_>>());
+    // initialize cli with the set of subcommand
+    let cli = Cli::new(
+        subcommands
+            .values()
+            .map(|v| v.cli_subcommand())
+            .collect::<Vec<_>>(),
+    );
 
-  // execute selected subcommand
-  let (name, args) = cli.subcommand();
-  if let Some(cmd) = subcommands.get(name) {
-    if let Err(e) = cmd.execute(args.unwrap()) {
-      println!("{}", e);
+    // execute selected subcommand
+    let (name, args) = cli.subcommand();
+    if let Some(cmd) = subcommands.get(name) {
+        if let Err(e) = cmd.execute(args.unwrap()) {
+            println!("{}", e);
+        }
     }
-  }
 }

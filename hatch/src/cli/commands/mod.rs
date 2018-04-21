@@ -6,7 +6,7 @@ pub mod run;
 pub mod clean;
 
 use hatch_error::HatchResult;
-use clap::{ ArgMatches, App };
+use clap::{App, ArgMatches};
 use std::path::PathBuf;
 
 static ARGS: &str = "ARGS";
@@ -21,29 +21,29 @@ static PROJECT_NAMES: &str = "PROJECT_NAMES";
 static PROJECT_PATH: &str = "PROJECT_PATH";
 
 pub trait Command<'command> {
-  fn cli_subcommand(&self) -> App<'command, 'command>;
-  
-  fn subcommand_name(&self) -> &'static str;
+    fn cli_subcommand(&self) -> App<'command, 'command>;
 
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
- 
-  fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
-    value_t!(args, PROJECT_NAME, String).ok()
-  }
-  
-  fn project_path(&self, args: &ArgMatches<'command>) -> PathBuf {
-    if args.is_present(PROJECT_PATH) {
-      PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
-    } else {
-      PathBuf::from("./")
+    fn subcommand_name(&self) -> &'static str;
+
+    fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
+
+    fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
+        value_t!(args, PROJECT_NAME, String).ok()
     }
-  }
+
+    fn project_path(&self, args: &ArgMatches<'command>) -> PathBuf {
+        if args.is_present(PROJECT_PATH) {
+            PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
+        } else {
+            PathBuf::from("./")
+        }
+    }
 }
 
 fn parse_deps_from_cli<'func>(args: &ArgMatches<'func>) -> Vec<String> {
-  if let Some(values) = args.values_of(INCLUDE) {
-    values.map(String::from).collect::<Vec<String>>()
-  } else {
-    Vec::new()
-  }
+    if let Some(values) = args.values_of(INCLUDE) {
+        values.map(String::from).collect::<Vec<String>>()
+    } else {
+        Vec::new()
+    }
 }

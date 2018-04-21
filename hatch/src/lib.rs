@@ -2,12 +2,12 @@
 
 #[macro_use]
 pub extern crate clap;
-pub extern crate yaml_rust;
-pub extern crate git2;
 #[macro_use]
 pub extern crate failure;
+pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
+pub extern crate yaml_rust;
 
 pub mod project;
 pub mod cli;
@@ -21,7 +21,6 @@ pub mod locations;
 
 #[cfg(test)]
 mod tests {
-  #[test]
-  fn it_works() {
-  }
+    #[test]
+    fn it_works() {}
 }
