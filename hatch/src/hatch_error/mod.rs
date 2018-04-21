@@ -24,5 +24,9 @@ pub struct MissingVersionError;
 pub struct InvalidPathError;
 
 #[derive(Fail, Debug)]
+#[fail(display = "Cleanup error")]
+pub struct CleanupError;
+
+#[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct NullError;

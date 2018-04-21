@@ -1,5 +1,6 @@
 pub mod builder;
 pub mod generator;
+pub mod janitor;
 pub mod config;
 pub mod tupfile;
 pub mod platform;
