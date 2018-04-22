@@ -49,7 +49,7 @@ impl Builder {
     pub fn assets(&self) -> &Vec<ProjectAsset> {
         &self.assets.as_ref()
     }
-    
+
     pub fn add_asset(&mut self, asset: ProjectAsset) {
         self.assets.push(asset);
     }
