@@ -1,10 +1,10 @@
 use assets::{Asset, ProjectAsset};
-use hatch_error::{HatchResult, ResultExt};
+use hatch_error::HatchResult;
 use std::path::PathBuf;
 use std::fs;
 
 fn remove_file(file_path: &PathBuf) -> HatchResult<()> {
-    lsfs::remove_file(&file_path)?;
+    fs::remove_file(&file_path)?;
 
     Ok(())
 }
