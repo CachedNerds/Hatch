@@ -1,5 +1,5 @@
 use hatch_error::{CleanupError, HatchResult};
-use clap::{App, ArgMatches, SubCommand};
+use clap::{App, Arg, ArgMatches, SubCommand};
 use cli::commands::Command;
 use task;
 use project::Project;
