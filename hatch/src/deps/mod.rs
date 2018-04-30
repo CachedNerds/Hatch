@@ -8,7 +8,6 @@ use git2::Repository;
 use std::collections::HashSet;
 use std::fs;
 use std::path::Path;
-use task;
 use self::dependency::Dependency;
 use locations::hatchfile_path;
 use std::fs::File;
@@ -89,8 +88,8 @@ fn clone_nested_project_deps(registry: &Path,
   // 1. Put this back in task::read_project
   // 2. Make a constructor for Project that takes a &Path
   let mut data = String::new();
-  let mut file = File::open(&path);
-  file.unwrap().read_to_string(&mut data);
+  let file = File::open(&path);
+  let _ = file.unwrap().read_to_string(&mut data);
   match serde_yaml::from_str::<Project>(&data) {
     Err(e) => {
       // TODO: For some reason, I can't push this error

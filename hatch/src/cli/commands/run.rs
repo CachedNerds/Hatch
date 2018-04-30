@@ -1,6 +1,5 @@
 use std::process::Command as ProcessCommand;
 use cli::commands::Command;
-use task;
 use clap::{ ArgMatches };
 use project::ProjectKind;
 use hatch_error::Action;

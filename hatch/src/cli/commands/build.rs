@@ -3,8 +3,6 @@ use clap::{ ArgMatches };
 use cli::commands::Command;
 use generators::Generator;
 use generators::tup::Tup;
-use assets::generator;
-use failure::ResultExt;
 
 pub struct Build;
 

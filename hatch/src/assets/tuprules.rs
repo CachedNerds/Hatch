@@ -1,8 +1,6 @@
 use platform::arch::Arch;
 use project::Target;
-use project::CompilerOptions;
 use project::ProjectKind;
-use assets::ProjectAsset;
 use project::Project;
 
 pub struct Tuprules {}
@@ -67,36 +65,6 @@ impl Tuprules {
       },
       _ => panic!("")
     };
-//    let compiler_options = maybe_compiler_options.clone().unwrap_or_else(|| {
-//      panic!("missing compiler options");
-//    });
-
-
-//    match compiler_options.target() {
-//      Target::Debug => {
-//        let debug_token = String::from("CFLAGS += -g");
-//        tokens.push(debug_token);
-//      },
-//      _ => {}
-//    }
-
-//    let arch_flag = Tuprules::arch_flag(compiler_options.arch());
-//    let arch_token = format!("ARCH = {}", arch_flag);
-//    tokens.push(arch_token);
-
-//    tokens.push(String::from("CFLAGS += $(ARCH)"));
-
-//    if !compiler_options.compiler_flags().is_empty() {
-//      let compiler_flags = format!("CFLAGS += {}", compiler_options.compiler_flags());
-//      tokens.push(compiler_flags);
-//    }
-//
-//    tokens.push(String::from("LINKFLAGS += $(ARCH)"));
-//
-//    if !compiler_options.linker_flags().is_empty() {
-//      let linker_flags = format!("LINKFLAGS += {}", compiler_options.linker_flags());
-//      tokens.push(linker_flags);
-//    }
 
     match project_kind {
       ProjectKind::Static | ProjectKind::Shared => {

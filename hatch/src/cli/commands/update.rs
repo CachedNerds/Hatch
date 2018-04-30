@@ -1,7 +1,6 @@
 use hatch_error::HatchResult;
 use clap::{ ArgMatches };
 use cli::commands::Command;
-use task;
 use generators::tup::Tup;
 
 pub struct Update;

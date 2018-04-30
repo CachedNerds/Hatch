@@ -5,7 +5,6 @@ use cli::commands::{ Command };
 use deps::clone_project_deps;
 use locations::{ hatchfile_path, modules_path };
 use hatch_error::{ HatchResult };
-use task;
 use project::{ CompilerOptions, Project };
 use serde_yaml;
 use generators::tup::Tup;

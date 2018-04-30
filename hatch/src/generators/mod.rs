@@ -1,6 +1,5 @@
 use project::Project;
 use hatch_error::HatchResult;
-use std::path::Path;
 use std::path::PathBuf;
 
 pub mod tup;

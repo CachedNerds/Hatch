@@ -1,12 +1,9 @@
 use generators::Generator;
-use assets::ProjectAsset;
 use project::Project;
 use assets::builder::Builder;
-use assets::{ TupKind };
 use platform::os;
 use hatch_error::HatchError;
 use failure::ResultExt;
-use std::path::Path;
 use std::path::PathBuf;
 
 pub struct Tup;
@@ -19,7 +16,6 @@ impl Tup {
 
 impl Generator for Tup {
   fn generate_assets(&self, project_path: PathBuf, project: &Project) -> Result<(), HatchError> {
-    let generator = Tup {};
     let mut builder = Builder::new(project_path, project);
     builder.config();
     builder.test_tupfile();
