@@ -43,15 +43,25 @@ mod tests;
 //}
 
 #[derive(Debug)]
-pub enum TupKind { Tuprules, Config, Tupfile, TestTupfile, TupfileIni }
+pub enum TupKind {
+    Tuprules,
+    Config,
+    Tupfile,
+    TestTupfile,
+    TupfileIni,
+}
 
 #[derive(Debug)]
-pub enum PlatformKind { Linux, MacOS, Windows }
+pub enum PlatformKind {
+    Linux,
+    MacOS,
+    Windows,
+}
 
 pub struct ProjectAsset {
-  path: PathBuf,
-  name: String,
-  contents: String,
+    path: PathBuf,
+    name: String,
+    contents: String,
 }
 
 impl ProjectAsset {

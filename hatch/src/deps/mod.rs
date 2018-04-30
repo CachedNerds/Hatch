@@ -3,7 +3,7 @@ mod tests;
 
 pub mod dependency;
 
-use hatch_error::{ HatchResult, HatchError };
+use hatch_error::{HatchError, HatchResult};
 use git2::Repository;
 use std::collections::HashSet;
 use std::fs;
@@ -20,22 +20,20 @@ pub fn clone_dep(url: &str, path: &Path) {
   let _ = Repository::clone(url, path);
 }
 
-fn walk(path: &Path,
-        callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchResult<()>
-{
-  if !callback(path)? {
-    return Ok(())
-  }
-
-  let dirs = fs::read_dir(path)?;
-
-  for dir in dirs {
-    let dir = dir?;
-    if dir.file_type()?.is_dir() {
-      walk(&dir.path(), callback)?;
+fn walk(path: &Path, callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchResult<()> {
+    if !callback(path)? {
+        return Ok(());
     }
-  }
-  Ok(())
+
+    let dirs = fs::read_dir(path)?;
+
+    for dir in dirs {
+        let dir = dir?;
+        if dir.file_type()?.is_dir() {
+            walk(&dir.path(), callback)?;
+        }
+    }
+    Ok(())
 }
 
 pub fn clone_project_deps(path: &Path,
@@ -44,38 +42,36 @@ pub fn clone_project_deps(path: &Path,
   let mut visited: HashSet<String> = HashSet::new();
   let mut errored: Vec<HatchError> = Vec::new();
 
-  // All dependencies are cloned into here
-  let registry = &path;
+    // All dependencies are cloned into here
+    let registry = &path;
 
   // Clone the dependencies specified on the command line
   dependencies.iter().for_each(|dep| {
     clone_dep(&dep.url(), &path.join(&dep.name()));
   });
 
-  // Clone the dependencies dependencies
-  walk(path, &mut |dir| {
-    // ignore hidden directories and ..
-    let name = dir.file_name().and_then(|s| s.to_str());
-    if name.map(|s| s.starts_with('.')) == Some(true) {
-      return Ok(false)
+    // Clone the dependencies dependencies
+    walk(path, &mut |dir| {
+        // ignore hidden directories and ..
+        let name = dir.file_name().and_then(|s| s.to_str());
+        if name.map(|s| s.starts_with('.')) == Some(true) {
+            return Ok(false);
+        }
+
+        // Grab the path to the Hatch.yml starting at `dir`
+        let hatchfile = hatchfile_path(dir);
+
+        if hatchfile.exists() {
+            clone_nested_project_deps(&registry, &dir, &mut errored, &mut visited);
+        }
+        Ok(true)
+    })?;
+
+    if !errored.is_empty() {
+        errored.into_iter().for_each(|e| println!("ERROR: {}", e));
     }
 
-    // Grab the path to the Hatch.yml starting at `dir`
-    let hatchfile = hatchfile_path(dir);
-
-    if hatchfile.exists() {
-      clone_nested_project_deps(&registry, &dir, &mut errored, &mut visited);
-    }
-    Ok(true)
-  })?;
-
-  if !errored.is_empty() {
-    errored.into_iter().for_each(|e| {
-      println!("ERROR: {}", e)
-    });
-  }
-
-  Ok(())
+    Ok(())
 }
 
 fn clone_nested_project_deps(registry: &Path,

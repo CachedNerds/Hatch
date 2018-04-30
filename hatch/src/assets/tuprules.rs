@@ -10,12 +10,12 @@ impl Tuprules {
     String::from("Tuprules.tup")
   }
 
-  fn arch_flag(arch: &Arch) -> String {
-    match *arch {
-      Arch::X64 => String::from("-m64"),
-      Arch::X86 => String::from("-m32"),
+    fn arch_flag(arch: &Arch) -> String {
+        match *arch {
+            Arch::X64 => String::from("-m64"),
+            Arch::X86 => String::from("-m32"),
+        }
     }
-  }
 
   fn type_flag(lib_type: &ProjectKind) -> String {
     match *lib_type {
@@ -99,7 +99,8 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 !link = |> $(CC) $(LINKFLAGS) %f -o %o |>
 
 # includes the STATIC and SHARED variables for the target platform
-include @(TUP_PLATFORM).tup"));
+include @(TUP_PLATFORM).tup",
+        ));
 
     match project_kind {
       ProjectKind::Static | ProjectKind::Shared => {
@@ -111,11 +112,16 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)"));
-      },
-      _ => {}
-    }
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+                ));
+            }
+            _ => {}
+        }
 
-    tokens.iter().map(|token| token.as_str()).collect::<Vec<_>>().join("\n")
-  }
+        tokens
+            .iter()
+            .map(|token| token.as_str())
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
 }

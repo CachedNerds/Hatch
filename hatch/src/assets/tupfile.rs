@@ -1,7 +1,7 @@
 use project::ProjectKind;
 
 pub struct Tupfile {
-  kind: ProjectKind
+    kind: ProjectKind,
 }
 
 impl Tupfile {
@@ -14,24 +14,26 @@ impl Tupfile {
 
     };
 
-    Tupfile { kind: copy_kind }
-  }
+        Tupfile { kind: copy_kind }
+    }
 
-  pub fn name() -> String {
-    String::from("Tupfile")
-  }
+    pub fn name() -> String {
+        String::from("Tupfile")
+    }
 }
 
 impl ToString for Tupfile {
-  fn to_string(&self) -> String {
-    let mut tokens = Vec::new();
+    fn to_string(&self) -> String {
+        let mut tokens = Vec::new();
 
-    let includes = String::from("include config.tup\ninclude_rules\n");
-    let compile_source = String::from(": foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_TARGET)/%B.o\n");
-    let compile_tests = String::from(": foreach $(TEST_FILES) |> !compile |> $(TEST_TARGET)/%B.o\n");
+        let includes = String::from("include config.tup\ninclude_rules\n");
+        let compile_source =
+            String::from(": foreach $(SOURCE_FILES) |> !compile |> $(SOURCE_TARGET)/%B.o\n");
+        let compile_tests =
+            String::from(": foreach $(TEST_FILES) |> !compile |> $(TEST_TARGET)/%B.o\n");
 
-    tokens.push(includes);
-    tokens.push(compile_source);
+        tokens.push(includes);
+        tokens.push(compile_source);
 
     match self.kind {
       ProjectKind::Binary => {
@@ -43,7 +45,7 @@ impl ToString for Tupfile {
       _ => panic!("should never get here!")
     }
 
-    tokens.push(compile_tests);
+        tokens.push(compile_tests);
 
     match self.kind {
       ProjectKind::Binary => {
@@ -54,7 +56,4 @@ impl ToString for Tupfile {
       }
       _ => panic!("should never get here!")
     }
-
-    tokens.iter().map(|token| token.as_str()).collect::<Vec<_>>().join("\n")
-  }
 }

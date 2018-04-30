@@ -5,12 +5,12 @@ extern crate serde_yaml;
 
 #[macro_use]
 pub extern crate clap;
-pub extern crate yaml_rust;
-pub extern crate git2;
 #[macro_use]
 pub extern crate failure;
+pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
+pub extern crate yaml_rust;
 
 pub mod project;
 pub mod cli;

@@ -14,8 +14,12 @@ use std::path::PathBuf;
 
 #[test]
 fn fmt_project_asset() {
-  let asset = ProjectAsset::new(PathBuf::from("./"), String::from("test"), String::from("test"));
+    let asset = ProjectAsset::new(
+        PathBuf::from("./"),
+        String::from("test"),
+        String::from("test"),
+    );
 
-  let result = format!("{:?}", asset);
-  assert_eq!(result, "path: ./, name: test, contents: test");
+    let result = format!("{:?}", asset);
+    assert_eq!(result, "path: ./, name: test, contents: test");
 }

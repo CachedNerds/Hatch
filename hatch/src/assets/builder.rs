@@ -1,9 +1,9 @@
-use assets::{ TupKind, PlatformKind, ProjectAsset };
+use assets::{PlatformKind, ProjectAsset, TupKind};
 use assets::config::Config;
 use assets::tuprules::Tuprules;
 use assets::test_tupfile::Tupfile as TestTupfile;
 use assets::tupfile::Tupfile;
-use assets::platform::{ Linux, MacOS, Windows };
+use assets::platform::{Linux, MacOS, Windows};
 use assets::tupfile_ini::TupfileIni;
 use assets::catch_header::CatchHeader;
 use assets::catch_definition::CatchDefinition;
@@ -63,8 +63,8 @@ impl<'builder> Builder<'builder> {
       PlatformKind::Windows => self.windows()
     };
 
-    self.assets.push(asset);
-  }
+        self.assets.push(asset);
+    }
 
   pub fn config(&self) -> ProjectAsset {
     let project_path = self.project_path.clone();
@@ -126,21 +126,24 @@ impl<'builder> Builder<'builder> {
         let mut resp = reqwest::get(CATCH_HEADER_URL)?;
         let content = resp.text()?;
 
-        Ok(ProjectAsset::new(test_src_path, CatchHeader::name(), content))
-      })().with_context(|e| {
-        format!("failed to generate catch.hpp : {}", e)
-      })?;
+                Ok(ProjectAsset::new(
+                    test_src_path,
+                    CatchHeader::name(),
+                    content,
+                ))
+            })()
+                .with_context(|e| format!("failed to generate catch.hpp : {}", e))?;
 
-      Ok(res)
-    } else {
-      Err(NullError)?
+            Ok(res)
+        } else {
+            Err(NullError)?
+        }
     }
-  }
 
   pub fn catch_definition(&self) -> ProjectAsset {
     let test_src_path = self.project_path.join("test/src");
     let contents = CatchDefinition::new().to_string();
 
-    ProjectAsset::new(test_src_path, CatchDefinition::name(), contents)
-  }
+        ProjectAsset::new(test_src_path, CatchDefinition::name(), contents)
+    }
 }
