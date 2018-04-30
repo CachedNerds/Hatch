@@ -1,7 +1,7 @@
 use std::fs;
 use std::io::prelude::*;
 use clap::{ ArgMatches };
-use cli::commands::{ Command, parse_dependencies };
+use cli::commands::{ Command };
 use deps::clone_project_deps;
 use locations::{ hatchfile_path, modules_path };
 use hatch_error::{ HatchResult };
@@ -25,7 +25,7 @@ impl<'command> Command<'command> for New {
     let kind = self.project_kind(args);
     let dir_path = self.project_path(args).join(&name);
     let hatch_file = hatchfile_path(&dir_path);
-    let includes = parse_dependencies(args);
+    let includes = self.parse_dependencies(args);
     fs::create_dir(&dir_path)?;
     fs::create_dir(modules_path(&dir_path))?;
     fs::create_dir(dir_path.join("src"))?;
@@ -43,8 +43,8 @@ impl<'command> Command<'command> for New {
     let mut file = fs::File::create(hatch_file)?;
     file.write_all(yaml_output.as_bytes())?;
     println!("Generating assets...");
-    let generator = Tup::boxed(&project);
-    task::generate_assets(generator, &project)?;
+    let generator = Box::new(Tup{});
+    self.generate_assets(generator, dir_path, &project)?;
     println!("Finished");
     Ok(())
   }

@@ -1,22 +1,48 @@
 use generators::Generator;
 use assets::ProjectAsset;
 use project::Project;
+use assets::builder::Builder;
+use assets::{ TupKind };
+use platform::os;
+use hatch_error::HatchError;
+use failure::ResultExt;
+use std::path::Path;
+use std::path::PathBuf;
 
-pub struct Tup<'tup> {
-  project: &'tup Project
+pub struct Tup;
+
+impl Tup {
+  pub fn new() -> Tup {
+    Tup{}
+  }
 }
 
-impl<'tup> Tup<'tup> {
-  pub fn new(project :&Project) -> Tup {
-    Tup { project }
-  }
-  pub fn boxed(project :&Project) -> Box<Tup> {
-    Box::new(Tup::new(project))
-  }
-}
+impl Generator for Tup {
+  fn generate_assets(&self, project_path: PathBuf, project: &Project) -> Result<(), HatchError> {
+    let generator = Tup {};
+    let mut builder = Builder::new(project_path, project);
+    builder.config();
+    builder.test_tupfile();
+    builder.tuprules();
+    builder.tupfile();
+    builder.tupfile_ini();
 
-impl<'generator> Generator<'generator> for Tup<'generator> {
-  fn asses(&self) -> Vec<ProjectAsset> {
-    unimplemented!()
+    let platform_type = os::platform_type();
+    builder.platform(&platform_type);
+
+    if let Ok(catch_header) = builder.catch_header() {
+      builder.add_asset(catch_header);
+    }
+
+    let catch_definition = builder.catch_definition();
+    builder.add_asset(catch_definition);
+    let assets = Builder::collect_assets(builder);
+
+    for asset in assets {
+      asset.write().with_context(|e| {
+        format!("Failed to generate asset: `{}` : {}", asset.path().display(), e)
+      })?;
+    }
+    Ok(())
   }
 }

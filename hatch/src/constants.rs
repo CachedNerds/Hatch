@@ -18,3 +18,5 @@ pub static BUILD_NAME: &str = "build";
 pub static UPDATE_NAME: &str = "update";
 pub static RUN_NAME: &str = "run";
 pub static TEST_NAME: &str = "test";
+
+pub static CATCH_HEADER_URL: &str = "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";

@@ -5,6 +5,8 @@ use clap::{ ArgMatches };
 use project::ProjectKind;
 use hatch_error::Action;
 use generators::tup::Tup;
+use generators::Generator;
+use failure::ResultExt;
 
 pub struct Run;
 
@@ -16,13 +18,17 @@ impl<'run> Run {
 
 impl<'command> Command<'command> for Run {
   fn execute(&self, args: &ArgMatches<'command>) -> Action {
-    let project_path = self.project_path(args);
-    let project = task::read_project(&project_path)?;
+    let (project_path, project) = self.read_project_context(args)?;
+    let generator = Tup{};
+    Generator::generate_assets(&generator, project_path.clone(), &project).with_context(|e| {
+      format!("asset generation failed : `{}`", e)
+    })?;
+
     match *project.kind() {
       ProjectKind::Binary => {
         println!("Generating assets...\n");
-        let generator = Tup::boxed(&project);
-        task::generate_assets(generator, &project)?;
+        let generator = Box::new(Tup{});
+        self.generate_assets(generator, project_path.clone(), &project)?;
         println!("Building project...\n");
         self.build(&project_path)?;
         println!("Executing...\n");

@@ -22,6 +22,9 @@ fn do_me_a_hatch() -> HatchResult<()> {
   let matches = App::from_yaml(doc).get_matches();
   let (name, args) = matches.subcommand();
 
+  // TODO: get the generator from the CLI and inject into commands
+  // let generator;
+
   let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
   let run_command = Box::new(Run::new());
   subcommands.insert(constants::RUN_NAME, run_command);

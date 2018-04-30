@@ -15,14 +15,37 @@ use platform::os;
 use assets::PlatformKind;
 use std::process;
 use hatch_error::InvalidPathError;
+use generators::Generator;
+use project::Project;
+use std::fs::File;
+use serde_yaml;
+use std::io::Read;
+use failure::ResultExt;
 
 pub trait Command<'command> {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
- 
+
+  fn read_project_context(&self, args: &ArgMatches<'command>) -> HatchResult<(PathBuf, Project)> {
+    let project_path = if args.is_present(PROJECT_PATH) {
+      PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
+    } else {
+      PathBuf::from("./")
+    };
+
+    let project = {
+      let project_path_ref = project_path.as_path();
+      let mut data = String::new();
+      File::open(&project_path_ref)?.read_to_string(&mut data)?;
+      serde_yaml::from_str::<Project>(&data)?
+    };
+
+    Ok((project_path, project))
+  }
+
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
     value_t!(args, PROJECT_NAME, String).ok()
   }
-  
+
   fn project_path(&self, args: &ArgMatches<'command>) -> PathBuf {
     if args.is_present(PROJECT_PATH) {
       PathBuf::from(value_t!(args, PROJECT_PATH, String).unwrap().as_str())
@@ -56,6 +79,14 @@ pub trait Command<'command> {
     }
   }
 
+  fn parse_dependencies<'func>(&self, args: &ArgMatches<'func>) -> Vec<Dependency> {
+    if let Some(values) = args.values_of(INCLUDE) {
+      values.map(String::from).map(Dependency::new).collect::<Vec<Dependency>>()
+    } else {
+      Vec::new()
+    }
+  }
+
   fn build(&self, project_path: &Path) -> HatchResult<()> {
     if let Some(path) = project_path.to_str() {
       let command = format!("cd {} && tup", path);
@@ -80,12 +111,11 @@ pub trait Command<'command> {
       Err(InvalidPathError)?
     }
   }
-}
 
-fn parse_dependencies<'func>(args: &ArgMatches<'func>) -> Vec<Dependency> {
-  if let Some(values) = args.values_of(INCLUDE) {
-    values.map(String::from).map(Dependency::new).collect::<Vec<Dependency>>()
-  } else {
-    Vec::new()
+  fn generate_assets(&self, generator: Box<Generator>, project_path: PathBuf, project: &Project) -> HatchResult<()> {
+    generator.generate_assets(project_path, project).with_context(|e| {
+      format!("asset generation failed : `{}`", e)
+    })?;
+    Ok(())
   }
 }

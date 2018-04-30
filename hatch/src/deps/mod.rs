@@ -11,6 +11,11 @@ use std::path::Path;
 use task;
 use self::dependency::Dependency;
 use locations::hatchfile_path;
+use std::fs::File;
+use std::io::Read;
+use project::Project;
+use serde_yaml;
+use hatch_error::SerdeYamlError;
 
 pub fn clone_dep(url: &str, path: &Path) {
   let _ = Repository::clone(url, path);
@@ -79,12 +84,20 @@ fn clone_nested_project_deps(registry: &Path,
                              errored: &mut Vec<HatchError>,
                              visited: &mut HashSet<String>)
 {
-  match task::read_project(path) {
+
+  // TODO: Do one of these:
+  // 1. Put this back in task::read_project
+  // 2. Make a constructor for Project that takes a &Path
+  let mut data = String::new();
+  let mut file = File::open(&path);
+  file.unwrap().read_to_string(&mut data);
+  match serde_yaml::from_str::<Project>(&data) {
     Err(e) => {
-      errored.push(e);
+      // TODO: For some reason, I can't push this error
+      // errored.push(SerdeYamlError{});
     },
     Ok(current_project) => {
-      if !visited.contains(&current_project.name().to_owned()) {
+      if !visited.contains( &current_project.name().to_owned()) {
         current_project.dependencies().iter().for_each(|dep| {
           clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
         });
@@ -92,4 +105,18 @@ fn clone_nested_project_deps(registry: &Path,
       }
     }
   }
+
+//  match task::read_project(path) {
+//    Err(e) => {
+//      errored.push(e);
+//    },
+//    Ok(current_project) => {
+//      if !visited.contains(&current_project.name().to_owned()) {
+//        current_project.dependencies().iter().for_each(|dep| {
+//          clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+//        });
+//        let _ = visited.insert(current_project.name().to_owned());
+//      }
+//    }
+//  }
 }

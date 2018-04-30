@@ -1,8 +1,10 @@
 use hatch_error::{ HatchResult };
 use clap::{ ArgMatches };
 use cli::commands::Command;
-use task;
+use generators::Generator;
 use generators::tup::Tup;
+use assets::generator;
+use failure::ResultExt;
 
 pub struct Build;
 
@@ -14,13 +16,13 @@ impl<'build> Build {
 
 impl<'command> Command<'command> for Build {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let project_path = self.project_path(args);
-    let project = task::read_project(&project_path)?;
-    println!("Generating assets...\n");
-    let generator = Tup::boxed(&project);
-    task::generate_assets(generator, &project)?;
+    let (project_path, project) = self.read_project_context(args)?;
     println!("Building project...\n");
     self.build(&project_path)?;
+    println!("Generating assets...\n");
+    // TODO: make a trait object so we can dynamic dispatch on a command line arg for generator
+    let generator: Box<Generator> = Box::new(Tup{});
+    self.generate_assets(generator, project_path, &project)?;
     Ok(())
   }
 }

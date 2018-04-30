@@ -9,7 +9,9 @@ impl Tupfile {
     let copy_kind = match *kind {
       ProjectKind::Binary => ProjectKind::Binary,
       ProjectKind::Static => ProjectKind::Static,
-      ProjectKind::Shared => ProjectKind::Shared
+      ProjectKind::Shared => ProjectKind::Shared,
+      ProjectKind::HeaderOnly => ProjectKind::HeaderOnly,
+
     };
 
     Tupfile { kind: copy_kind }
@@ -38,6 +40,7 @@ impl ToString for Tupfile {
       ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(": $(SOURCE_OBJ_FILES) |> !archive |> $(SOURCE_TARGET)/$(PROJECT_LIB) <$(PROJECT)>\n"));
       }
+      _ => panic!("should never get here!")
     }
 
     tokens.push(compile_tests);
@@ -49,6 +52,7 @@ impl ToString for Tupfile {
       ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(": $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test"));
       }
+      _ => panic!("should never get here!")
     }
 
     tokens.iter().map(|token| token.as_str()).collect::<Vec<_>>().join("\n")

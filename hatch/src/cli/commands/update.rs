@@ -14,9 +14,9 @@ impl<'update> Update {
 
 impl<'command> Command<'command> for Update {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let project = task::read_project(&self.project_path(args))?;
-    let generator = Tup::boxed(&project);
-    task::generate_assets(generator, &project)?;
+    let (path, project) = self.read_project_context(args)?;
+    let generator = Box::new(Tup{});
+    self.generate_assets(generator, path.clone(), &project)?;
     Ok(())
   }
 }
