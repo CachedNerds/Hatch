@@ -1,7 +1,6 @@
 use std::process::Command as ProcessCommand;
 use cli::commands::Command;
 use hatch_error::{ HatchResult, ResultExt };
-use task;
 use clap::{ ArgMatches };
 use generators::tup::Tup;
 use generators::Generator;
@@ -19,14 +18,11 @@ impl<'command> Command<'command> for Test {
     let (project_path, project) = self.read_project_context(args)?;
     println!("Generating assets...\n");
     let generator: Box<Generator> = Box::new(Tup::new());
-    self.generate_assets(generator, project_path.clone(), &project);
-//    Generator::generate_assets(&tup, project_path, project);
-//    let generator = Tup::boxed(&project_path, &project);
-//    task::generate_assets(generator, &project)?;
+    self.generate_assets(generator, project_path.clone(), &project)?;
     println!("Building project...\n");
-//    self.build(&project_path).with_context(|e| {
-//      format!("Failed to build project : {}", e)
-//    })?;
+    self.build(&project_path).with_context(|e| {
+      format!("Failed to build project : {}", e)
+    })?;
     println!("Executing tests...\n");
     let test_executable_path = format!("{}test/target/{}.test", project_path.display(), project.name());
     let test_arguments = Command::parse_arguments_from_cli(self, args);
