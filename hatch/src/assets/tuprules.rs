@@ -10,7 +10,7 @@ impl Tuprules {
     String::from("Tuprules.tup")
   }
 
-    fn arch_flag(arch: &Arch) -> String {
+  fn arch_flag(arch: &Arch) -> String {
         match *arch {
             Arch::X64 => String::from("-m64"),
             Arch::X86 => String::from("-m32"),
