@@ -4,6 +4,8 @@ use project::build::{Config, Target};
 use platform::arch::Arch;
 use configuration::CompilerOptions;
 use configuration::Target;
+use project::CompilerOptions;
+use project::Target;
 
 /**
  * These tests were created using All-Pairs testing.
@@ -64,7 +66,7 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let config = CompilerOptions::new(ProjectKind::Library(LibraryKind::Static),
+  let config = CompilerOptions::new(
                            String::from("g++"),
                            vec![String::from("-c"), String::from("--std=c++1z")],
                            vec![String::from("-v")],
@@ -114,7 +116,7 @@ else
   endif
 endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let compiler_options = CompilerOptions::new(ProjectKind::Library(LibraryKind::Static),
+  let compiler_options = CompilerOptions::new(
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
@@ -166,7 +168,7 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let compiler_options = CompilerOptions::new(ProjectKind::Library(LibraryKind::Shared),
+  let compiler_options = CompilerOptions::new(
                            String::from("g++"),
                            Vec::new(),
                            Vec::new(),
@@ -219,8 +221,7 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-    let config = Config::new(
-        ProjectKind::Library(LibraryKind::Shared),
+    let config = CompilerOptions::new(
         String::from("g++"),
         vec![String::from("-c"), String::from("--std=c++1z")],
         vec![String::from("-v")],
@@ -261,8 +262,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = Config::new(
-        ProjectKind::Binary,
+    let config = CompilerOptions::new(
         String::from("g++"),
         Vec::new(),
         Vec::new(),
@@ -306,8 +306,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = Config::new(
-        ProjectKind::Binary,
+    let config = CompilerOptions::new(
         String::from("g++"),
         vec![String::from("-c"), String::from("--std=c++1z")],
         vec![String::from("-v")],
@@ -349,8 +348,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = Config::new(
-        ProjectKind::Binary,
+    let config = CompilerOptions::new(
         String::from("g++"),
         vec![String::from("-c"), String::from("--std=c++1z")],
         Vec::new(),
@@ -393,8 +391,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = Config::new(
-        ProjectKind::Binary,
+    let config = CompilerOptions::new(
         String::from("g++"),
         Vec::new(),
         vec![String::from("-v")],
