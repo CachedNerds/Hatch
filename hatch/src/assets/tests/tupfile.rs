@@ -1,5 +1,5 @@
-use assets::tupfile::Tupfile;
 use assets::tests::fixtures;
+use assets::tupfile::Tupfile;
 use project::{LibraryKind, ProjectKind};
 
 #[test]

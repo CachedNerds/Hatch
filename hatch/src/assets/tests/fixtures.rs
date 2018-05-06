@@ -1,6 +1,6 @@
-use project::{Project, ProjectKind};
-use project::build::{Config, Target};
 use platform::arch::Arch;
+use project::build::{Config, Target};
+use project::{Project, ProjectKind};
 use std::path::PathBuf;
 
 pub fn project(kind: ProjectKind) -> Project {

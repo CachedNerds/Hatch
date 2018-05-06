@@ -1,5 +1,5 @@
-use assets::generator::*;
 use assets::ProjectAsset;
+use assets::generator::*;
 use std::fs;
 use std::io::prelude::*;
 use std::path::PathBuf;

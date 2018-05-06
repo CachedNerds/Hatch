@@ -1,20 +1,19 @@
-use std::path::Path;
-use std::path::PathBuf;
-use std::fs;
 use failure::ResultExt;
 use hatch_error::HatchResult;
+use std::fs;
 use std::io::Write;
+use std::path::Path;
+use std::path::PathBuf;
 
-pub mod builder;
+//pub mod builder;
 pub mod generator;
-pub mod config;
-pub mod tupfile;
-pub mod platform;
-pub mod tuprules;
-pub mod test_tupfile;
-pub mod tupfile_ini;
-pub mod catch_header;
-pub mod catch_definition;
+//pub mod tupfile;
+//pub mod platform;
+//pub mod test_tupfile;
+//pub mod tuprules;
+//pub mod tupfile_ini;
+//pub mod catch_header;
+//pub mod catch_definition;
 
 #[cfg(test)]
 mod tests;
@@ -65,31 +64,37 @@ pub struct ProjectAsset {
 }
 
 impl ProjectAsset {
-  pub fn new(path: PathBuf, name: String, contents: String) -> ProjectAsset {
-    ProjectAsset { path, name, contents }
-  }
+    pub fn new(path: PathBuf, name: String, contents: String) -> ProjectAsset {
+        ProjectAsset {
+            path,
+            name,
+            contents,
+        }
+    }
 
-  pub fn path(& self) -> &Path {
-    self.path.as_path()
-  }
+    pub fn path(&self) -> &Path {
+        self.path.as_path()
+    }
 
-  pub fn write(&self) -> HatchResult<()> {
-    let path = self.path();
-    fs::create_dir_all(path).with_context(|e| {
-    format!("Failed to create directory: `{}` : {}", path.display(), e)
-    })?;
+    pub fn write(&self) -> HatchResult<()> {
+        let path = self.path();
+        fs::create_dir_all(path)
+            .with_context(|e| format!("Failed to create directory: `{}` : {}", path.display(), e))?;
 
-    let file_path = path.join(&self.name);
-    let mut file = fs::File::create(&file_path).with_context(|e| {
-    format!("Failed to create file: `{}` : {}", file_path.display(), e)
-    })?;
+        let file_path = path.join(&self.name);
+        let mut file = fs::File::create(&file_path)
+            .with_context(|e| format!("Failed to create file: `{}` : {}", file_path.display(), e))?;
 
-    file.write_all(self.contents.as_bytes()).with_context(|e| {
-    format!("Failed to write contents to file: `{}` : {}", file_path.display(), e)
-    })?;
+        file.write_all(self.contents.as_bytes()).with_context(|e| {
+            format!(
+                "Failed to write contents to file: `{}` : {}",
+                file_path.display(),
+                e
+            )
+        })?;
 
-    Ok(())
-  }
+        Ok(())
+    }
 }
 
 //impl<'project_asset> ProjectAsset<'project_asset> {

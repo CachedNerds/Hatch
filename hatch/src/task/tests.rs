@@ -9,8 +9,8 @@
 //
 //fn assets_exist(path: &Path) -> bool {
 //  let file_path = match os::platform_type() {
-//    PlatformKind::MacOS => path.join("macosx.tup"),
-//    PlatformKind::Windows => path.join("win32.tup"),
+//    PlatformKind::mac_os => path.join("macosx.tup"),
+//    PlatformKind::windows => path.join("win32.tup"),
 //    PlatformKind::Linux => path.join("linux.tup")
 //  };
 //

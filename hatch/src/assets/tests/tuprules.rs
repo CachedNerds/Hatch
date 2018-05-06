@@ -1,11 +1,11 @@
 use assets::tuprules::Tuprules;
-use project::{LibraryKind, ProjectKind};
-use project::build::{Config, Target};
-use platform::arch::Arch;
 use configuration::CompilerOptions;
 use configuration::Target;
+use platform::arch::Arch;
 use project::CompilerOptions;
 use project::Target;
+use project::build::{Config, Target};
+use project::{LibraryKind, ProjectKind};
 
 /**
  * These tests were created using All-Pairs testing.
@@ -66,12 +66,13 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let config = CompilerOptions::new(
-                           String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")],
-                           vec![String::from("-v")],
-                           Arch::X64,
-                           Target::Release);
+    let config = CompilerOptions::new(
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")],
+        vec![String::from("-v")],
+        Arch::X64,
+        Target::Release,
+    );
 
     let tuprules = Tuprules::new(&config);
 
@@ -115,13 +116,15 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
-  let compiler_options = CompilerOptions::new(
-                           String::from("g++"),
-                           Vec::new(),
-                           Vec::new(),
-                           Arch::X86,
-                           Target::Debug); 
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
+    let compiler_options = CompilerOptions::new(
+        String::from("g++"),
+        Vec::new(),
+        Vec::new(),
+        Arch::X86,
+        Target::Debug,
+    );
 
     let tuprules = Tuprules::new(&config);
 
@@ -168,14 +171,15 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let compiler_options = CompilerOptions::new(
-                           String::from("g++"),
-                           Vec::new(),
-                           Vec::new(),
-                           Arch::X64,
-                           Target::Debug);
+    let compiler_options = CompilerOptions::new(
+        String::from("g++"),
+        Vec::new(),
+        Vec::new(),
+        Arch::X64,
+        Target::Debug,
+    );
 
-  let tuprules = Tuprules::new(&compiler_options);
+    let tuprules = Tuprules::new(&compiler_options);
 
     assert_eq!(contents, tuprules.to_string());
 }

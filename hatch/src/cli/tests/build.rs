@@ -1,5 +1,5 @@
-use cli::commands::build::Build;
 use cli::commands::Command;
+use cli::commands::build::Build;
 
 #[test]
 fn create_build_command() {
