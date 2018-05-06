@@ -38,88 +38,77 @@ impl<'builder> Builder<'builder> {
 
     pub fn project(&mut self, asset_kind: TupKind) {
         let asset = match asset_kind {
-            TupKind::Config => self.config(),
-            TupKind::TestTupfile => self.test_tupfile(),
-            TupKind::Tuprules => self.tuprules(),
-            TupKind::Tupfile => self.tupfile(),
-            TupKind::TupfileIni => self.tupfile_ini(),
+            TupKind::Config => self.add_tup_config(),
+            TupKind::TestTupfile => self.add_test_tupfile(),
+            TupKind::Tuprules => self.add_tuprules(),
+            TupKind::Tupfile => self.add_tupfile(),
+            TupKind::TupfileIni => self.add_tupfile_ini(),
         };
 
         self.assets.push(asset);
-        //    let z= if let Some(path) = self.project_path { path };
-
-        //    let asset = match *asset_kind {
-        //      TupKind::Config => self.config(project_path, project),
-        //      TupKind::TestTupfile => self.test_tupfile(project),
-        //      TupKind::Tuprules => self.tuprules(project),
-        //      TupKind::Tupfile => self.tupfile(project),
-        //      TupKind::TupfileIni => self.tupfile_ini(project),
-        //    };
-        //
-        //    self.assets.push(asset);
     }
 
     pub fn platform(&mut self, asset_kind: &PlatformKind) {
         let asset = match *asset_kind {
-            PlatformKind::Linux => self.linux(),
-            PlatformKind::MacOS => self.macos(),
-            PlatformKind::Windows => self.windows(),
+            PlatformKind::Linux => self.add_linux_platform_tup_file(),
+            PlatformKind::MacOS => self.add_macos_platform_tup_file(),
+            PlatformKind::Windows => self.add_windows_platform_tup_file(),
         };
 
         self.assets.push(asset);
     }
 
-    pub fn config(&self) -> ProjectAsset {
+    pub fn add_tup_config(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let project = &self.project;
         let contents = make_tup_config_string(project.name(), project.kind());
         ProjectAsset::new(project_path, String::from("config.tup"), contents)
     }
 
-    pub fn test_tupfile(&self) -> ProjectAsset {
+    pub fn add_test_tupfile(&self) -> ProjectAsset {
         let asset_path = self.project_path.join("test");
         let contents = make_test_tupfile_string();
         ProjectAsset::new(asset_path, String::from("test_tupfile"), contents)
     }
 
-    pub fn tuprules(&self) -> ProjectAsset {
+    pub fn add_tuprules(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = make_tuprules_string(self.project);
         ProjectAsset::new(project_path, String::from("tuprules"), contents)
     }
 
-    pub fn tupfile(&self) -> ProjectAsset {
+    pub fn add_tupfile(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let project = &self.project;
         let contents = make_tupfile_string(project.kind());
         ProjectAsset::new(project_path, String::from("tupfile"), contents)
     }
 
-    pub fn tupfile_ini(&self) -> ProjectAsset {
+    pub fn add_tupfile_ini(&self) -> ProjectAsset {
         let contents = TupfileIni::new().to_string();
         let project_path = self.project_path.clone();
         ProjectAsset::new(project_path, String::from("tup.ini"), contents)
     }
 
-    pub fn linux(&self) -> ProjectAsset {
+    pub fn add_linux_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = linux::to_string();
         ProjectAsset::new(project_path, String::from("linux.tup"), contents)
     }
 
-    pub fn macos(&self) -> ProjectAsset {
+    pub fn add_macos_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = mac_os::to_string();
         ProjectAsset::new(project_path, String::from("macos.tup"), contents)
     }
 
-    pub fn windows(&self) -> ProjectAsset {
+    pub fn add_windows_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = windows::to_string();
         ProjectAsset::new(project_path, String::from("win32.tup"), contents)
     }
 
-    pub fn catch_header(&self) -> HatchResult<ProjectAsset> {
+    pub fn add_catch_header(&self) -> HatchResult<ProjectAsset> {
         let test_src_path = self.project_path.join("test/src");
         let file_name = CatchHeader::name();
         if !test_src_path.join(file_name).exists() {
@@ -140,7 +129,7 @@ impl<'builder> Builder<'builder> {
         }
     }
 
-    pub fn catch_definition(&self) -> ProjectAsset {
+    pub fn add_catch_definition(&self) -> ProjectAsset {
         let test_src_path = self.project_path.join("test/src");
         let contents = make_catch_definition_string();
 
