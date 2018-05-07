@@ -15,7 +15,7 @@ pub fn project(kind: ProjectKind) -> Project {
     let project = Project::new(
         String::from("test"),
         String::from("0.1.0"),
-        ProjectKind::Static,
+        kind,
         Some(compiler_options),
         Vec::new(),
     );
