@@ -20,29 +20,6 @@ pub mod catch_definition;
 
 #[cfg(test)]
 mod tests;
-//
-//use std::fmt;
-//use std::cmp;
-//use std::path::{ Path };
-//use project::Project;
-//
-//pub trait Asset {
-//  fn path(&self) -> &Path;
-//  fn name(&self) -> &str;
-//  fn contents(&self) -> &str;
-//}
-//
-//pub fn print_file_path<T>(asset: T) where T: Asset {
-//  println!("{}", asset.path().display());
-//}
-//
-//pub fn print_file_name<T>(asset: T) where T: Asset {
-//  println!("{}", asset.name());
-//}
-//
-//pub fn print_file_contents<T>(asset: T) where T: Asset {
-//  println!("{}", asset.contents());
-//}
 
 #[derive(Debug)]
 pub enum TupKind {
