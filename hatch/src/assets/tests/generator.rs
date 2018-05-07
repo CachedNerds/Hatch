@@ -12,7 +12,7 @@ fn generate_one_without_directories() {
         String::from("test"),
     );
 
-    if let Err(e) = generate_all(vec![test_asset]) {
+    if let Err(e) = generate_all(&vec![test_asset]) {
         panic!(e);
     }
 
@@ -43,7 +43,7 @@ fn generate_one_with_directories() {
         String::from("test"),
     );
 
-    if let Err(e) = generate_all(vec![test_asset]) {
+    if let Err(e) = generate_all(&vec![test_asset]) {
         panic!(e);
     }
 
@@ -74,7 +74,7 @@ fn generate_one_overwrites_file() {
         String::from("old"),
     );
 
-    if let Err(e) = generate_all(vec![test_asset]) {
+    if let Err(e) = generate_all(&vec![test_asset]) {
         panic!(e);
     }
 
@@ -103,7 +103,7 @@ fn generate_one_overwrites_file() {
         String::from("new"),
     );
 
-    if let Err(e) = generate_all(vec![test_asset]) {
+    if let Err(e) = generate_all(&vec![test_asset]) {
         fs::remove_file("./test2.test");
         panic!(e);
     }
