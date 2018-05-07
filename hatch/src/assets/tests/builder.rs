@@ -6,7 +6,9 @@ use project::{ProjectKind};
 
 #[test]
 fn add_asset() {
-    let mut asset_builder = AssetBuilder::new();
+    let project = fixtures::project(ProjectKind::HeaderOnly);
+    let mut asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+
     let asset = ProjectAsset::new(
         PathBuf::from("./"),
         String::from("test"),
@@ -25,8 +27,8 @@ fn add_asset() {
 fn build_config_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.config(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.config();
 
     let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
     let expected_asset = ProjectAsset::new(
@@ -42,8 +44,8 @@ fn build_config_asset() {
 fn build_test_tupfile_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.test_tupfile(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.test_tupfile();
 
     let expected_contents = String::from(".gitignore");
     let expected_asset = ProjectAsset::new(
@@ -59,8 +61,8 @@ fn build_test_tupfile_asset() {
 fn build_tuprules_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tuprules(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tuprules();
 
     let expected_contents = String::from(
         ".gitignore
@@ -113,8 +115,8 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
 fn build_tupfile_asset() {
     let project = fixtures::project(ProjectKind::Shared);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tupfile(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tupfile();
 
     let expected_contents = String::from(
         "include config.tup
@@ -141,8 +143,8 @@ include_rules
 fn build_tupfile_ini_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tupfile_ini(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tupfile_ini();
 
     let expected_contents = String::from("");
     let expected_asset = ProjectAsset::new(
@@ -158,8 +160,8 @@ fn build_tupfile_ini_asset() {
 fn build_linux_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.linux(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.linux();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -175,8 +177,8 @@ fn build_linux_asset() {
 fn build_macos_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.macos(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.macos();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -192,8 +194,8 @@ fn build_macos_asset() {
 fn build_windows_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.windows(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.windows();
 
     let expected_contents = String::from(
         "STATIC = lib
