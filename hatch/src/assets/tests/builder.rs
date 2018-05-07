@@ -16,7 +16,9 @@ fn add_asset() {
     );
     asset_builder.add_asset(asset);
 
-    let assets = asset_builder.assets();
+    // My reason for adopting this static method, is so I clarify to reader that we are eating the
+    // Builder. It is gone. Not ever coming back.
+    let assets = AssetBuilder::collect_assets(asset_builder);
 
     assert_eq!(assets.len(), 1);
 
@@ -218,8 +220,8 @@ CC = clang++.exe
 fn build_catch_definition() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.catch_definition(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.catch_definition();
 
     let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
     let expected_asset = ProjectAsset::new(

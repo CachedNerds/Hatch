@@ -71,6 +71,10 @@ impl ProjectAsset {
     ProjectAsset { path, name, contents }
   }
 
+    pub fn name(&self) -> &str {
+        self.name
+    }
+
   pub fn path(& self) -> &Path {
     self.path.as_path()
   }
@@ -94,26 +98,6 @@ impl ProjectAsset {
   }
 }
 
-//impl<'project_asset> ProjectAsset<'project_asset> {
-//  pub fn new(path: &'project_asset Path, name: &'project_asset str, contents: &'project_asset str) -> ProjectAsset<'project_asset> {
-//    ProjectAsset { path, name, contents }
-//  }
-//}
-
-//impl<'asset> Asset for ProjectAsset<'asset> {
-//  fn path(& self) -> &Path {
-//    self.path
-//  }
-//
-//  fn name(&self) -> &str {
-//    &self.name
-//  }
-//
-//  fn contents(&self) -> &str {
-//    &self.contents
-//  }
-//}
-//
 impl fmt::Debug for ProjectAsset {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
