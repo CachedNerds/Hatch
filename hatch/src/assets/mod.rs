@@ -58,6 +58,7 @@ pub enum PlatformKind {
     Windows,
 }
 
+#[derive(Debug)]
 pub struct ProjectAsset {
     path: PathBuf,
     name: String,
