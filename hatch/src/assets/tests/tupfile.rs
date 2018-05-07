@@ -19,7 +19,7 @@ include_rules
 : $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.config().kind()).to_string());
+    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
 }
 
 #[test]
@@ -39,5 +39,5 @@ include_rules
 : $(TEST_OBJ_FILES) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.config().kind()).to_string());
+    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
 }
