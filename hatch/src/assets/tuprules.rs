@@ -102,7 +102,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
         ));
 
-    match project_kind {
+    match *project_kind {
       ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(
           "ifeq ($(LIB_TYPE),static)
