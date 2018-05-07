@@ -1,8 +1,12 @@
 use assets::tuprules::Tuprules;
-use project::{ProjectKind};
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::Target;
+
+/**
+I'm sorry Danny. I have completely destroyed your beautiful, elegant, All-pairs testing strategy.
+I'm just trying to get things building again. We can fix this!
+*/
 
 /**
  * These tests were created using All-Pairs testing.
