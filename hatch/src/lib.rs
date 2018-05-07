@@ -11,6 +11,7 @@ pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
 pub extern crate yaml_rust;
+extern crate core;
 
 pub mod project;
 pub mod cli;

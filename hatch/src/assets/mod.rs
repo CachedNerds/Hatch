@@ -4,6 +4,8 @@ use std::fs;
 use failure::ResultExt;
 use hatch_error::HatchResult;
 use std::io::Write;
+use core::cmp;
+use std::fmt;
 
 pub mod builder;
 pub mod generator;
@@ -58,7 +60,6 @@ pub enum PlatformKind {
     Windows,
 }
 
-#[derive(Debug)]
 pub struct ProjectAsset {
     path: PathBuf,
     name: String,
@@ -113,14 +114,14 @@ impl ProjectAsset {
 //  }
 //}
 //
-//impl<'debug> fmt::Debug for ProjectAsset<'debug> {
-//  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//    write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
-//  }
-//}
-//
-//impl<'partialeq> cmp::PartialEq for ProjectAsset<'partialeq> {
-//  fn eq(&self, other: &ProjectAsset) -> bool {
-//    self.name == other.name && self.contents == other.contents
-//  }
-//}
+impl fmt::Debug for ProjectAsset {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
+  }
+}
+
+impl cmp::PartialEq for ProjectAsset {
+  fn eq(&self, other: &ProjectAsset) -> bool {
+    self.name == other.name && self.contents == other.contents
+  }
+}
