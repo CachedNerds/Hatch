@@ -182,7 +182,7 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
                            Target::Debug);
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
@@ -237,7 +237,7 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
@@ -279,7 +279,7 @@ include @(TUP_PLATFORM).tup",
     );
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
@@ -324,7 +324,7 @@ include @(TUP_PLATFORM).tup",
     );
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
@@ -367,7 +367,7 @@ include @(TUP_PLATFORM).tup",
     );
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
@@ -411,7 +411,7 @@ include @(TUP_PLATFORM).tup",
     );
 
     let tuprules = Tuprules{};
-    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
     assert_eq!(contents, tuprules.to_string(&project));
 }
