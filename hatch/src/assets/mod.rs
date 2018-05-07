@@ -49,7 +49,7 @@ impl ProjectAsset {
   }
 
     pub fn name(&self) -> &str {
-        self.name
+        self.name.as_str()
     }
 
   pub fn path(& self) -> &Path {
