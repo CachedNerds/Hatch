@@ -1,10 +1,10 @@
 use assets::tupfile::Tupfile;
 use assets::tests::fixtures;
-use project::{LibraryKind, ProjectKind};
+use project::{ProjectKind};
 
 #[test]
 fn build_library_tupfile() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
     let contents = String::from(
         "include config.tup

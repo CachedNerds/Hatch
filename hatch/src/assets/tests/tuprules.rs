@@ -1,9 +1,6 @@
 use assets::tuprules::Tuprules;
-use project::{LibraryKind, ProjectKind};
-use project::build::{Config, Target};
+use project::{ProjectKind};
 use platform::arch::Arch;
-use configuration::CompilerOptions;
-use configuration::Target;
 use project::CompilerOptions;
 use project::Target;
 
