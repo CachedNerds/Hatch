@@ -1,11 +1,14 @@
 use assets::tuprules::Tuprules;
-use configuration::CompilerOptions;
-use configuration::Target;
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::Target;
-use project::build::{Config, Target};
-use project::{LibraryKind, ProjectKind};
+use assets::tests::fixtures::project_with_compiler_options;
+use project::ProjectKind;
+
+/**
+I'm sorry Danny. I have completely destroyed your beautiful, elegant, All-pairs testing strategy.
+I'm just trying to get things building again. We can fix this!
+*/
 
 /**
  * These tests were created using All-Pairs testing.
@@ -66,17 +69,17 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-    let config = CompilerOptions::new(
-        String::from("g++"),
-        vec![String::from("-c"), String::from("--std=c++1z")],
-        vec![String::from("-v")],
-        Arch::X64,
-        Target::Release,
-    );
+  let compiler_options = CompilerOptions::new(
+                           String::from("g++"),
+                           vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
+                           vec![String::from("-v")].join(' '.to_string().as_str()),
+                           Arch::X64,
+                           Target::Release);
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -116,19 +119,19 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)",
-    );
-    let compiler_options = CompilerOptions::new(
-        String::from("g++"),
-        Vec::new(),
-        Vec::new(),
-        Arch::X86,
-        Target::Debug,
-    );
+PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
-    let tuprules = Tuprules::new(&config);
+  let compiler_options = CompilerOptions::new(
+                           String::from("g++"),
+                           String::from(""),
+                           String::from(""),
+                           Arch::X86,
+                           Target::Debug);
 
-    assert_eq!(contents, tuprules.to_string());
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -171,17 +174,17 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-    let compiler_options = CompilerOptions::new(
-        String::from("g++"),
-        Vec::new(),
-        Vec::new(),
-        Arch::X64,
-        Target::Debug,
-    );
+  let compiler_options = CompilerOptions::new(
+                           String::from("g++"),
+                           String::from(""),
+                           String::from(""),
+                           Arch::X64,
+                           Target::Debug);
 
-    let tuprules = Tuprules::new(&compiler_options);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -225,17 +228,18 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-    let config = CompilerOptions::new(
+    let compiler_options = CompilerOptions::new(
         String::from("g++"),
-        vec![String::from("-c"), String::from("--std=c++1z")],
-        vec![String::from("-v")],
+        vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
+        vec![String::from("-v")].join(' '.to_string().as_str()),
         Arch::X86,
         Target::Release,
     );
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -266,17 +270,18 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = CompilerOptions::new(
+    let compiler_options = CompilerOptions::new(
         String::from("g++"),
-        Vec::new(),
-        Vec::new(),
+        String::from(""),
+        String::from(""),
         Arch::X64,
         Target::Release,
     );
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -310,17 +315,18 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = CompilerOptions::new(
+    let compiler_options = CompilerOptions::new(
         String::from("g++"),
-        vec![String::from("-c"), String::from("--std=c++1z")],
-        vec![String::from("-v")],
+        vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
+        vec![String::from("-v")].join(' '.to_string().as_str()),
         Arch::X86,
         Target::Debug,
     );
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -352,17 +358,18 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = CompilerOptions::new(
+    let compiler_options = CompilerOptions::new(
         String::from("g++"),
-        vec![String::from("-c"), String::from("--std=c++1z")],
-        Vec::new(),
+        vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
+        String::from(""),
         Arch::X64,
         Target::Release,
     );
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }
 
 #[test]
@@ -395,15 +402,16 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
     );
 
-    let config = CompilerOptions::new(
+    let compiler_options = CompilerOptions::new(
         String::from("g++"),
-        Vec::new(),
-        vec![String::from("-v")],
+        String::from(""),
+        vec![String::from("-v")].join(' '.to_string().as_str()),
         Arch::X86,
         Target::Debug,
     );
 
-    let tuprules = Tuprules::new(&config);
+    let tuprules = Tuprules{};
+    let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
 
-    assert_eq!(contents, tuprules.to_string());
+    assert_eq!(contents, tuprules.to_string(&project));
 }

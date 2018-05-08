@@ -48,9 +48,9 @@ impl CompilerOptions {
     }
 
     pub fn default_from_kind(kind: &ProjectKind) -> Option<CompilerOptions> {
-        match kind {
+        match *kind {
             ProjectKind::HeaderOnly => None,
-            _ => Some(CompilerOptions::default()),
+            _ => Some(CompilerOptions::default())
         }
     }
 
