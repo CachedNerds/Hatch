@@ -31,13 +31,13 @@ impl Tuprules {
 
     let project_kind = project.kind();
     let maybe_compiler_options = project.compiler_options();
-    let _ = match maybe_compiler_options {
-      Some(compiler_options) => {
+    let _ = match *maybe_compiler_options {
+      Some(ref compiler_options) => {
         let compiler_token = format!("CC = {}", compiler_options.compiler());
         tokens.push(compiler_token);
 
         match compiler_options.target() {
-          Target::Debug => {
+          &Target::Debug => {
             let debug_token = String::from("CFLAGS += -g");
             tokens.push(debug_token);
           },
@@ -66,7 +66,7 @@ impl Tuprules {
       _ => panic!("")
     };
 
-    match project_kind {
+    match *project_kind {
       ProjectKind::Static | ProjectKind::Shared => {
         let link_flags_type = format!(
           "ifneq (@(TUP_PLATFORM),macosx)
@@ -102,7 +102,7 @@ TEST_OBJ_FILES = $(TEST_TARGET)/*.o
 include @(TUP_PLATFORM).tup",
         ));
 
-    match project_kind {
+    match *project_kind {
       ProjectKind::Static | ProjectKind::Shared => {
         tokens.push(String::from(
           "ifeq ($(LIB_TYPE),static)

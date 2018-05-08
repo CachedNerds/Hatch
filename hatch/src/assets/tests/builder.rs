@@ -1,12 +1,14 @@
 use assets::builder::Builder as AssetBuilder;
-use assets::{Asset, ProjectAsset};
+use assets::{ProjectAsset};
 use std::path::PathBuf;
 use assets::tests::fixtures;
-use project::{LibraryKind, ProjectKind};
+use project::{ProjectKind};
 
 #[test]
 fn add_asset() {
-    let mut asset_builder = AssetBuilder::new();
+    let project = fixtures::project(ProjectKind::HeaderOnly);
+    let mut asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+
     let asset = ProjectAsset::new(
         PathBuf::from("./"),
         String::from("test"),
@@ -14,7 +16,9 @@ fn add_asset() {
     );
     asset_builder.add_asset(asset);
 
-    let assets = asset_builder.assets();
+    // My reason for adopting this static method, is so I clarify to reader that we are eating the
+    // Builder. It is gone. Not ever coming back.
+    let assets = AssetBuilder::collect_assets(asset_builder);
 
     assert_eq!(assets.len(), 1);
 
@@ -23,10 +27,10 @@ fn add_asset() {
 
 #[test]
 fn build_config_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.config(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.config();
 
     let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
     let expected_asset = ProjectAsset::new(
@@ -40,10 +44,10 @@ fn build_config_asset() {
 
 #[test]
 fn build_test_tupfile_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.test_tupfile(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.test_tupfile();
 
     let expected_contents = String::from(".gitignore");
     let expected_asset = ProjectAsset::new(
@@ -57,10 +61,10 @@ fn build_test_tupfile_asset() {
 
 #[test]
 fn build_tuprules_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tuprules(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tuprules();
 
     let expected_contents = String::from(
         ".gitignore
@@ -111,10 +115,10 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
 
 #[test]
 fn build_tupfile_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Shared));
+    let project = fixtures::project(ProjectKind::Shared);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tupfile(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tupfile();
 
     let expected_contents = String::from(
         "include config.tup
@@ -139,10 +143,10 @@ include_rules
 
 #[test]
 fn build_tupfile_ini_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.tupfile_ini(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.tupfile_ini();
 
     let expected_contents = String::from("");
     let expected_asset = ProjectAsset::new(
@@ -156,10 +160,10 @@ fn build_tupfile_ini_asset() {
 
 #[test]
 fn build_linux_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.linux(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.linux();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -173,10 +177,10 @@ fn build_linux_asset() {
 
 #[test]
 fn build_macos_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.macos(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.macos();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -190,10 +194,10 @@ fn build_macos_asset() {
 
 #[test]
 fn build_windows_asset() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.windows(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.windows();
 
     let expected_contents = String::from(
         "STATIC = lib
@@ -214,10 +218,10 @@ CC = clang++.exe
 
 #[test]
 fn build_catch_definition() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new();
-    let actual_asset = asset_builder.catch_definition(&project);
+    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let actual_asset = asset_builder.catch_definition();
 
     let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
     let expected_asset = ProjectAsset::new(

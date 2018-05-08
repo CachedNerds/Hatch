@@ -43,17 +43,6 @@ impl<'builder> Builder<'builder> {
     };
 
     self.assets.push(asset);
-//    let z= if let Some(path) = self.project_path { path };
-
-//    let asset = match *asset_kind {
-//      TupKind::Config => self.config(project_path, project),
-//      TupKind::TestTupfile => self.test_tupfile(project),
-//      TupKind::Tuprules => self.tuprules(project),
-//      TupKind::Tupfile => self.tupfile(project),
-//      TupKind::TupfileIni => self.tupfile_ini(project),
-//    };
-//
-//    self.assets.push(asset);
   }
 
   pub fn platform(&mut self, asset_kind: &PlatformKind) {

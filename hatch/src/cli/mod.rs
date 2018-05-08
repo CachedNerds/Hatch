@@ -1,8 +1,5 @@
 pub mod commands;
 
-#[cfg(test)]
-mod tests;
-
 use clap::{App, AppSettings, Arg, ArgMatches};
 
 pub struct Cli<'cli>(ArgMatches<'cli>);

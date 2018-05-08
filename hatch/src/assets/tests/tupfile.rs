@@ -1,10 +1,10 @@
 use assets::tupfile::Tupfile;
 use assets::tests::fixtures;
-use project::{LibraryKind, ProjectKind};
+use project::{ProjectKind};
 
 #[test]
 fn build_library_tupfile() {
-    let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+    let project = fixtures::project(ProjectKind::Static);
 
     let contents = String::from(
         "include config.tup
@@ -19,7 +19,7 @@ include_rules
 : $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.config().kind()).to_string());
+    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
 }
 
 #[test]
@@ -39,5 +39,5 @@ include_rules
 : $(TEST_OBJ_FILES) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.config().kind()).to_string());
+    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
 }
