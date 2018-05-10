@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use project::{Project, ProjectKind};
 use platform::arch::Arch;
 use project::CompilerOptions;
