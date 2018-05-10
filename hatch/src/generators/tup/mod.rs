@@ -1,5 +1,8 @@
 use generators::tup::tup::Tup;
 use generators::Generator;
+use assets::ProjectAsset;
+use hatch_error::HatchResult;
+use failure::ResultExt;
 
 pub mod tup;
 
@@ -19,4 +22,17 @@ mod tests;
 pub fn make_a_tup_in_a_box() -> Box<Generator> {
     let generator: Box<Generator> = Box::new(Tup {});
     generator
+}
+
+pub fn generate_all(assets: &Vec<ProjectAsset>) -> HatchResult<()> {
+    for asset in assets {
+        asset.write().with_context(|e| {
+            format!(
+                "Failed to generate asset: `{}` : {}",
+                asset.path().display(),
+                e
+            )
+        })?;
+    }
+    Ok(())
 }

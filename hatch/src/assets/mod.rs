@@ -8,7 +8,7 @@ use core::cmp;
 use std::fmt;
 
 //pub mod builder;
-pub mod generator;
+//pub mod generator;
 //pub mod tupfile;
 //pub mod platform;
 //pub mod test_tupfile;
