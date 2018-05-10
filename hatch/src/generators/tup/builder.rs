@@ -1,6 +1,5 @@
 use assets::{PlatformKind, ProjectAsset, TupKind};
 use constants::CATCH_HEADER_URL;
-use generators::tup::catch_header::CatchHeader;
 use generators::tup::tupfile_ini::TupfileIni;
 use hatch_error::{HatchResult, NullError, ResultExt};
 use project::Project;
@@ -12,6 +11,7 @@ use generators::tup::tup_config::make_tup_config_string;
 use generators::tup::catch_definition::make_catch_definition_string;
 use generators::tup::tupfile::make_tupfile_string;
 use generators::tup::platform::{mac_os, linux, windows};
+use generators::tup::catch_header::catch_header_filename;
 
 pub struct Builder<'builder> {
     project_path: PathBuf,
@@ -110,15 +110,14 @@ impl<'builder> Builder<'builder> {
 
     pub fn add_catch_header(&self) -> HatchResult<ProjectAsset> {
         let test_src_path = self.project_path.join("test/src");
-        let file_name = CatchHeader::name();
-        if !test_src_path.join(file_name).exists() {
+        if !test_src_path.join(catch_header_filename()).exists() {
             let res = (|| -> HatchResult<ProjectAsset> {
                 let mut resp = reqwest::get(CATCH_HEADER_URL)?;
                 let content = resp.text()?;
 
                 Ok(ProjectAsset::new(
                     test_src_path,
-                    CatchHeader::name(),
+                    catch_header_filename(),
                     content,
                 ))
             })().with_context(|e| format!("failed to generate catch.hpp : {}", e))?;

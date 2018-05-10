@@ -1,6 +1,7 @@
-use assets::test_tupfile::Tupfile;
+use project::ProjectKind;
+use generators::tup::test_tupfile::make_test_tupfile_string;
 
 #[test]
 fn build_test_tupfile() {
-    assert_eq!(".gitignore", Tupfile::new().to_string());
+    assert_eq!(".gitignore", make_test_tupfile_string());
 }

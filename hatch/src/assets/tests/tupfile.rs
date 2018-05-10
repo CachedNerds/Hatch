@@ -1,6 +1,6 @@
 use assets::tests::fixtures;
-use assets::tupfile::Tupfile;
 use project::{ProjectKind};
+use generators::tup::tupfile::make_tupfile_string;
 
 #[test]
 fn build_library_tupfile() {
@@ -19,7 +19,7 @@ include_rules
 : $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
+    assert_eq!(contents, make_tupfile_string(project.kind()));
 }
 
 #[test]
@@ -39,5 +39,5 @@ include_rules
 : $(TEST_OBJ_FILES) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, Tupfile::new(project.kind()).to_string());
+    assert_eq!(contents, make_tupfile_string(project.kind()).to_string());
 }

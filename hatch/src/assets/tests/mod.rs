@@ -1,6 +1,5 @@
 mod builder;
 mod catch_definition;
-mod catch_header;
 mod config;
 mod fixtures;
 mod generator;
