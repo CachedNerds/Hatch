@@ -1,4 +1,3 @@
-use project::ProjectKind;
 use generators::tup::test_tupfile::make_test_tupfile_string;
 
 #[test]
