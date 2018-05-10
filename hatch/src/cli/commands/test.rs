@@ -14,10 +14,9 @@ impl<'test> Test {
 }
 
 impl<'command> Command<'command> for Test {
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
+  fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()> {
     let (project_path, project) = self.read_project_context(args)?;
     println!("Generating assets...\n");
-    let generator: Box<Generator> = Box::new(Tup::new());
     self.generate_assets(generator, project_path.clone(), &project)?;
     println!("Building project...\n");
     self.build(&project_path).with_context(|e| {

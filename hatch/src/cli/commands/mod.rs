@@ -23,7 +23,7 @@ use std::io::Read;
 use failure::ResultExt;
 
 pub trait Command<'command> {
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
+  fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()>;
 
   fn read_project_context(&self, args: &ArgMatches<'command>) -> HatchResult<(PathBuf, Project)> {
     let project_path = if args.is_present(PROJECT_PATH) {

@@ -8,6 +8,7 @@ use hatch_error::{ HatchResult };
 use project::{ CompilerOptions, Project };
 use serde_yaml;
 use generators::tup::Tup;
+use generators::Generator;
 
 pub struct New;
 
@@ -18,7 +19,7 @@ impl<'new> New {
 }
 
 impl<'command> Command<'command> for New {
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
+  fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()> {
     let name = self.project_name(args).unwrap_or("".to_string());
     let version = self.project_version(args);
     let kind = self.project_kind(args);
@@ -42,7 +43,6 @@ impl<'command> Command<'command> for New {
     let mut file = fs::File::create(hatch_file)?;
     file.write_all(yaml_output.as_bytes())?;
     println!("Generating assets...");
-    let generator = Box::new(Tup{});
     self.generate_assets(generator, dir_path, &project)?;
     println!("Finished");
     Ok(())

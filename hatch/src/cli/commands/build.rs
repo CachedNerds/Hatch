@@ -13,7 +13,7 @@ impl<'build> Build {
 }
 
 impl<'command> Command<'command> for Build {
-  fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
+  fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()> {
     let (project_path, project) = self.read_project_context(args)?;
     println!("Building project...\n");
     self.build(&project_path)?;

@@ -16,10 +16,9 @@ impl<'run> Run {
 }
 
 impl<'command> Command<'command> for Run {
-  fn execute(&self, args: &ArgMatches<'command>) -> Action {
+  fn execute(&self , generator: Box<Generator>, args: &ArgMatches<'command>) -> Action {
     let (project_path, project) = self.read_project_context(args)?;
-    let generator = Tup{};
-    Generator::generate_assets(&generator, project_path.clone(), &project).with_context(|e| {
+    self.generate_assets(generator, project_path.clone(), &project).with_context(|e| {
       format!("asset generation failed : `{}`", e)
     })?;
 
