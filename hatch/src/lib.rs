@@ -23,7 +23,6 @@ pub mod locations;
 pub mod platform;
 pub mod project;
 pub mod task;
-pub mod yaml;
 
 #[cfg(test)]
 mod tests {
