@@ -13,6 +13,9 @@ pub mod tuprules;
 pub mod tup_config;
 pub mod platform;
 
+#[cfg(test)]
+mod tests;
+
 pub fn make_a_tup_in_a_box() -> Box<Generator> {
     let generator: Box<Generator> = Box::new(Tup {});
     generator

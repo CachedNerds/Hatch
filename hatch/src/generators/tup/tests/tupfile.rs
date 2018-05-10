@@ -1,5 +1,5 @@
-use assets::tests::fixtures;
-use project::{ProjectKind};
+use generators::tup::tests::fixtures;
+use project::ProjectKind;
 use generators::tup::tupfile::make_tupfile_string;
 
 #[test]

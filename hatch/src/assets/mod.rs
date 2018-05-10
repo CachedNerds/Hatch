@@ -17,9 +17,6 @@ pub mod generator;
 //pub mod catch_header;
 //pub mod catch_definition;
 
-#[cfg(test)]
-mod tests;
-
 #[derive(Debug)]
 pub enum TupKind {
     Tuprules,

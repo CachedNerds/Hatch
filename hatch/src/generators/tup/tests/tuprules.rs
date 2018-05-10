@@ -1,9 +1,9 @@
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::Target;
-use assets::tests::fixtures::project_with_compiler_options;
 use project::ProjectKind;
 use generators::tup::tuprules::make_tuprules_string;
+use generators::tup::tests::fixtures::project_with_compiler_options;
 
 /**
 I'm sorry Danny. I have completely destroyed your beautiful, elegant, All-pairs testing strategy.
