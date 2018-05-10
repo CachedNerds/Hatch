@@ -1,4 +1,3 @@
-use assets::{PlatformKind, ProjectAsset, TupKind};
 use constants::CATCH_HEADER_URL;
 use generators::tup::tupfile_ini::TupfileIni;
 use hatch_error::{HatchResult, NullError, ResultExt};
@@ -12,6 +11,9 @@ use generators::tup::catch_definition::make_catch_definition_string;
 use generators::tup::tupfile::make_tupfile_string;
 use generators::tup::platform::{mac_os, linux, windows};
 use generators::tup::catch_header::catch_header_filename;
+use generators::project_asset::ProjectAsset;
+use generators::tup::tup_kind::TupKind;
+use generators::platform_kind::PlatformKind;
 
 pub struct Builder<'builder> {
     project_path: PathBuf,

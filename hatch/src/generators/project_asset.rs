@@ -1,37 +1,11 @@
-use failure::ResultExt;
-use hatch_error::HatchResult;
 use std::fs;
-use std::io::Write;
+use hatch_error::HatchResult;
 use std::path::Path;
 use std::path::PathBuf;
-use core::cmp;
 use std::fmt;
-
-//pub mod builder;
-//pub mod generator;
-//pub mod tupfile;
-//pub mod platform;
-//pub mod test_tupfile;
-//pub mod tuprules;
-//pub mod tupfile_ini;
-//pub mod catch_header;
-//pub mod catch_definition;
-
-#[derive(Debug)]
-pub enum TupKind {
-    Tuprules,
-    Config,
-    Tupfile,
-    TestTupfile,
-    TupfileIni,
-}
-
-#[derive(Debug)]
-pub enum PlatformKind {
-    Linux,
-    MacOS,
-    Windows,
-}
+use std::cmp;
+use failure::ResultExt;
+use std::io::Write;
 
 pub struct ProjectAsset {
     path: PathBuf,
@@ -52,9 +26,9 @@ impl ProjectAsset {
         self.name.as_str()
     }
 
-   pub fn path(& self) -> &Path {
-    self.path.as_path()
-  }
+    pub fn path(& self) -> &Path {
+        self.path.as_path()
+    }
 
     pub fn write(&self) -> HatchResult<()> {
         let path = self.path();
@@ -78,13 +52,13 @@ impl ProjectAsset {
 }
 
 impl fmt::Debug for ProjectAsset {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
-  }
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
+    }
 }
 
 impl cmp::PartialEq for ProjectAsset {
-  fn eq(&self, other: &ProjectAsset) -> bool {
-    self.name == other.name && self.contents == other.contents
-  }
+    fn eq(&self, other: &ProjectAsset) -> bool {
+        self.name == other.name && self.contents == other.contents
+    }
 }

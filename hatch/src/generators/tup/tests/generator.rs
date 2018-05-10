@@ -1,8 +1,8 @@
-use assets::ProjectAsset;
 use std::fs;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use generators::tup::generate_all;
+use generators::project_asset::ProjectAsset;
 
 #[test]
 fn generate_one_without_directories() {

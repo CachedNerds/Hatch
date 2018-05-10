@@ -14,7 +14,6 @@ pub extern crate reqwest;
 pub extern crate yaml_rust;
 extern crate core;
 
-pub mod assets;
 pub mod cli;
 pub mod constants;
 pub mod deps;

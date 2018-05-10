@@ -1,4 +1,3 @@
-use assets::ProjectAsset;
 use project::ProjectKind;
 
 pub fn make_tupfile_string(kind: &ProjectKind) -> String {

@@ -1,8 +1,8 @@
 use generators::tup::tup::Tup;
 use generators::Generator;
-use assets::ProjectAsset;
 use hatch_error::HatchResult;
 use failure::ResultExt;
+use generators::project_asset::ProjectAsset;
 
 pub mod tup;
 
@@ -15,6 +15,7 @@ pub mod test_tupfile;
 pub mod tuprules;
 pub mod tup_config;
 pub mod platform;
+pub mod tup_kind;
 
 #[cfg(test)]
 mod tests;
