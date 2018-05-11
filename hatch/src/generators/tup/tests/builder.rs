@@ -63,7 +63,7 @@ fn build_test_tupfile_asset() {
 fn build_tuprules_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
     let actual_asset = asset_builder.add_tuprules();
 
     let expected_contents = String::from(

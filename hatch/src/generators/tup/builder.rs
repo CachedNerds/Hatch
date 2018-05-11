@@ -76,7 +76,7 @@ impl<'builder> Builder<'builder> {
     pub fn add_tuprules(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = make_tuprules_string(self.project);
-        ProjectAsset::new(project_path, String::from("tuprules"), contents)
+        ProjectAsset::new(project_path, String::from("Tuprules.tup"), contents)
     }
 
     pub fn add_tupfile(&self) -> ProjectAsset {
