@@ -8,11 +8,11 @@ extern crate serde_yaml;
 pub extern crate clap;
 #[macro_use]
 pub extern crate failure;
+extern crate core;
 pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
 pub extern crate yaml_rust;
-extern crate core;
 
 pub mod cli;
 pub mod constants;

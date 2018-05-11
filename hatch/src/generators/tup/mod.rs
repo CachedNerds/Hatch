@@ -1,21 +1,21 @@
+use failure::ResultExt;
+use generators::project_asset::ProjectAsset;
 use generators::tup::tup::Tup;
 use generators::Generator;
 use hatch_error::HatchResult;
-use failure::ResultExt;
-use generators::project_asset::ProjectAsset;
 
 pub mod tup;
 
 pub mod builder;
 pub mod catch_definition;
 pub mod catch_header;
+pub mod platform;
+pub mod test_tupfile;
+pub mod tup_config;
+pub mod tup_kind;
 pub mod tupfile;
 pub mod tupfile_ini;
-pub mod test_tupfile;
 pub mod tuprules;
-pub mod tup_config;
-pub mod platform;
-pub mod tup_kind;
 
 #[cfg(test)]
 mod tests;

@@ -1,9 +1,9 @@
+use generators::tup::tests::fixtures::project_with_compiler_options;
+use generators::tup::tuprules::make_tuprules_string;
 use platform::arch::Arch;
 use project::CompilerOptions;
-use project::Target;
 use project::ProjectKind;
-use generators::tup::tuprules::make_tuprules_string;
-use generators::tup::tests::fixtures::project_with_compiler_options;
+use project::Target;
 
 /**
 I'm sorry Danny. I have completely destroyed your beautiful, elegant, All-pairs testing strategy.
@@ -69,12 +69,13 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let compiler_options = CompilerOptions::new(
-                           String::from("g++"),
-                           vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
-                           vec![String::from("-v")].join(' '.to_string().as_str()),
-                           Arch::X64,
-                           Target::Release);
+    let compiler_options = CompilerOptions::new(
+        String::from("g++"),
+        vec![String::from("-c"), String::from("--std=c++1z")].join(' '.to_string().as_str()),
+        vec![String::from("-v")].join(' '.to_string().as_str()),
+        Arch::X64,
+        Target::Release,
+    );
 
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
     let actual_contents = make_tuprules_string(&project);
@@ -119,14 +120,16 @@ else
     EXTENSION = $(SHARED)
   endif
 endif
-PROJECT_LIB = $(PROJECT).$(EXTENSION)");
+PROJECT_LIB = $(PROJECT).$(EXTENSION)",
+    );
 
-  let compiler_options = CompilerOptions::new(
-                           String::from("g++"),
-                           String::from(""),
-                           String::from(""),
-                           Arch::X86,
-                           Target::Debug);
+    let compiler_options = CompilerOptions::new(
+        String::from("g++"),
+        String::from(""),
+        String::from(""),
+        Arch::X86,
+        Target::Debug,
+    );
 
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
     let actual_contents = make_tuprules_string(&project);
@@ -174,12 +177,13 @@ endif
 PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
-  let compiler_options = CompilerOptions::new(
-                           String::from("g++"),
-                           String::from(""),
-                           String::from(""),
-                           Arch::X64,
-                           Target::Debug);
+    let compiler_options = CompilerOptions::new(
+        String::from("g++"),
+        String::from(""),
+        String::from(""),
+        Arch::X64,
+        Target::Debug,
+    );
 
     let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
     let actual_contents = make_tuprules_string(&project);

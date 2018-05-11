@@ -8,8 +8,8 @@ mod test_tupfile;
 mod tupfile;
 mod tuprules;
 
-use std::path::PathBuf;
 use generators::project_asset::ProjectAsset;
+use std::path::PathBuf;
 
 #[test]
 fn fmt_project_asset() {

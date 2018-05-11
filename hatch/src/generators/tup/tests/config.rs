@@ -1,5 +1,5 @@
-use project::{ProjectKind};
 use generators::tup::tup_config::make_tup_config_string;
+use project::ProjectKind;
 
 #[test]
 fn build_shared_config() {

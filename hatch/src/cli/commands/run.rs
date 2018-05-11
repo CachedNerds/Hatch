@@ -1,11 +1,11 @@
 use clap::ArgMatches;
 use cli::commands::Command;
 use failure::ResultExt;
+use generators::tup::make_a_tup_in_a_box;
 use generators::Generator;
 use hatch_error::Action;
 use project::ProjectKind;
 use std::process::Command as ProcessCommand;
-use generators::tup::make_a_tup_in_a_box;
 
 pub struct Run;
 
@@ -19,7 +19,8 @@ impl<'command> Command<'command> for Run {
     fn execute(&self, args: &ArgMatches<'command>) -> Action {
         let (project_path, project) = self.read_project_context(args)?;
         let generator = make_a_tup_in_a_box();
-        generator.generate_assets( project_path.clone(), &project)
+        generator
+            .generate_assets(project_path.clone(), &project)
             .with_context(|e| format!("asset generation failed : `{}`", e))?;
 
         match *project.kind() {

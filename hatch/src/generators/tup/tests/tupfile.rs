@@ -1,6 +1,6 @@
 use generators::tup::tests::fixtures;
-use project::ProjectKind;
 use generators::tup::tupfile::make_tupfile_string;
+use project::ProjectKind;
 
 #[test]
 fn build_library_tupfile() {

@@ -1,19 +1,19 @@
 use constants::CATCH_HEADER_URL;
+use generators::platform_kind::PlatformKind;
+use generators::project_asset::ProjectAsset;
+use generators::tup::catch_definition::make_catch_definition_string;
+use generators::tup::catch_header::catch_header_filename;
+use generators::tup::platform::{linux, mac_os, windows};
+use generators::tup::test_tupfile::make_test_tupfile_string;
+use generators::tup::tup_config::make_tup_config_string;
+use generators::tup::tup_kind::TupKind;
+use generators::tup::tupfile::make_tupfile_string;
 use generators::tup::tupfile_ini::TupfileIni;
+use generators::tup::tuprules::make_tuprules_string;
 use hatch_error::{HatchResult, NullError, ResultExt};
 use project::Project;
 use reqwest;
 use std::path::PathBuf;
-use generators::tup::tuprules::make_tuprules_string;
-use generators::tup::test_tupfile::make_test_tupfile_string;
-use generators::tup::tup_config::make_tup_config_string;
-use generators::tup::catch_definition::make_catch_definition_string;
-use generators::tup::tupfile::make_tupfile_string;
-use generators::tup::platform::{mac_os, linux, windows};
-use generators::tup::catch_header::catch_header_filename;
-use generators::project_asset::ProjectAsset;
-use generators::tup::tup_kind::TupKind;
-use generators::platform_kind::PlatformKind;
 
 pub struct Builder<'builder> {
     project_path: PathBuf,

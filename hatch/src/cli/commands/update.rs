@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use cli::commands::Command;
-use hatch_error::HatchResult;
 use generators::tup::make_a_tup_in_a_box;
+use hatch_error::HatchResult;
 
 pub struct Update;
 

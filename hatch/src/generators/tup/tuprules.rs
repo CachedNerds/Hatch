@@ -115,8 +115,6 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         .join("\n")
 }
 
-
-
 //pub struct Tuprules {}
 
 //impl Tuprules {

@@ -6,10 +6,7 @@ pub mod linux {
     pub fn to_string() -> String {
         let static_extension = "STATIC = a";
         let shared_extension = "SHARED = so";
-        [
-            static_extension,
-            shared_extension,
-        ].join("\n")
+        [static_extension, shared_extension].join("\n")
     }
 }
 
@@ -20,12 +17,9 @@ pub mod mac_os {
     }
 
     pub fn to_string() -> String {
-        let static_extension ="STATIC = a";
+        let static_extension = "STATIC = a";
         let shared_extension = "SHARED = so";
-        [
-            static_extension,
-            shared_extension,
-        ].join("\n")
+        [static_extension, shared_extension].join("\n")
     }
 }
 

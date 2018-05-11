@@ -1,14 +1,13 @@
 use clap::ArgMatches;
 use cli::commands::Command;
 use deps::clone_project_deps;
+use generators::tup::make_a_tup_in_a_box;
 use hatch_error::HatchResult;
 use locations::{hatchfile_path, modules_path};
 use project::{CompilerOptions, Project};
 use serde_yaml;
 use std::fs;
 use std::io::prelude::*;
-use generators::tup::make_a_tup_in_a_box;
-
 
 pub struct New;
 

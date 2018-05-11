@@ -8,6 +8,7 @@ use clap::ArgMatches;
 use constants::{ARGS, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};
 use deps::dependency::Dependency;
 use failure::ResultExt;
+use generators::platform_kind::PlatformKind;
 use generators::Generator;
 use hatch_error::HatchResult;
 use hatch_error::InvalidPathError;
@@ -20,7 +21,6 @@ use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 use std::process;
-use generators::platform_kind::PlatformKind;
 
 pub trait Command<'command> {
     fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;

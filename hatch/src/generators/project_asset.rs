@@ -1,11 +1,11 @@
-use std::fs;
+use failure::ResultExt;
 use hatch_error::HatchResult;
+use std::cmp;
+use std::fmt;
+use std::fs;
+use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
-use std::fmt;
-use std::cmp;
-use failure::ResultExt;
-use std::io::Write;
 
 pub struct ProjectAsset {
     path: PathBuf,
@@ -26,7 +26,7 @@ impl ProjectAsset {
         self.name.as_str()
     }
 
-    pub fn path(& self) -> &Path {
+    pub fn path(&self) -> &Path {
         self.path.as_path()
     }
 
@@ -53,7 +53,13 @@ impl ProjectAsset {
 
 impl fmt::Debug for ProjectAsset {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "path: {}, name: {}, contents: {}", self.path.display(), self.name, self.contents)
+        write!(
+            f,
+            "path: {}, name: {}, contents: {}",
+            self.path.display(),
+            self.name,
+            self.contents
+        )
     }
 }
 

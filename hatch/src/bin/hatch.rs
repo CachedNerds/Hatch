@@ -5,12 +5,12 @@ extern crate yaml_rust;
 use std::collections::HashMap;
 
 use clap::App;
-use hatch::cli::commands::Command;
 use hatch::cli::commands::build::Build;
 use hatch::cli::commands::new::New;
 use hatch::cli::commands::run::Run;
 use hatch::cli::commands::test::Test;
 use hatch::cli::commands::update::Update;
+use hatch::cli::commands::Command;
 use hatch::constants;
 use hatch::hatch_error::{HatchResult, MissingParameterError};
 use yaml_rust::YamlLoader;

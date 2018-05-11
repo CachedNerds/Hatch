@@ -1,8 +1,8 @@
-use generators::tup::builder::Builder as AssetBuilder;
-use project::{ProjectKind};
-use std::path::PathBuf;
-use generators::tup::tests::fixtures;
 use generators::project_asset::ProjectAsset;
+use generators::tup::builder::Builder as AssetBuilder;
+use generators::tup::tests::fixtures;
+use project::ProjectKind;
+use std::path::PathBuf;
 
 #[test]
 fn add_asset() {

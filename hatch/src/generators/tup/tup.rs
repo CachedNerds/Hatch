@@ -1,6 +1,6 @@
 use failure::ResultExt;
-use generators::Generator;
 use generators::tup::builder::Builder;
+use generators::Generator;
 use hatch_error::HatchError;
 use platform::os;
 use project::Project;
