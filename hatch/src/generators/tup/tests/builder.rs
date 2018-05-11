@@ -46,7 +46,7 @@ fn build_config_asset() {
 fn build_test_tupfile_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
     let actual_asset = asset_builder.add_test_tupfile();
 
     let expected_contents = String::from(".gitignore");

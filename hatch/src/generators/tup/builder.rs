@@ -68,9 +68,9 @@ impl<'builder> Builder<'builder> {
     }
 
     pub fn add_test_tupfile(&self) -> ProjectAsset {
-        let asset_path = self.project_path.join("test");
+        let asset_path = self.project_path.join("test/");
         let contents = make_test_tupfile_string();
-        ProjectAsset::new(asset_path, String::from("test_tupfile"), contents)
+        ProjectAsset::new(asset_path, String::from("Tupfile"), contents)
     }
 
     pub fn add_tuprules(&self) -> ProjectAsset {
