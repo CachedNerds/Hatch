@@ -83,7 +83,7 @@ impl<'builder> Builder<'builder> {
         let project_path = self.project_path.clone();
         let project = &self.project;
         let contents = make_tupfile_string(project.kind());
-        ProjectAsset::new(project_path, String::from("tupfile"), contents)
+        ProjectAsset::new(project_path, String::from("Tupfile"), contents)
     }
 
     pub fn add_tupfile_ini(&self) -> ProjectAsset {
