@@ -179,7 +179,7 @@ fn build_linux_asset() {
 fn build_macos_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
     let actual_asset = asset_builder.add_macos_platform_tup_file();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
