@@ -145,7 +145,7 @@ include_rules
 fn build_tupfile_ini_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
     let actual_asset = asset_builder.add_tupfile_ini();
 
     let expected_contents = String::from("");

@@ -89,7 +89,7 @@ impl<'builder> Builder<'builder> {
     pub fn add_tupfile_ini(&self) -> ProjectAsset {
         let contents = TupfileIni::new().to_string();
         let project_path = self.project_path.clone();
-        ProjectAsset::new(project_path, String::from("tup.ini"), contents)
+        ProjectAsset::new(project_path, String::from("Tupfile.ini"), contents)
     }
 
     pub fn add_linux_platform_tup_file(&self) -> ProjectAsset {
