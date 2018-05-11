@@ -101,7 +101,7 @@ impl<'builder> Builder<'builder> {
     pub fn add_macos_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let contents = mac_os::to_string();
-        ProjectAsset::new(project_path, String::from("macos.tup"), contents)
+        ProjectAsset::new(project_path, String::from("macosx.tup"), contents)
     }
 
     pub fn add_windows_platform_tup_file(&self) -> ProjectAsset {
