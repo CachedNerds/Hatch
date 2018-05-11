@@ -9,7 +9,7 @@ use clap::{ ArgMatches };
 use std::path::PathBuf;
 use deps::dependency::Dependency;
 use project::ProjectKind;
-use constants::{ ARGS, PROJECT_NAME, PROJECT_PATH, VERSION, TYPE, INCLUDE };
+use constants::{ ARGS, PROJECT_NAME, PROJECT_PATH, VERSION, TYPE, INCLUDE, GENERATOR };
 use std::path::Path;
 use platform::os;
 use assets::PlatformKind;
@@ -21,6 +21,7 @@ use std::fs::File;
 use serde_yaml;
 use std::io::Read;
 use failure::ResultExt;
+use generators::get_generator;
 
 pub trait Command<'command> {
   fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()>;
@@ -40,6 +41,10 @@ pub trait Command<'command> {
     };
 
     Ok((project_path, project))
+  }
+
+  fn generator(&self, args: &ArgMatches<'command>) -> Option<Box<Generator>> {
+    get_generator(value_t!(args, GENERATOR, String).ok())
   }
 
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
