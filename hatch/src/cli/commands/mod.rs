@@ -44,7 +44,9 @@ pub trait Command<'command> {
   }
 
   fn generator(&self, args: &ArgMatches<'command>) -> Option<Box<Generator>> {
-    get_generator(value_t!(args, GENERATOR, String).ok())
+    let generator = value_t!(args, GENERATOR, String).ok();
+    get_generator(&generator);
+    None
   }
 
   fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {
