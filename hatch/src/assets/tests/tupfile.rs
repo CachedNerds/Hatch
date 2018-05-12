@@ -1,6 +1,6 @@
-use assets::tupfile::Tupfile;
 use assets::tests::fixtures;
-use project::{ProjectKind};
+use assets::tupfile::Tupfile;
+use project::ProjectKind;
 
 #[test]
 fn build_library_tupfile() {

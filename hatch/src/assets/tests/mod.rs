@@ -1,13 +1,13 @@
 mod builder;
-mod generator;
+mod catch_definition;
+mod catch_header;
 mod config;
+mod fixtures;
+mod generator;
 mod platform;
 mod test_tupfile;
 mod tupfile;
 mod tuprules;
-mod catch_header;
-mod catch_definition;
-mod fixtures;
 
 use assets::ProjectAsset;
 use std::path::PathBuf;

@@ -1,5 +1,5 @@
-pub use failure::ResultExt;
 pub use failure::Error as HatchError;
+pub use failure::ResultExt;
 
 pub type HatchResult<T> = Result<T, HatchError>;
 
@@ -32,7 +32,6 @@ pub struct NullError;
 #[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct MissingParameterError;
-
 
 #[derive(Fail, Debug)]
 #[fail(display = "Failed to do Serde Yaml stuff")]

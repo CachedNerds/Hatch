@@ -1,7 +1,7 @@
-use project::{Project, ProjectKind};
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::Target;
+use project::{Project, ProjectKind};
 
 pub fn project(kind: ProjectKind) -> Project {
     let compiler_options = CompilerOptions::new(
@@ -23,11 +23,15 @@ pub fn project(kind: ProjectKind) -> Project {
     project
 }
 
-pub fn project_with_compiler_options(kind: ProjectKind, compiler_options: CompilerOptions) -> Project {
+pub fn project_with_compiler_options(
+    kind: ProjectKind,
+    compiler_options: CompilerOptions,
+) -> Project {
     Project::new(
         String::from("test"),
         String::from("0.1.0"),
         kind,
         Some(compiler_options),
-        Vec::new())
+        Vec::new(),
+    )
 }

@@ -1,5 +1,5 @@
 use assets::config::Config;
-use project::{ProjectKind};
+use project::ProjectKind;
 
 #[test]
 fn build_shared_config() {

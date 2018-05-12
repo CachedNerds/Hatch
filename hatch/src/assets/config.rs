@@ -21,13 +21,13 @@ impl Config {
         format!("PROJECT = {}", name)
     }
 
-  pub fn lib_type(project_kind: &ProjectKind) -> String {
-    let kind = match *project_kind {
-      ProjectKind::Binary => "binary",
-      ProjectKind::Static => "static",
-      ProjectKind::Shared => "shared",
-      ProjectKind::HeaderOnly => "header-only",
-    };
+    pub fn lib_type(project_kind: &ProjectKind) -> String {
+        let kind = match *project_kind {
+            ProjectKind::Binary => "binary",
+            ProjectKind::Static => "static",
+            ProjectKind::Shared => "shared",
+            ProjectKind::HeaderOnly => "header-only",
+        };
 
         format!("LIB_TYPE = {}", kind)
     }
