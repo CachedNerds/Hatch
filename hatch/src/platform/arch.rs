@@ -1,8 +1,11 @@
-use std::mem::size_of;
 use std::fmt;
+use std::mem::size_of;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub enum Arch { X64, X86 }
+pub enum Arch {
+    X64,
+    X86,
+}
 
 impl AsRef<Arch> for Arch {
     fn as_ref(&self) -> &Arch {
