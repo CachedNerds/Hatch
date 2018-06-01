@@ -1,8 +1,8 @@
 use assets::builder::Builder as AssetBuilder;
-use assets::{ProjectAsset};
-use std::path::PathBuf;
 use assets::tests::fixtures;
-use project::{ProjectKind};
+use assets::ProjectAsset;
+use project::ProjectKind;
+use std::path::PathBuf;
 
 #[test]
 fn add_asset() {

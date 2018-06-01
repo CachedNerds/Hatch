@@ -10,24 +10,45 @@ use deps::dependency::Dependency;
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Project {
-  name : String,
-  version: String,
-  kind: ProjectKind,
-  #[serde(skip_serializing_if = "Option::is_none")]
-  compiler_options: Option<CompilerOptions>,
-  #[serde(skip_serializing_if = "Vec::is_empty")]
-  dependencies: Vec<Dependency>,
+    name: String,
+    version: String,
+    kind: ProjectKind,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    compiler_options: Option<CompilerOptions>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    dependencies: Vec<Dependency>,
 }
 
 impl Project {
-  pub fn new(name: String, version: String, kind: ProjectKind,
-             compiler_options: Option<CompilerOptions>, includes: Vec<Dependency>) -> Project {
-    Project { name, version, kind, compiler_options, dependencies: includes }
-  }
+    pub fn new(
+        name: String,
+        version: String,
+        kind: ProjectKind,
+        compiler_options: Option<CompilerOptions>,
+        includes: Vec<Dependency>,
+    ) -> Project {
+        Project {
+            name,
+            version,
+            kind,
+            compiler_options,
+            dependencies: includes,
+        }
+    }
 
-  pub fn name(&self) -> &str { self.name.as_str() }
-  pub fn version(&self) -> &str { self.version.as_str() }
-  pub fn kind(&self) -> &ProjectKind { &self.kind }
-  pub fn compiler_options(&self) -> &Option<CompilerOptions> { &self.compiler_options }
-  pub fn dependencies(&self) -> &Vec<Dependency> { &self.dependencies }
+    pub fn name(&self) -> &str {
+        self.name.as_str()
+    }
+    pub fn version(&self) -> &str {
+        self.version.as_str()
+    }
+    pub fn kind(&self) -> &ProjectKind {
+        &self.kind
+    }
+    pub fn compiler_options(&self) -> &Option<CompilerOptions> {
+        &self.compiler_options
+    }
+    pub fn dependencies(&self) -> &Vec<Dependency> {
+        &self.dependencies
+    }
 }
