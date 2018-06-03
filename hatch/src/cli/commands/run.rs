@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use cli::commands::Command;
 use failure::ResultExt;
-use generators::tup::Tup;
+use generators::tup::make_a_tup_in_a_box;
 use generators::Generator;
 use hatch_error::Action;
 use project::ProjectKind;
@@ -16,15 +16,17 @@ impl<'run> Run {
 }
 
 impl<'command> Command<'command> for Run {
-    fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> Action {
+    fn execute(&self, args: &ArgMatches<'command>) -> Action {
         let (project_path, project) = self.read_project_context(args)?;
-        self.generate_assets(generator, project_path.clone(), &project)
+        let generator = make_a_tup_in_a_box();
+        generator
+            .generate_assets(project_path.clone(), &project)
             .with_context(|e| format!("asset generation failed : `{}`", e))?;
 
         match *project.kind() {
             ProjectKind::Binary => {
                 println!("Generating assets...\n");
-                let generator = Box::new(Tup {});
+                let generator = make_a_tup_in_a_box();
                 self.generate_assets(generator, project_path.clone(), &project)?;
                 println!("Building project...\n");
                 self.build(&project_path)?;

@@ -1,6 +1,6 @@
-use assets::builder::Builder as AssetBuilder;
-use assets::tests::fixtures;
-use assets::ProjectAsset;
+use generators::project_asset::ProjectAsset;
+use generators::tup::builder::Builder as AssetBuilder;
+use generators::tup::tests::fixtures;
 use project::ProjectKind;
 use std::path::PathBuf;
 
@@ -30,7 +30,7 @@ fn build_config_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
     let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.config();
+    let actual_asset = asset_builder.add_tup_config();
 
     let expected_contents = String::from("PROJECT = test\nLIB_TYPE = static");
     let expected_asset = ProjectAsset::new(
@@ -46,8 +46,8 @@ fn build_config_asset() {
 fn build_test_tupfile_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.test_tupfile();
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
+    let actual_asset = asset_builder.add_test_tupfile();
 
     let expected_contents = String::from(".gitignore");
     let expected_asset = ProjectAsset::new(
@@ -63,8 +63,8 @@ fn build_test_tupfile_asset() {
 fn build_tuprules_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.tuprules();
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
+    let actual_asset = asset_builder.add_tuprules();
 
     let expected_contents = String::from(
         ".gitignore
@@ -117,8 +117,8 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
 fn build_tupfile_asset() {
     let project = fixtures::project(ProjectKind::Shared);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.tupfile();
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
+    let actual_asset = asset_builder.add_tupfile();
 
     let expected_contents = String::from(
         "include config.tup
@@ -145,8 +145,8 @@ include_rules
 fn build_tupfile_ini_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.tupfile_ini();
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
+    let actual_asset = asset_builder.add_tupfile_ini();
 
     let expected_contents = String::from("");
     let expected_asset = ProjectAsset::new(
@@ -163,7 +163,7 @@ fn build_linux_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
     let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.linux();
+    let actual_asset = asset_builder.add_linux_platform_tup_file();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -179,8 +179,8 @@ fn build_linux_asset() {
 fn build_macos_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
-    let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.macos();
+    let asset_builder = AssetBuilder::new(PathBuf::from("./"), &project);
+    let actual_asset = asset_builder.add_macos_platform_tup_file();
 
     let expected_contents = String::from("STATIC = a\nSHARED = so");
     let expected_asset = ProjectAsset::new(
@@ -197,7 +197,7 @@ fn build_windows_asset() {
     let project = fixtures::project(ProjectKind::Static);
 
     let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.windows();
+    let actual_asset = asset_builder.add_windows_platform_tup_file();
 
     let expected_contents = String::from(
         "STATIC = lib
@@ -221,7 +221,8 @@ fn build_catch_definition() {
     let project = fixtures::project(ProjectKind::Static);
 
     let asset_builder = AssetBuilder::new(PathBuf::new(), &project);
-    let actual_asset = asset_builder.catch_definition();
+
+    let actual_asset = asset_builder.add_catch_definition();
 
     let expected_contents = String::from("#define CATCH_CONFIG_MAIN\n#include \"catch.hpp\"");
     let expected_asset = ProjectAsset::new(
