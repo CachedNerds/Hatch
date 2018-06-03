@@ -1,5 +1,5 @@
-use assets::tests::fixtures::project_with_compiler_options;
-use assets::tuprules::Tuprules;
+use generators::tup::tests::fixtures::project_with_compiler_options;
+use generators::tup::tuprules::make_tuprules_string;
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::ProjectKind;
@@ -77,10 +77,10 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         Target::Release,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -131,10 +131,10 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         Target::Debug,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -185,10 +185,10 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         Target::Debug,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -240,10 +240,10 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         Target::Release,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -282,10 +282,10 @@ include @(TUP_PLATFORM).tup",
         Target::Release,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -327,10 +327,10 @@ include @(TUP_PLATFORM).tup",
         Target::Debug,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -370,10 +370,10 @@ include @(TUP_PLATFORM).tup",
         Target::Release,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }
 
 #[test]
@@ -414,8 +414,8 @@ include @(TUP_PLATFORM).tup",
         Target::Debug,
     );
 
-    let tuprules = Tuprules {};
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
+    let actual_contents = make_tuprules_string(&project);
 
-    assert_eq!(contents, tuprules.to_string(&project));
+    assert_eq!(contents, actual_contents);
 }

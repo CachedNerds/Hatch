@@ -1,6 +1,5 @@
 mod builder;
 mod catch_definition;
-mod catch_header;
 mod config;
 mod fixtures;
 mod generator;
@@ -9,7 +8,7 @@ mod test_tupfile;
 mod tupfile;
 mod tuprules;
 
-use assets::ProjectAsset;
+use generators::project_asset::ProjectAsset;
 use std::path::PathBuf;
 
 #[test]

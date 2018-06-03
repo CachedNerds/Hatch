@@ -1,8 +1,7 @@
 use clap::ArgMatches;
 use cli::commands::Command;
 use deps::clone_project_deps;
-use generators::tup::Tup;
-use generators::Generator;
+use generators::tup::make_a_tup_in_a_box;
 use hatch_error::HatchResult;
 use locations::{hatchfile_path, modules_path};
 use project::{CompilerOptions, Project};
@@ -19,7 +18,7 @@ impl<'new> New {
 }
 
 impl<'command> Command<'command> for New {
-    fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()> {
+    fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
         let name = self.project_name(args).unwrap_or("".to_string());
         let version = self.project_version(args);
         let kind = self.project_kind(args);
@@ -43,6 +42,7 @@ impl<'command> Command<'command> for New {
         let mut file = fs::File::create(hatch_file)?;
         file.write_all(yaml_output.as_bytes())?;
         println!("Generating assets...");
+        let generator = make_a_tup_in_a_box();
         self.generate_assets(generator, dir_path, &project)?;
         println!("Finished");
         Ok(())

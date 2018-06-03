@@ -1,11 +1,7 @@
-pub struct CatchHeader;
+pub fn make_catch_header_string() -> String {
+    String::from("")
+}
 
-impl CatchHeader {
-    pub fn new() -> CatchHeader {
-        CatchHeader
-    }
-
-    pub fn name() -> String {
-        String::from("catch.hpp")
-    }
+pub fn catch_header_filename() -> String {
+    String::from("catch.hpp")
 }

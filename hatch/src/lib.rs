@@ -14,7 +14,6 @@ pub extern crate os_info;
 pub extern crate reqwest;
 pub extern crate yaml_rust;
 
-pub mod assets;
 pub mod cli;
 pub mod constants;
 pub mod deps;
@@ -24,7 +23,6 @@ pub mod locations;
 pub mod platform;
 pub mod project;
 pub mod task;
-pub mod yaml;
 
 #[cfg(test)]
 mod tests {

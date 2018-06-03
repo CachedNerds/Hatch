@@ -1,40 +1,35 @@
 use project::ProjectKind;
 
-pub struct Config {
-    project: String,
-    lib_type: String,
+fn name() -> String {
+    String::from("config.tup")
 }
 
-impl Config {
-    pub fn new(name: &str, project_kind: &ProjectKind) -> Config {
-        Config {
-            project: Config::project(name),
-            lib_type: Config::lib_type(project_kind),
-        }
-    }
-
-    pub fn name() -> String {
-        String::from("config.tup")
-    }
-
-    pub fn project(name: &str) -> String {
-        format!("PROJECT = {}", name)
-    }
-
-    pub fn lib_type(project_kind: &ProjectKind) -> String {
-        let kind = match *project_kind {
-            ProjectKind::Binary => "binary",
-            ProjectKind::Static => "static",
-            ProjectKind::Shared => "shared",
-            ProjectKind::HeaderOnly => "header-only",
-        };
-
-        format!("LIB_TYPE = {}", kind)
-    }
+fn project(name: &str) -> String {
+    format!("PROJECT = {}", name)
 }
 
-impl ToString for Config {
-    fn to_string(&self) -> String {
-        [self.project.as_str(), self.lib_type.as_str()].join("\n")
-    }
+fn lib_type(project_kind: &ProjectKind) -> String {
+    let kind = match *project_kind {
+        ProjectKind::Binary => "binary",
+        ProjectKind::Static => "static",
+        ProjectKind::Shared => "shared",
+        ProjectKind::HeaderOnly => "header-only",
+    };
+
+    format!("LIB_TYPE = {}", kind)
+}
+
+fn make_config_string(project_kind: &ProjectKind) -> String {
+    let kind = match *project_kind {
+        ProjectKind::Binary => "binary",
+        ProjectKind::Static => "static",
+        ProjectKind::Shared => "shared",
+        ProjectKind::HeaderOnly => "header-only",
+    };
+
+    format!("LIB_TYPE = {}", kind)
+}
+
+pub fn make_tup_config_string(name: &str, project_kind: &ProjectKind) -> String {
+    [project(name), lib_type(project_kind)].join("\n")
 }

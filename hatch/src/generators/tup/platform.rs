@@ -1,109 +1,44 @@
-pub struct Linux {
-    static_extension: String,
-    shared_extension: String,
-}
-
-impl Linux {
-    pub fn new() -> Linux {
-        Linux {
-            static_extension: Linux::static_extension(),
-            shared_extension: Linux::shared_extension(),
-        }
-    }
-
+pub mod linux {
     pub fn name() -> String {
         String::from("linux.tup")
     }
 
-    pub fn static_extension() -> String {
-        String::from("STATIC = a")
-    }
-
-    pub fn shared_extension() -> String {
-        String::from("SHARED = so")
+    pub fn to_string() -> String {
+        let static_extension = "STATIC = a";
+        let shared_extension = "SHARED = so";
+        [static_extension, shared_extension].join("\n")
     }
 }
 
-impl ToString for Linux {
-    fn to_string(&self) -> String {
-        [
-            self.static_extension.as_str(),
-            self.shared_extension.as_str(),
-        ].join("\n")
-    }
-}
-
-pub struct MacOS {
-    static_extension: String,
-    shared_extension: String,
-}
-
-impl MacOS {
-    pub fn new() -> MacOS {
-        MacOS {
-            static_extension: MacOS::static_extension(),
-            shared_extension: MacOS::shared_extension(),
-        }
-    }
+pub mod mac_os {
 
     pub fn name() -> String {
         String::from("macosx.tup")
     }
 
-    pub fn static_extension() -> String {
-        String::from("STATIC = a")
-    }
-
-    pub fn shared_extension() -> String {
-        String::from("SHARED = so")
+    pub fn to_string() -> String {
+        let static_extension = "STATIC = a";
+        let shared_extension = "SHARED = so";
+        [static_extension, shared_extension].join("\n")
     }
 }
 
-impl ToString for MacOS {
-    fn to_string(&self) -> String {
-        [
-            self.static_extension.as_str(),
-            self.shared_extension.as_str(),
-        ].join("\n")
-    }
-}
-
-pub struct Windows {
-    static_extension: String,
-    shared_extension: String,
-}
-
-impl Windows {
-    pub fn new() -> Windows {
-        Windows {
-            static_extension: Windows::static_extension(),
-            shared_extension: Windows::shared_extension(),
-        }
-    }
-
+pub mod windows {
     pub fn name() -> String {
         String::from("win32.tup")
     }
 
-    pub fn static_extension() -> String {
-        String::from("STATIC = lib")
-    }
-
-    pub fn shared_extension() -> String {
-        String::from("SHARED = dll")
-    }
-}
-
-impl ToString for Windows {
-    fn to_string(&self) -> String {
+    pub fn to_string() -> String {
+        let static_extension = "STATIC = lib";
+        let shared_extension = "SHARED = dll";
         let clang_comment = "# Use clang for front-end";
         let clang = "CC = clang++.exe";
         let llvm_comment = "# Use llvm-lib for static libraries";
         let archive_macro = "!archive = |> llvm-lib /MACHINE:X64 /OUT:%o %f |>";
 
         [
-            self.static_extension.as_str(),
-            self.shared_extension.as_str(),
+            static_extension,
+            shared_extension,
             clang_comment,
             clang,
             llvm_comment,

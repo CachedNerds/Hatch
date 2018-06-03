@@ -1,6 +1,6 @@
 use clap::ArgMatches;
 use cli::commands::Command;
-use generators::tup::Tup;
+use generators::tup::make_a_tup_in_a_box;
 use generators::Generator;
 use hatch_error::{HatchResult, ResultExt};
 use std::process::Command as ProcessCommand;
@@ -14,9 +14,10 @@ impl<'test> Test {
 }
 
 impl<'command> Command<'command> for Test {
-    fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()> {
+    fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
         let (project_path, project) = self.read_project_context(args)?;
         println!("Generating assets...\n");
+        let generator = make_a_tup_in_a_box();
         self.generate_assets(generator, project_path.clone(), &project)?;
         println!("Building project...\n");
         self.build(&project_path)

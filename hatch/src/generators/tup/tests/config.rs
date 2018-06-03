@@ -1,23 +1,23 @@
-use assets::config::Config;
+use generators::tup::tup_config::make_tup_config_string;
 use project::ProjectKind;
 
 #[test]
 fn build_shared_config() {
-    let config = Config::new("Test", &ProjectKind::Shared);
+    let config = make_tup_config_string("Test", &ProjectKind::Shared);
 
     assert_eq!("PROJECT = Test\nLIB_TYPE = shared", config.to_string());
 }
 
 #[test]
 fn build_static_config() {
-    let config = Config::new("Test", &ProjectKind::Static);
+    let config = make_tup_config_string("Test", &ProjectKind::Static);
 
     assert_eq!("PROJECT = Test\nLIB_TYPE = static", config.to_string());
 }
 
 #[test]
 fn build_binary_config() {
-    let config = Config::new("Test", &ProjectKind::Binary);
+    let config = make_tup_config_string("Test", &ProjectKind::Binary);
 
     assert_eq!("PROJECT = Test\nLIB_TYPE = binary", config.to_string());
 }
