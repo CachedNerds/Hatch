@@ -2,9 +2,6 @@
 name: hatch
 version: "0.2-rc01"
 about: C++ build system
-settings:
-    - SubcommandRequiredElseHelp
-    - DisableVersion
 subcommands:
     - build:
         about: Build a project

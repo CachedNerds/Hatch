@@ -1,4 +1,4 @@
-
+extern crate clap;
 extern crate hatch;
 extern crate yaml_rust;
 
@@ -22,8 +22,6 @@ fn do_me_a_hatch() -> HatchResult<()> {
     let matches = App::from_yaml(doc).get_matches();
     let (name, args) = matches.subcommand();
 
-  // TODO: get the generator from the CLI and inject into commands
-  // let generator;
     // TODO: get the generator from the CLI and inject into commands
     // let generator;
 
@@ -45,9 +43,6 @@ fn do_me_a_hatch() -> HatchResult<()> {
 
     let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
 
-  // TODO: args.unwrap is bad, don't do this, it should be resultified
-  subcommand.execute(args.unwrap())?;
-  Ok(())
     // TODO: args.unwrap is bad, don't do this, it should be resultified
     subcommand.execute(args.unwrap())?;
     Ok(())
