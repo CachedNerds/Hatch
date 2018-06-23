@@ -7,6 +7,7 @@ use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
+#[derive(Debug)]
 pub struct ProjectAsset {
     path: PathBuf,
     name: String,
@@ -48,18 +49,6 @@ impl ProjectAsset {
         })?;
 
         Ok(())
-    }
-}
-
-impl fmt::Debug for ProjectAsset {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "path: {}, name: {}, contents: {}",
-            self.path.display(),
-            self.name,
-            self.contents
-        )
     }
 }
 
