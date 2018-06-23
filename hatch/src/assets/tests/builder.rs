@@ -2,7 +2,7 @@ use assets::builder::Builder as AssetBuilder;
 use assets::{ Asset, ProjectAsset };
 use std::path::PathBuf;
 use assets::tests::fixtures;
-use project::{ ProjectKind, LibraryKind };
+use project::ProjectKind;
 
 #[test]
 fn add_asset() {
@@ -19,7 +19,7 @@ fn add_asset() {
 
 #[test]
 fn build_config_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.config(&project);
@@ -32,7 +32,7 @@ fn build_config_asset() {
 
 #[test]
 fn build_test_tupfile_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.test_tupfile(&project);
@@ -45,7 +45,7 @@ fn build_test_tupfile_asset() {
 
 #[test]
 fn build_tuprules_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tuprules(&project);
@@ -94,7 +94,7 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)");
 
 #[test]
 fn build_tupfile_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Shared));
+  let project = fixtures::project(ProjectKind::Shared);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile(&project);
@@ -117,7 +117,7 @@ include_rules
 
 #[test]
 fn build_tupfile_ini_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.tupfile_ini(&project);
@@ -130,7 +130,7 @@ fn build_tupfile_ini_asset() {
 
 #[test]
 fn build_linux_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.linux(&project);
@@ -143,7 +143,7 @@ fn build_linux_asset() {
 
 #[test]
 fn build_macos_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.macos(&project);
@@ -156,7 +156,7 @@ fn build_macos_asset() {
 
 #[test]
 fn build_windows_asset() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.windows(&project);
@@ -175,7 +175,7 @@ CC = clang++.exe
 
 #[test]
 fn build_catch_definition() {
-  let project = fixtures::project(ProjectKind::Library(LibraryKind::Static));
+  let project = fixtures::project(ProjectKind::Static);
 
   let asset_builder = AssetBuilder::new();
   let actual_asset = asset_builder.catch_definition(&project);

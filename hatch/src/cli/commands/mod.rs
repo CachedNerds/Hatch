@@ -15,6 +15,7 @@ static TYPE: &str = "TYPE";
 static BIN: &str = "bin";
 static STATIC: &str = "static";
 static SHARED: &str = "shared";
+static HEADER: &str = "header-only";
 static PROJECT_NAME: &str = "PROJECT_NAME";
 static PROJECT_NAMES: &str = "PROJECT_NAMES";
 static PROJECT_PATH: &str = "PROJECT_PATH";

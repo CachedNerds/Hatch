@@ -2,7 +2,7 @@ use std::fs;
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::{ Command, parse_deps_from_cli };
 use deps::clone_project_deps;
-use project::{ Project, ProjectKind, LibraryKind };
+use project::{ Project, ProjectKind };
 use project::build::{ Target, Config };
 use platform::arch::Arch;
 use deps::dependency::Dependency;
@@ -14,7 +14,7 @@ use task;
 use std::fmt::Write as FmtWrite;
 use std::io::Write as IoWrite;
 
-use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, PROJECT_NAME };
+use cli::commands::{ INCLUDE, VERSION, TYPE, BIN, STATIC, SHARED, HEADER, PROJECT_NAME };
 
 pub struct New {
   name: &'static str,
@@ -43,12 +43,13 @@ impl<'new> New {
       // Rust to pattern match on a static variable
       match type_arg.as_str() {
         arg if arg == BIN => ProjectKind::Binary,
-        arg if arg == STATIC => ProjectKind::Library(LibraryKind::Static),
-        arg if arg == SHARED => ProjectKind::Library(LibraryKind::Shared),
-        _ => ProjectKind::Library(LibraryKind::Static)
+        arg if arg == STATIC => ProjectKind::Static,
+        arg if arg == SHARED => ProjectKind::Shared,
+        arg if arg == HEADER => ProjectKind::HeaderOnly,
+        _ => ProjectKind::Static,
       }
     } else {
-      ProjectKind::Library(LibraryKind::Static)
+      ProjectKind::Static
     }
   }
 
@@ -121,7 +122,7 @@ impl<'command> Command<'command> for New {
            .help("Determines the type of the project")
            .long("type").short("t")
            .takes_value(true)
-           .possible_values(&[BIN, STATIC, SHARED])
+           .possible_values(&[BIN, STATIC, SHARED, &HEADER])
            .required(true))
 
       .arg(Arg::with_name(VERSION)
@@ -186,10 +187,16 @@ impl<'command> Command<'command> for New {
                                  project_deps,
                                  dir_path.to_owned());
 
-      println!("Generating assets...");
-      task::generate_assets(&project)?;
-
-      println!("Finished");
+      match *project.config().kind() {
+        ProjectKind::HeaderOnly => {
+          println!("Skipping tup file generation because project is header-only.");
+        }
+        _ => {
+          println!("Generating assets...");
+          task::generate_assets(&project)?;
+          println!("Finished");
+        }
+      }
 
       Ok(())
     })().with_context(|e| {
