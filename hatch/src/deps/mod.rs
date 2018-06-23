@@ -5,7 +5,6 @@ pub mod dependency;
 
 use self::dependency::Dependency;
 use git2::Repository;
-use hatch_error::SerdeYamlError;
 use hatch_error::{HatchError, HatchResult};
 use locations::hatchfile_path;
 use project::Project;
@@ -78,12 +77,13 @@ fn clone_nested_project_deps(
     errored: &mut Vec<HatchError>,
     visited: &mut HashSet<String>,
 ) {
+    use failure::ResultExt;
     let mut data = String::new();
     let file = File::open(&path);
     let _ = file.unwrap().read_to_string(&mut data);
     match serde_yaml::from_str::<Project>(&data) {
         Err(e) => {
-            errored.push(e);
+            errored.push(Err(e).compat().unwrap());
         }
         Ok(current_project) => {
             if !visited.contains(&current_project.name().to_owned()) {
