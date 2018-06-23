@@ -18,7 +18,10 @@ impl ProjectKind {
             _ => ProjectKind::Static,
         }
     }
-    pub fn default() -> ProjectKind {
+}
+
+impl Default for ProjectKind {
+    fn default() -> Self {
         ProjectKind::Static
     }
 }
