@@ -21,3 +21,5 @@ pub static TEST_NAME: &str = "test";
 
 pub static CATCH_HEADER_URL: &str =
     "https://github.com/catchorg/Catch2/releases/download/v2.1.1/catch.hpp";
+
+pub static HATCH_FILE_NAME: &str = "Hatch.yml";
