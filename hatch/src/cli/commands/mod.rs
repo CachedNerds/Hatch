@@ -4,12 +4,11 @@ pub mod run;
 pub mod test;
 pub mod update;
 
-use assets::PlatformKind;
 use clap::ArgMatches;
-use constants::{ARGS, GENERATOR, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};
+use constants::{ARGS, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};
 use deps::dependency::Dependency;
 use failure::ResultExt;
-use generators::get_generator;
+use generators::platform_kind::PlatformKind;
 use generators::Generator;
 use hatch_error::HatchResult;
 use hatch_error::InvalidPathError;
@@ -24,7 +23,7 @@ use std::path::PathBuf;
 use std::process;
 
 pub trait Command<'command> {
-    fn execute(&self, generator: Box<Generator>, args: &ArgMatches<'command>) -> HatchResult<()>;
+    fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()>;
 
     fn read_project_context(&self, args: &ArgMatches<'command>) -> HatchResult<(PathBuf, Project)> {
         let project_path = if args.is_present(PROJECT_PATH) {
@@ -41,12 +40,6 @@ pub trait Command<'command> {
         };
 
         Ok((project_path, project))
-    }
-
-    fn generator(&self, args: &ArgMatches<'command>) -> Option<Box<Generator>> {
-        let generator = value_t!(args, GENERATOR, String).ok();
-        get_generator(&generator);
-        None
     }
 
     fn project_name(&self, args: &ArgMatches<'command>) -> Option<String> {

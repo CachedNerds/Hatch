@@ -12,7 +12,6 @@ use hatch::cli::commands::test::Test;
 use hatch::cli::commands::update::Update;
 use hatch::cli::commands::Command;
 use hatch::constants;
-use hatch::generators::tup::Tup;
 use hatch::hatch_error::{HatchResult, MissingParameterError};
 use yaml_rust::YamlLoader;
 
@@ -24,7 +23,7 @@ fn do_me_a_hatch() -> HatchResult<()> {
     let (name, args) = matches.subcommand();
 
     // TODO: get the generator from the CLI and inject into commands
-    let generator = Box::new(Tup {});
+    // let generator;
 
     let mut subcommands: HashMap<&'static str, Box<Command>> = HashMap::new();
     let run_command = Box::new(Run::new());
@@ -45,7 +44,7 @@ fn do_me_a_hatch() -> HatchResult<()> {
     let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
 
     // TODO: args.unwrap is bad, don't do this, it should be resultified
-    subcommand.execute(generator, args.unwrap())?;
+    subcommand.execute(args.unwrap())?;
     Ok(())
 }
 

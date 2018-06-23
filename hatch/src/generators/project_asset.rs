@@ -1,41 +1,11 @@
-use core::cmp;
 use failure::ResultExt;
 use hatch_error::HatchResult;
+use std::cmp;
 use std::fmt;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
-
-pub mod builder;
-pub mod catch_definition;
-pub mod catch_header;
-pub mod config;
-pub mod generator;
-pub mod platform;
-pub mod test_tupfile;
-pub mod tupfile;
-pub mod tupfile_ini;
-pub mod tuprules;
-
-#[cfg(test)]
-mod tests;
-
-#[derive(Debug)]
-pub enum TupKind {
-    Tuprules,
-    Config,
-    Tupfile,
-    TestTupfile,
-    TupfileIni,
-}
-
-#[derive(Debug)]
-pub enum PlatformKind {
-    Linux,
-    MacOS,
-    Windows,
-}
 
 pub struct ProjectAsset {
     path: PathBuf,
