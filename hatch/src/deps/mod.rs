@@ -78,16 +78,12 @@ fn clone_nested_project_deps(
     errored: &mut Vec<HatchError>,
     visited: &mut HashSet<String>,
 ) {
-    // TODO: Do one of these:
-    // 1. Put this back in task::read_project
-    // 2. Make a constructor for Project that takes a &Path
     let mut data = String::new();
     let file = File::open(&path);
     let _ = file.unwrap().read_to_string(&mut data);
     match serde_yaml::from_str::<Project>(&data) {
         Err(e) => {
-            // TODO: For some reason, I can't push this error
-            // errored.push(SerdeYamlError{});
+            errored.push(e);
         }
         Ok(current_project) => {
             if !visited.contains(&current_project.name().to_owned()) {
