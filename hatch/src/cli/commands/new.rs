@@ -25,7 +25,9 @@ impl<'command> Command<'command> for New {
         let dir_path = self.project_path(args).join(&name);
         let hatch_file = hatchfile_path(&dir_path);
         let includes = self.parse_dependencies(args);
-        fs::create_dir(&dir_path)?;
+        if !dir_path.exists() {
+            fs::create_dir(&dir_path)?;
+        }
         fs::create_dir(modules_path(&dir_path))?;
         fs::create_dir(dir_path.join("src"))?;
         fs::create_dir(dir_path.join("target"))?;
