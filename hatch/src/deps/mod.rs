@@ -94,18 +94,4 @@ fn clone_nested_project_deps(
             }
         }
     }
-
-    //  match task::read_project(path) {
-    //    Err(e) => {
-    //      errored.push(e);
-    //    },
-    //    Ok(current_project) => {
-    //      if !visited.contains(&current_project.name().to_owned()) {
-    //        current_project.dependencies().iter().for_each(|dep| {
-    //          clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-    //        });
-    //        let _ = visited.insert(current_project.name().to_owned());
-    //      }
-    //    }
-    //  }
 }
