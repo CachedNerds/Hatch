@@ -32,7 +32,3 @@ pub struct NullError;
 #[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct MissingParameterError;
-
-#[derive(Fail, Debug)]
-#[fail(display = "Failed to do Serde Yaml stuff")]
-pub struct SerdeYamlError;
