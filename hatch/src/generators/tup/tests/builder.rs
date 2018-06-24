@@ -18,7 +18,7 @@ fn add_asset() {
 
     // My reason for adopting this static method, is so I clarify to reader that we are eating the
     // Builder. It is gone. Not ever coming back.
-    let assets = AssetBuilder::collect_assets(asset_builder);
+    let assets = AssetBuilder::assets(asset_builder);
 
     assert_eq!(assets.len(), 1);
 

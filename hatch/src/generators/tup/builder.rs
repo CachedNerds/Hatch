@@ -30,7 +30,7 @@ impl<'builder> Builder<'builder> {
         }
     }
 
-    pub fn collect_assets(self) -> Vec<ProjectAsset> { self.assets }
+    pub fn assets(self) -> Vec<ProjectAsset> { self.assets }
 
     pub fn add_asset(&mut self, asset: ProjectAsset) {
         self.assets.push(asset);
