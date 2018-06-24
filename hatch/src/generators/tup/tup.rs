@@ -32,7 +32,7 @@ impl Generator for Tup {
 
         let catch_definition = builder.add_catch_definition();
         builder.add_asset(catch_definition);
-        let assets = Builder::collect_assets(builder);
+        let assets = builder.assets();
 
         for asset in assets {
             asset.write().with_context(|e| {
