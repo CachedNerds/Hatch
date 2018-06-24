@@ -94,20 +94,20 @@ impl<'builder> Builder<'builder> {
 
     pub fn add_linux_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = linux::to_string();
-        ProjectAsset::new(project_path, String::from("linux.tup"), contents)
+        let contents = linux::make_string();
+        ProjectAsset::new(project_path, linux::file_name(), contents)
     }
 
     pub fn add_macos_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = mac_os::to_string();
-        ProjectAsset::new(project_path, String::from("macosx.tup"), contents)
+        let contents = mac_os::make_string();
+        ProjectAsset::new(project_path, mac_os::file_name(), contents)
     }
 
     pub fn add_windows_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = windows::to_string();
-        ProjectAsset::new(project_path, String::from("win32.tup"), contents)
+        let contents = windows::make_string();
+        ProjectAsset::new(project_path, windows::file_name(), contents)
     }
 
     pub fn add_catch_header(&self) -> HatchResult<ProjectAsset> {
@@ -122,7 +122,7 @@ impl<'builder> Builder<'builder> {
                     catch_header::file_name(),
                     content,
                 ))
-            })().with_context(|e| format!("failed to generate catch.hpp : {}", e))?;
+            })().with_context(|e| format!("failed to generate {} : {}", catch_header::file_name(), e))?;
 
             Ok(res)
         } else {

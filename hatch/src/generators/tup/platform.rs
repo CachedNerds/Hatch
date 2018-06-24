@@ -1,9 +1,9 @@
 pub mod linux {
-    pub fn name() -> String {
+    pub fn file_name() -> String {
         String::from("linux.tup")
     }
 
-    pub fn to_string() -> String {
+    pub fn make_string() -> String {
         let static_extension = "STATIC = a";
         let shared_extension = "SHARED = so";
         [static_extension, shared_extension].join("\n")
@@ -11,12 +11,11 @@ pub mod linux {
 }
 
 pub mod mac_os {
-
-    pub fn name() -> String {
+    pub fn file_name() -> String {
         String::from("macosx.tup")
     }
 
-    pub fn to_string() -> String {
+    pub fn make_string() -> String {
         let static_extension = "STATIC = a";
         let shared_extension = "SHARED = so";
         [static_extension, shared_extension].join("\n")
@@ -24,11 +23,11 @@ pub mod mac_os {
 }
 
 pub mod windows {
-    pub fn name() -> String {
+    pub fn file_name() -> String {
         String::from("win32.tup")
     }
 
-    pub fn to_string() -> String {
+    pub fn make_string() -> String {
         let static_extension = "STATIC = lib";
         let shared_extension = "SHARED = dll";
         let clang_comment = "# Use clang for front-end";
