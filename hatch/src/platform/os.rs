@@ -1,4 +1,4 @@
-use assets::PlatformKind;
+use generators::platform_kind::PlatformKind;
 use os_info;
 use os_info::Type::{Macos, Windows};
 

@@ -1,7 +1,9 @@
-pub use failure::ResultExt;
 pub use failure::Error as HatchError;
+pub use failure::ResultExt;
 
 pub type HatchResult<T> = Result<T, HatchError>;
+
+pub type Action = HatchResult<()>;
 
 #[derive(Fail, Debug)]
 #[fail(display = "No content in Hatch.yml")]
@@ -26,3 +28,7 @@ pub struct InvalidPathError;
 #[derive(Fail, Debug)]
 #[fail(display = "")]
 pub struct NullError;
+
+#[derive(Fail, Debug)]
+#[fail(display = "")]
+pub struct MissingParameterError;
