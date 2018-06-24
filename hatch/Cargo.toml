@@ -1,7 +1,7 @@
 [package]
 name = "hatch"
-version = "0.1.0"
-authors = ["technetos <mrgould93@gmail.com>"]
+version = "0.2.0"
+authors = ["technetos <mrgould93@gmail.com>", "dannypeck <danieljpeck93@gmail.com>", "xmclark <mackenzie.a.z.c@gmail.com>"]
 
 [dependencies]
 clap = {version = "2", features = ["yaml"]}
