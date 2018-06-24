@@ -2,7 +2,6 @@ use clap::ArgMatches;
 use cli::commands::Command;
 use failure::ResultExt;
 use generators::tup::make_a_tup_in_a_box;
-use generators::Generator;
 use hatch_error::Action;
 use project::ProjectKind;
 use std::process::Command as ProcessCommand;
