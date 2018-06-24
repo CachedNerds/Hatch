@@ -87,10 +87,12 @@ fn clone_nested_project_deps(
         }
         Ok(current_project) => {
             if !visited.contains(&current_project.name().to_owned()) {
-                current_project.dependencies().iter().for_each(|dep| {
-                    clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-                });
-                let _ = visited.insert(current_project.name().to_owned());
+                if let Some(dependencies) = current_project.dependencies() {
+                    dependencies.iter().for_each(|dep| {
+                        clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+                    });
+                    let _ = visited.insert(current_project.name().to_owned());
+                }
             }
         }
     }

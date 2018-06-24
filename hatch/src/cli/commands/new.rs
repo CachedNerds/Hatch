@@ -33,10 +33,11 @@ impl<'command> Command<'command> for New {
         fs::create_dir(dir_path.join("target"))?;
         fs::create_dir_all(dir_path.join("test").join("src"))?;
         fs::create_dir(dir_path.join("test").join("target"))?;
-        if !includes.is_empty() {
+        let includes = if !includes.is_empty() {
             println!("Installing project dependencies...");
             clone_project_deps(modules_path(&dir_path).as_path(), &includes)?;
-        }
+            Some(includes)
+        } else { None };
         println!("Creating Hatch.yml file...");
         let compiler_options = CompilerOptions::default_from_kind(&kind);
         let project = Project::new(name, version, kind, compiler_options, includes);

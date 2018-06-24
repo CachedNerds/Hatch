@@ -17,7 +17,7 @@ pub fn project(kind: ProjectKind) -> Project {
         String::from("0.1.0"),
         kind,
         Some(compiler_options),
-        Vec::new(),
+        None,
     );
 
     project
@@ -32,6 +32,6 @@ pub fn project_with_compiler_options(
         String::from("0.1.0"),
         kind,
         Some(compiler_options),
-        Vec::new(),
+        None,
     )
 }

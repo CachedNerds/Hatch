@@ -5,7 +5,7 @@ pub mod test;
 pub mod update;
 
 use clap::ArgMatches;
-use constants::{ARGS, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};
+use constants::{ARGS, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION, HATCH_FILE_NAME};
 use deps::dependency::Dependency;
 use failure::ResultExt;
 use generators::platform_kind::PlatformKind;
@@ -33,7 +33,7 @@ pub trait Command<'command> {
         };
 
         let project = {
-            let project_path_ref = project_path.as_path();
+            let project_path_ref = project_path.join(HATCH_FILE_NAME);
             let mut data = String::new();
             File::open(&project_path_ref)?.read_to_string(&mut data)?;
             serde_yaml::from_str::<Project>(&data)?
