@@ -18,7 +18,11 @@ fn type_flag(lib_type: &ProjectKind) -> String {
     }
 }
 
-pub fn make_tuprules_string(project: &Project) -> String {
+pub fn file_name() -> String {
+    String::from("Tuprules.tup")
+}
+
+pub fn make_string(project: &Project) -> String {
     let mut tokens = Vec::new();
     tokens.push(String::from(".gitignore"));
 
@@ -114,13 +118,3 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
         .collect::<Vec<_>>()
         .join("\n")
 }
-
-//pub struct Tuprules {}
-
-//impl Tuprules {
-////    pub fn name() -> String {
-////        String::from("Tuprules.tup")
-////    }
-//
-//
-//}

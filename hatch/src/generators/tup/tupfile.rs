@@ -1,6 +1,10 @@
 use project::ProjectKind;
 
-pub fn make_tupfile_string(kind: &ProjectKind) -> String {
+pub fn file_name() -> String {
+    String::from("Tupfile")
+}
+
+pub fn make_string(kind: &ProjectKind) -> String {
     let mut tokens = Vec::new();
 
     let includes = String::from("include config.tup\ninclude_rules\n");

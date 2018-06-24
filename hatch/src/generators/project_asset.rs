@@ -1,7 +1,6 @@
 use failure::ResultExt;
 use hatch_error::HatchResult;
 use std::cmp;
-use std::fmt;
 use std::fs;
 use std::io::Write;
 use std::path::Path;

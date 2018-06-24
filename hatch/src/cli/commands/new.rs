@@ -37,7 +37,9 @@ impl<'command> Command<'command> for New {
             println!("Installing project dependencies...");
             clone_project_deps(modules_path(&dir_path).as_path(), &includes)?;
             Some(includes)
-        } else { None };
+        } else {
+            None
+        };
         println!("Creating Hatch.yml file...");
         let compiler_options = CompilerOptions::default_from_kind(&kind);
         let project = Project::new(name, version, kind, compiler_options, includes);

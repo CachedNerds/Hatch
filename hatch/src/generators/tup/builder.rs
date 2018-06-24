@@ -1,15 +1,10 @@
 use constants::CATCH_HEADER_URL;
 use generators::platform_kind::PlatformKind;
 use generators::project_asset::ProjectAsset;
-use generators::tup::catch_definition::make_catch_definition_string;
-use generators::tup::catch_header::catch_header_filename;
-use generators::tup::platform::{linux, mac_os, windows};
-use generators::tup::test_tupfile::make_test_tupfile_string;
-use generators::tup::tup_config::make_tup_config_string;
-use generators::tup::tup_kind::TupKind;
-use generators::tup::tupfile::make_tupfile_string;
-use generators::tup::tupfile_ini::TupfileIni;
-use generators::tup::tuprules::make_tuprules_string;
+use generators::tup::{
+    catch_definition, catch_header, platform::{linux, mac_os, windows}, test_tupfile, tup_config,
+    tup_kind::TupKind, tupfile, tupfile_ini, tuprules,
+};
 use hatch_error::{HatchResult, NullError, ResultExt};
 use project::Project;
 use reqwest;
@@ -61,66 +56,68 @@ impl<'builder> Builder<'builder> {
     pub fn add_tup_config(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let project = &self.project;
-        let contents = make_tup_config_string(project.name(), project.kind());
-        ProjectAsset::new(project_path, String::from("config.tup"), contents)
+        let contents = tup_config::make_string(project.name(), project.kind());
+        ProjectAsset::new(project_path, tup_config::file_name(), contents)
     }
 
     pub fn add_test_tupfile(&self) -> ProjectAsset {
         let asset_path = self.project_path.join("test/");
-        let contents = make_test_tupfile_string();
-        ProjectAsset::new(asset_path, String::from("Tupfile"), contents)
+        let contents = test_tupfile::make_string();
+        ProjectAsset::new(asset_path, test_tupfile::file_name(), contents)
     }
 
     pub fn add_tuprules(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = make_tuprules_string(self.project);
-        ProjectAsset::new(project_path, String::from("Tuprules.tup"), contents)
+        let contents = tuprules::make_string(self.project);
+        ProjectAsset::new(project_path, tuprules::file_name(), contents)
     }
 
     pub fn add_tupfile(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
         let project = &self.project;
-        let contents = make_tupfile_string(project.kind());
-        ProjectAsset::new(project_path, String::from("Tupfile"), contents)
+        let contents = tupfile::make_string(project.kind());
+        ProjectAsset::new(project_path, tupfile::file_name(), contents)
     }
 
     pub fn add_tupfile_ini(&self) -> ProjectAsset {
-        let contents = TupfileIni::new().to_string();
         let project_path = self.project_path.clone();
-        ProjectAsset::new(project_path, String::from("Tupfile.ini"), contents)
+        let contents = tupfile_ini::make_string();
+        ProjectAsset::new(project_path, tupfile_ini::file_name(), contents)
     }
 
     pub fn add_linux_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = linux::to_string();
-        ProjectAsset::new(project_path, String::from("linux.tup"), contents)
+        let contents = linux::make_string();
+        ProjectAsset::new(project_path, linux::file_name(), contents)
     }
 
     pub fn add_macos_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = mac_os::to_string();
-        ProjectAsset::new(project_path, String::from("macosx.tup"), contents)
+        let contents = mac_os::make_string();
+        ProjectAsset::new(project_path, mac_os::file_name(), contents)
     }
 
     pub fn add_windows_platform_tup_file(&self) -> ProjectAsset {
         let project_path = self.project_path.clone();
-        let contents = windows::to_string();
-        ProjectAsset::new(project_path, String::from("win32.tup"), contents)
+        let contents = windows::make_string();
+        ProjectAsset::new(project_path, windows::file_name(), contents)
     }
 
     pub fn add_catch_header(&self) -> HatchResult<ProjectAsset> {
         let test_src_path = self.project_path.join("test/src");
-        if !test_src_path.join(catch_header_filename()).exists() {
+        if !test_src_path.join(catch_header::file_name()).exists() {
             let res = (|| -> HatchResult<ProjectAsset> {
                 let mut resp = reqwest::get(CATCH_HEADER_URL)?;
                 let content = resp.text()?;
 
                 Ok(ProjectAsset::new(
                     test_src_path,
-                    catch_header_filename(),
+                    catch_header::file_name(),
                     content,
                 ))
-            })().with_context(|e| format!("failed to generate catch.hpp : {}", e))?;
+            })().with_context(|e| {
+                format!("failed to generate {} : {}", catch_header::file_name(), e)
+            })?;
 
             Ok(res)
         } else {
@@ -130,8 +127,8 @@ impl<'builder> Builder<'builder> {
 
     pub fn add_catch_definition(&self) -> ProjectAsset {
         let test_src_path = self.project_path.join("test/src");
-        let contents = make_catch_definition_string();
+        let contents = catch_definition::make_string();
 
-        ProjectAsset::new(test_src_path, String::from("catch.cpp"), contents)
+        ProjectAsset::new(test_src_path, catch_definition::file_name(), contents)
     }
 }

@@ -1,17 +1,7 @@
-pub struct TupfileIni;
-
-impl TupfileIni {
-    pub fn new() -> TupfileIni {
-        TupfileIni
-    }
-
-    pub fn name() -> String {
-        String::from("Tupfile.ini")
-    }
+pub fn file_name() -> String {
+    String::from("Tupfile.ini")
 }
 
-impl ToString for TupfileIni {
-    fn to_string(&self) -> String {
-        String::from("")
-    }
+pub fn make_string() -> String {
+    String::from("")
 }

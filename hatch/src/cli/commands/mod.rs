@@ -5,7 +5,7 @@ pub mod test;
 pub mod update;
 
 use clap::ArgMatches;
-use constants::{ARGS, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION, HATCH_FILE_NAME};
+use constants::{ARGS, HATCH_FILE_NAME, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};
 use deps::dependency::Dependency;
 use failure::ResultExt;
 use generators::platform_kind::PlatformKind;

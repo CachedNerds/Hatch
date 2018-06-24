@@ -1,3 +1,7 @@
-pub fn make_test_tupfile_string() -> String {
+pub fn file_name() -> String {
+    String::from("Tupfile")
+}
+
+pub fn make_string() -> String {
     String::from(".gitignore")
 }

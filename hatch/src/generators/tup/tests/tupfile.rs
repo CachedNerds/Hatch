@@ -1,9 +1,14 @@
 use generators::tup::tests::fixtures;
-use generators::tup::tupfile::make_tupfile_string;
+use generators::tup::tupfile;
 use project::ProjectKind;
 
 #[test]
-fn build_library_tupfile() {
+fn tupfile_file_name() {
+    assert_eq!("Tupfile", tupfile::file_name())
+}
+
+#[test]
+fn generate_library_tupfile() {
     let project = fixtures::project(ProjectKind::Static);
 
     let contents = String::from(
@@ -19,11 +24,11 @@ include_rules
 : $(TEST_OBJ_FILES) $(SOURCE_TARGET)/$(PROJECT_LIB) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, make_tupfile_string(project.kind()));
+    assert_eq!(contents, tupfile::make_string(project.kind()));
 }
 
 #[test]
-fn build_binary_tupfile() {
+fn generate_binary_tupfile() {
     let project = fixtures::project(ProjectKind::Binary);
 
     let contents = String::from(
@@ -39,5 +44,5 @@ include_rules
 : $(TEST_OBJ_FILES) |> !link |> $(TEST_TARGET)/$(PROJECT).test",
     );
 
-    assert_eq!(contents, make_tupfile_string(project.kind()).to_string());
+    assert_eq!(contents, tupfile::make_string(project.kind()).to_string());
 }

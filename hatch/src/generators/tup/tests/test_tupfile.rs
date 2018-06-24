@@ -1,6 +1,11 @@
-use generators::tup::test_tupfile::make_test_tupfile_string;
+use generators::tup::test_tupfile;
 
 #[test]
-fn build_test_tupfile() {
-    assert_eq!(".gitignore", make_test_tupfile_string());
+fn test_tupfile_file_name() {
+    assert_eq!("Tupfile", test_tupfile::file_name())
+}
+
+#[test]
+fn generate_test_tupfile() {
+    assert_eq!(".gitignore", test_tupfile::make_string());
 }
