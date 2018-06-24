@@ -1,7 +1,7 @@
-pub fn make_catch_header_string() -> String {
-    String::from("")
+pub fn file_name() -> String {
+    String::from("catch.hpp")
 }
 
-pub fn catch_header_filename() -> String {
-    String::from("catch.hpp")
+pub fn make_string() -> String {
+    String::from("")
 }

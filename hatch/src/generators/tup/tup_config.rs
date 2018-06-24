@@ -1,9 +1,5 @@
 use project::ProjectKind;
 
-fn name() -> String {
-    String::from("config.tup")
-}
-
 fn project(name: &str) -> String {
     format!("PROJECT = {}", name)
 }
@@ -18,6 +14,10 @@ fn lib_type(project_kind: &ProjectKind) -> String {
     format!("LIB_TYPE = {}", kind)
 }
 
-pub fn make_tup_config_string(name: &str, project_kind: &ProjectKind) -> String {
+pub fn file_name() -> String {
+    String::from("config.tup")
+}
+
+pub fn make_string(name: &str, project_kind: &ProjectKind) -> String {
     [project(name), lib_type(project_kind)].join("\n")
 }
