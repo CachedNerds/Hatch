@@ -1,15 +1,10 @@
 use constants::CATCH_HEADER_URL;
 use generators::platform_kind::PlatformKind;
 use generators::project_asset::ProjectAsset;
-use generators::tup::platform::{linux, mac_os, windows};
-use generators::tup::tup_kind::TupKind;
-use generators::tup::catch_definition;
-use generators::tup::catch_header;
-use generators::tup::test_tupfile;
-use generators::tup::tup_config;
-use generators::tup::tupfile;
-use generators::tup::tupfile_ini;
-use generators::tup::tuprules;
+use generators::tup::{
+    catch_definition, catch_header, platform::{linux, mac_os, windows}, test_tupfile, tup_config,
+    tup_kind::TupKind, tupfile, tupfile_ini, tuprules,
+};
 use hatch_error::{HatchResult, NullError, ResultExt};
 use project::Project;
 use reqwest;
@@ -122,7 +117,9 @@ impl<'builder> Builder<'builder> {
                     catch_header::file_name(),
                     content,
                 ))
-            })().with_context(|e| format!("failed to generate {} : {}", catch_header::file_name(), e))?;
+            })().with_context(|e| {
+                format!("failed to generate {} : {}", catch_header::file_name(), e)
+            })?;
 
             Ok(res)
         } else {

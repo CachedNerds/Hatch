@@ -5,7 +5,6 @@ use project::CompilerOptions;
 use project::ProjectKind;
 use project::Target;
 
-
 #[test]
 fn tuprules_file_name() {
     assert_eq!("Tuprules.tup", tuprules::file_name())
