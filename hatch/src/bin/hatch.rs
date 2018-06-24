@@ -43,7 +43,6 @@ fn do_me_a_hatch() -> HatchResult<()> {
 
     let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
 
-    // TODO: args.unwrap is bad, don't do this, it should be resultified
     subcommand.execute(args.unwrap())?;
     Ok(())
 }
