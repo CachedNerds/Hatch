@@ -1,28 +1,24 @@
 #![forbid(unsafe_code)]
-
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_yaml;
 
 #[macro_use]
 pub extern crate clap;
-pub extern crate yaml_rust;
-pub extern crate git2;
 #[macro_use]
 pub extern crate failure;
+extern crate core;
+pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
+pub extern crate yaml_rust;
 
-pub mod project;
 pub mod cli;
-pub mod hatch_error;
-pub mod yaml;
-pub mod assets;
-pub mod task;
+pub mod constants;
 pub mod deps;
-pub mod platform;
+pub mod generators;
+pub mod hatch_error;
 pub mod locations;
-
-#[cfg(test)]
-mod tests {
-  #[test]
-  fn it_works() {
-  }
-}
+pub mod platform;
+pub mod project;
