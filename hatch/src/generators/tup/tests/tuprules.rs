@@ -1,9 +1,15 @@
 use generators::tup::tests::fixtures::project_with_compiler_options;
-use generators::tup::tuprules::make_tuprules_string;
+use generators::tup::tuprules;
 use platform::arch::Arch;
 use project::CompilerOptions;
 use project::ProjectKind;
 use project::Target;
+
+
+#[test]
+fn tuprules_file_name() {
+    assert_eq!("Tuprules.tup", tuprules::file_name())
+}
 
 /**
 I'm sorry Danny. I have completely destroyed your beautiful, elegant, All-pairs testing strategy.
@@ -29,7 +35,7 @@ I'm just trying to get things building again. We can fix this!
  */
 
 #[test]
-fn build_static_x64_release_with_flags_tuprules() {
+fn generate_static_x64_release_with_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -78,13 +84,13 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_static_x86_debug_without_flags_tuprules() {
+fn generate_static_x86_debug_without_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -132,13 +138,13 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
     let project = project_with_compiler_options(ProjectKind::Static, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_shared_x64_debug_without_flags_tuprules() {
+fn generate_shared_x64_debug_without_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -186,13 +192,13 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
     let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_shared_x86_release_with_flags_tuprules() {
+fn generate_shared_x86_release_with_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -241,13 +247,13 @@ PROJECT_LIB = $(PROJECT).$(EXTENSION)",
     );
 
     let project = project_with_compiler_options(ProjectKind::Shared, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_binary_x64_release_without_flags_tuprules() {
+fn generate_binary_x64_release_without_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -283,13 +289,13 @@ include @(TUP_PLATFORM).tup",
     );
 
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_binary_x86_debug_with_flags_tuprules() {
+fn generate_binary_x86_debug_with_flags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -328,13 +334,13 @@ include @(TUP_PLATFORM).tup",
     );
 
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_binary_x64_release_with_cflags_without_lflags_tuprules() {
+fn generate_binary_x64_release_with_cflags_without_lflags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -371,13 +377,13 @@ include @(TUP_PLATFORM).tup",
     );
 
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }
 
 #[test]
-fn build_binary_x86_debug_without_cflags_with_lflags_tuprules() {
+fn generate_binary_x86_debug_without_cflags_with_lflags_tuprules() {
     let contents = String::from(
         ".gitignore
 CC = g++
@@ -415,7 +421,7 @@ include @(TUP_PLATFORM).tup",
     );
 
     let project = project_with_compiler_options(ProjectKind::Binary, compiler_options);
-    let actual_contents = make_tuprules_string(&project);
+    let actual_contents = tuprules::make_string(&project);
 
     assert_eq!(contents, actual_contents);
 }

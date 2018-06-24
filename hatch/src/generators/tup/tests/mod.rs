@@ -1,6 +1,6 @@
 mod builder;
 mod catch_definition;
-mod config;
+mod tup_config;
 mod fixtures;
 mod generator;
 mod platform;
