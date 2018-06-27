@@ -13,6 +13,8 @@ pub extern crate git2;
 pub extern crate os_info;
 pub extern crate reqwest;
 pub extern crate yaml_rust;
+pub extern crate assert_fs;
+pub extern crate predicates;
 
 pub mod cli;
 pub mod constants;
