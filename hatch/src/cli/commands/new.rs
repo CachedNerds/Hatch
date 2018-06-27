@@ -8,6 +8,7 @@ use project::{CompilerOptions, Project};
 use serde_yaml;
 use std::fs;
 use std::io::prelude::*;
+use std::path::Path;
 
 pub struct New;
 
@@ -58,5 +59,32 @@ impl<'command> Command<'command> for New {
         self.generate_assets(generator, dir_path, &project)?;
         println!("Finished");
         Ok(())
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_makes_correct_dirs() {
+        use super::New;
+        use assert_fs::TempDir;
+        use assert_fs::prelude::*;
+        use predicates::prelude::*;
+        let temp = TempDir::new().unwrap();
+        let dir_path = temp.path().to_owned();
+        let new = New::new();
+        let result = new.write_directory_structure(&dir_path);
+        let is_dir = predicate::path::is_dir();
+        temp.child("src").assert(&is_dir);
+        temp.child("target").assert(&is_dir);
+        temp.child("test").assert(&is_dir);
+        temp.child("test/src").assert(&is_dir);
+        temp.child("test/target").assert(&is_dir);
+        temp.close().unwrap();
+        match result {
+            Ok(_) => assert!(true),
+            _ => assert!(false),
+        }
     }
 }
