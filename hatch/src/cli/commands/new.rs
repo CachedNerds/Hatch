@@ -15,6 +15,18 @@ impl<'new> New {
     pub fn new() -> New {
         New
     }
+
+    pub fn write_directory_structure(&self, dir_path: &Path) -> HatchResult<()> {
+        if !dir_path.exists() {
+            fs::create_dir(&dir_path)?;
+        }
+        fs::create_dir(modules_path(&dir_path))?;
+        fs::create_dir(dir_path.join("src"))?;
+        fs::create_dir(dir_path.join("target"))?;
+        fs::create_dir_all(dir_path.join("test").join("src"))?;
+        fs::create_dir(dir_path.join("test").join("target"))?;
+        Ok(())
+    }
 }
 
 impl<'command> Command<'command> for New {
@@ -25,14 +37,9 @@ impl<'command> Command<'command> for New {
         let dir_path = self.project_path(args).join(&name);
         let hatch_file = hatchfile_path(&dir_path);
         let includes = self.parse_dependencies(args);
-        if !dir_path.exists() {
-            fs::create_dir(&dir_path)?;
-        }
-        fs::create_dir(modules_path(&dir_path))?;
-        fs::create_dir(dir_path.join("src"))?;
-        fs::create_dir(dir_path.join("target"))?;
-        fs::create_dir_all(dir_path.join("test").join("src"))?;
-        fs::create_dir(dir_path.join("test").join("target"))?;
+
+        self.write_directory_structure(&dir_path)?;
+
         let includes = if !includes.is_empty() {
             println!("Installing project dependencies...");
             clone_project_deps(modules_path(&dir_path).as_path(), &includes)?;
