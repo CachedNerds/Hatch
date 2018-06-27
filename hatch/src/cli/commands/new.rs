@@ -8,12 +8,25 @@ use project::{CompilerOptions, Project};
 use serde_yaml;
 use std::fs;
 use std::io::prelude::*;
+use std::path::Path;
 
 pub struct New;
 
 impl<'new> New {
     pub fn new() -> New {
         New
+    }
+
+    pub fn write_directory_structure(&self, dir_path: &Path) -> HatchResult<()> {
+        if !dir_path.exists() {
+            fs::create_dir(&dir_path)?;
+        }
+        fs::create_dir(modules_path(&dir_path))?;
+        fs::create_dir(dir_path.join("src"))?;
+        fs::create_dir(dir_path.join("target"))?;
+        fs::create_dir_all(dir_path.join("test").join("src"))?;
+        fs::create_dir(dir_path.join("test").join("target"))?;
+        Ok(())
     }
 }
 
@@ -25,14 +38,9 @@ impl<'command> Command<'command> for New {
         let dir_path = self.project_path(args).join(&name);
         let hatch_file = hatchfile_path(&dir_path);
         let includes = self.parse_dependencies(args);
-        if !dir_path.exists() {
-            fs::create_dir(&dir_path)?;
-        }
-        fs::create_dir(modules_path(&dir_path))?;
-        fs::create_dir(dir_path.join("src"))?;
-        fs::create_dir(dir_path.join("target"))?;
-        fs::create_dir_all(dir_path.join("test").join("src"))?;
-        fs::create_dir(dir_path.join("test").join("target"))?;
+
+        self.write_directory_structure(&dir_path)?;
+
         let includes = if !includes.is_empty() {
             println!("Installing project dependencies...");
             clone_project_deps(modules_path(&dir_path).as_path(), &includes)?;
@@ -51,5 +59,32 @@ impl<'command> Command<'command> for New {
         self.generate_assets(generator, dir_path, &project)?;
         println!("Finished");
         Ok(())
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_makes_correct_dirs() {
+        use super::New;
+        use assert_fs::TempDir;
+        use assert_fs::prelude::*;
+        use predicates::prelude::*;
+        let temp = TempDir::new().unwrap();
+        let dir_path = temp.path().to_owned();
+        let new = New::new();
+        let result = new.write_directory_structure(&dir_path);
+        let is_dir = predicate::path::is_dir();
+        temp.child("src").assert(&is_dir);
+        temp.child("target").assert(&is_dir);
+        temp.child("test").assert(&is_dir);
+        temp.child("test/src").assert(&is_dir);
+        temp.child("test/target").assert(&is_dir);
+        temp.close().unwrap();
+        match result {
+            Ok(_) => assert!(true),
+            _ => assert!(false),
+        }
     }
 }
