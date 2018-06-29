@@ -53,7 +53,7 @@ impl<'update> Clean {
 
 impl<'command> Command<'command> for Clean {
   fn execute(&self, args: &ArgMatches<'command>) -> HatchResult<()> {
-    let project = task::read_project(&self.project_path(args))?;
+      let (_, project) = self.read_project_context(&args)?;
     self.clean(&project)?;
     Ok(())
   }
