@@ -1,7 +1,6 @@
 use hatch_error::{ HatchResult, CleanupError };
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
-use task;
 use project::Project;
 use assets::builder::Builder as AssetBuilder;
 use assets::janitor;
