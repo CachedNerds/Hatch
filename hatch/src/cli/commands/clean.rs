@@ -3,7 +3,7 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use project::Project;
 use assets::builder::Builder as AssetBuilder;
-use janitor;
+use generators::tup::make_a_tup_in_a_box;
 
 pub struct Clean {
   name: &'static str
@@ -43,6 +43,7 @@ impl<'update> Clean {
 
   pub fn clean(&self, project: &Project) -> HatchResult<()> {
     let asset_builder = AssetBuilder::from(&project);
+    let generator = make_a_tup_in_a_box();
 
     let remove_assets_results = janitor::remove_assets(asset_builder.assets());
     let remove_targets_results = janitor::remove_targets(project.path());

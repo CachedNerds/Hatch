@@ -24,4 +24,3 @@ pub mod hatch_error;
 pub mod locations;
 pub mod platform;
 pub mod project;
-mod janitor;
