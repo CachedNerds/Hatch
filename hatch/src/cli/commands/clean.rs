@@ -2,7 +2,6 @@ use hatch_error::{ HatchResult, CleanupError };
 use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use project::Project;
-use assets::builder::Builder as AssetBuilder;
 use generators::tup::make_a_tup_in_a_box;
 
 pub struct Clean {
@@ -42,21 +41,13 @@ impl<'update> Clean {
   }
 
   pub fn clean(&self, project: &Project) -> HatchResult<()> {
-    let asset_builder = AssetBuilder::from(&project);
     let generator = make_a_tup_in_a_box();
-
-    let remove_assets_results = janitor::remove_assets(asset_builder.assets());
-    let remove_targets_results = janitor::remove_targets(project.path());
-
-    self.print_errors(&remove_assets_results);
-    self.print_errors(&remove_targets_results);
-
-    let errors_occurred = self.contains_errors(&remove_assets_results) || self.contains_errors(&remove_targets_results);
-    if errors_occurred {
-      Err(CleanupError)?
-    } else {
-      Ok(())
-    }
+      let clear_result = generator.clear_assets();
+      // TODO: get back printing errors
+      match clear_result {
+          Ok(()) => Ok(()),
+          Err(e) => CleanupError,
+      }
   }
 }
 
