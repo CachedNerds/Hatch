@@ -1,4 +1,3 @@
-use assets::{ Asset, ProjectAsset };
 use hatch_error::{ HatchResult, ResultExt };
 use std::path::PathBuf;
 use std::fs;
