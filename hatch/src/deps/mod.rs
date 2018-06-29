@@ -3,17 +3,20 @@ mod tests;
 
 pub mod dependency;
 
-use hatch_error::{HatchError, HatchResult};
+use self::dependency::Dependency;
 use git2::Repository;
+use hatch_error::{HatchError, HatchResult};
+use locations::hatchfile_path;
+use project::Project;
+use serde_yaml;
 use std::collections::HashSet;
 use std::fs;
-use std::path::{Path, PathBuf};
-use task;
-use self::dependency::Dependency;
-use locations::hatchfile_path;
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 
 pub fn clone_dep(url: &str, path: &Path) {
-    Repository::clone(url, path);
+    let _ = Repository::clone(url, path);
 }
 
 fn walk(path: &Path, callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchResult<()> {
@@ -32,7 +35,7 @@ fn walk(path: &Path, callback: &mut FnMut(&Path) -> HatchResult<bool>) -> HatchR
     Ok(())
 }
 
-pub fn clone_project_deps(path: &Path, user_defined_deps: &Vec<Dependency>) -> HatchResult<()> {
+pub fn clone_project_deps(path: &Path, dependencies: &Vec<Dependency>) -> HatchResult<()> {
     let mut visited: HashSet<String> = HashSet::new();
     let mut errored: Vec<HatchError> = Vec::new();
 
@@ -40,7 +43,7 @@ pub fn clone_project_deps(path: &Path, user_defined_deps: &Vec<Dependency>) -> H
     let registry = &path;
 
     // Clone the dependencies specified on the command line
-    user_defined_deps.iter().for_each(|dep| {
+    dependencies.iter().for_each(|dep| {
         clone_dep(&dep.url(), &path.join(&dep.name()));
     });
 
@@ -74,16 +77,22 @@ fn clone_nested_project_deps(
     errored: &mut Vec<HatchError>,
     visited: &mut HashSet<String>,
 ) {
-    match task::read_project(path) {
+    use failure::ResultExt;
+    let mut data = String::new();
+    let file = File::open(&path);
+    let _ = file.unwrap().read_to_string(&mut data);
+    match serde_yaml::from_str::<Project>(&data) {
         Err(e) => {
-            errored.push(e);
+            errored.push(Err(e).compat().unwrap());
         }
         Ok(current_project) => {
             if !visited.contains(&current_project.name().to_owned()) {
-                current_project.deps().iter().for_each(|dep| {
-                    clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
-                });
-                let _ = visited.insert(current_project.name().to_owned());
+                if let Some(dependencies) = current_project.dependencies() {
+                    dependencies.iter().for_each(|dep| {
+                        clone_dep(&dep.url(), &registry.join(dep.name()).as_path());
+                    });
+                    let _ = visited.insert(current_project.name().to_owned());
+                }
             }
         }
     }

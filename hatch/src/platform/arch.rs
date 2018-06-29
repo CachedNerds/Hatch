@@ -1,7 +1,7 @@
-use std::mem::size_of;
 use std::fmt;
+use std::mem::size_of;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub enum Arch {
     X64,
     X86,

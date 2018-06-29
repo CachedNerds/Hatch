@@ -1,81 +1,54 @@
-pub mod build;
+pub mod compiler_options;
+pub mod project_kind;
+pub mod target;
 
-use std::fmt;
-use std::path::PathBuf;
-use self::build::Config;
+pub use self::compiler_options::CompilerOptions;
+pub use self::project_kind::ProjectKind;
+pub use self::target::Target;
+
 use deps::dependency::Dependency;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
 pub struct Project {
     name: String,
     version: String,
-    config: Config,
-    deps: Vec<Dependency>,
-    path: PathBuf,
+    kind: ProjectKind,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    compiler_options: Option<CompilerOptions>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    dependencies: Option<Vec<Dependency>>,
 }
 
 impl Project {
     pub fn new(
         name: String,
         version: String,
-        config: Config,
-        deps: Vec<Dependency>,
-        path: PathBuf,
+        kind: ProjectKind,
+        compiler_options: Option<CompilerOptions>,
+        dependencies: Option<Vec<Dependency>>,
     ) -> Project {
         Project {
             name,
             version,
-            config,
-            deps,
-            path,
+            kind,
+            compiler_options,
+            dependencies,
         }
     }
 
     pub fn name(&self) -> &str {
-        self.name.as_ref()
+        self.name.as_str()
     }
-
     pub fn version(&self) -> &str {
-        self.version.as_ref()
+        self.version.as_str()
     }
-
-    pub fn config(&self) -> &Config {
-        self.config.as_ref()
+    pub fn kind(&self) -> &ProjectKind {
+        &self.kind
     }
-
-    pub fn deps(&self) -> &Vec<Dependency> {
-        self.deps.as_ref()
+    pub fn compiler_options(&self) -> &Option<CompilerOptions> {
+        &self.compiler_options
     }
-
-    pub fn path(&self) -> &PathBuf {
-        &self.path
-    }
-}
-
-#[derive(Debug)]
-pub enum LibraryKind {
-    Shared,
-    Static,
-}
-
-#[derive(Debug)]
-pub enum ProjectKind {
-    Binary,
-    Library(LibraryKind),
-}
-
-impl AsRef<ProjectKind> for ProjectKind {
-    fn as_ref(&self) -> &ProjectKind {
-        &self
-    }
-}
-
-impl fmt::Display for ProjectKind {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            ProjectKind::Library(LibraryKind::Shared) => write!(f, "shared-lib"),
-            ProjectKind::Library(LibraryKind::Static) => write!(f, "static-lib"),
-            ProjectKind::Binary => write!(f, "binary"),
-        }
+    pub fn dependencies(&self) -> &Option<Vec<Dependency>> {
+        &self.dependencies
     }
 }
