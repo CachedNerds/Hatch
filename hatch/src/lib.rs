@@ -18,6 +18,7 @@ pub mod task;
 pub mod deps;
 pub mod platform;
 pub mod locations;
+mod janitor;
 
 #[cfg(test)]
 mod tests {
