@@ -3,7 +3,7 @@ use clap::{ App, SubCommand, Arg, ArgMatches };
 use cli::commands::Command;
 use project::Project;
 use assets::builder::Builder as AssetBuilder;
-use assets::janitor;
+use janitor;
 
 pub struct Clean {
   name: &'static str
