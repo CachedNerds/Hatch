@@ -11,6 +11,6 @@ pub trait Generator {
     // TODO: this interface should take references
     fn generate_assets(&self, project_path: PathBuf, project: &Project) -> HatchResult<()>;
 
-    fn clear_assets(&self, project_path: PathBuf, project: &Project) -> HatchResult<()>;
+    fn clear_assets(&self, project_path: PathBuf, project: &Project) -> Vec<HatchResult<()>>;
 
 }

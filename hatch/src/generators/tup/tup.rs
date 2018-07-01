@@ -7,6 +7,7 @@ use project::Project;
 use std::path::PathBuf;
 use generators::project_asset::ProjectAsset;
 use generators::tup::janitor;
+use hatch_error::CleanupError;
 
 pub struct Tup;
 
@@ -55,10 +56,10 @@ impl Generator for Tup {
         Ok(())
     }
 
-    fn clear_assets(&self, project_path: PathBuf, project: &Project) -> Result<(), HatchError> {
+    fn clear_assets(&self, project_path: PathBuf, project: &Project) -> Vec<Result<(), HatchError>> {
         let assets = self.assets(project_path, project);
-        let remove_assets_results = janitor::remove_assets(&assets)?;
-        let remove_targets_results = janitor::remove_targets(&project_path)?;
-        Ok(())
+        let mut results = janitor::remove_assets(&assets);
+        results.extend(janitor::remove_targets(&project_path));
+        results
     }
 }
