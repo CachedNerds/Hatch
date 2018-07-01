@@ -52,7 +52,7 @@ impl<'clean> Clean {
               errors = true;
           }
       }
-      if errors { Ok(()) } else { Err(CleanupError) }
+      if errors { Ok(()) } else { Err(CleanupError)? }
   }
 }
 
