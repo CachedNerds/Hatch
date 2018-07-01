@@ -57,7 +57,7 @@ impl Generator for Tup {
     }
 
     fn clear_assets(&self, project_path: PathBuf, project: &Project) -> Vec<Result<(), HatchError>> {
-        let assets = self.assets(project_path, project);
+        let assets = self.assets(project_path.clone(), project);
         let mut results = janitor::remove_assets(&assets);
         results.extend(janitor::remove_targets(&project_path));
         results
