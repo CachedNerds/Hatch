@@ -42,13 +42,15 @@ fn do_me_a_hatch() -> HatchResult<()> {
     let test_command = Box::new(Test::new());
     subcommands.insert(constants::TEST_NAME, test_command);
 
+    let clean_command = Box::new(Clean::new());
+    subcommands.insert(constants::CLEAN_NAME, clean_command);
+
     let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
 
-    let clean_command = Box::new(Clean::new());
     subcommand.execute(args.unwrap())?;
     Ok(())
 }
-    subcommands.insert(clean_command.subcommand_name(), clean_command);
+
 
 fn main() {
     println!("running hatch...");
