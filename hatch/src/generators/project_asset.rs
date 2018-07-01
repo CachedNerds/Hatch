@@ -6,7 +6,7 @@ use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ProjectAsset {
     path: PathBuf,
     name: String,
