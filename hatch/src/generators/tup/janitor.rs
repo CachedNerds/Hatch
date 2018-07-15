@@ -1,4 +1,4 @@
-use hatch_error::{ HatchResult, ResultExt };
+use hatch_error::{HatchResult};
 use std::path::PathBuf;
 use std::fs;
 use generators::project_asset::ProjectAsset;
@@ -34,12 +34,10 @@ mod tests {
   use std::fs;
   use assert_fs::TempDir;
   use assert_fs::prelude::*;
-  use predicates::prelude::*;
   use generators::project_asset::ProjectAsset;
   use generators::tup::janitor::remove_assets;
-  use std::path::Path;
-  use std::fs::File;
   use std::path::PathBuf;
+  use std::fs::File;
 
   #[test]
   fn it_removes_assets_and_leaves_everything_else() {

@@ -1,9 +1,7 @@
-use hatch_error::{ HatchResult, CleanupError };
-use clap::{ App, SubCommand, Arg, ArgMatches };
+use clap::ArgMatches;
 use cli::commands::Command;
-use project::Project;
 use generators::tup::make_a_tup_in_a_box;
-use std::path::PathBuf;
+use hatch_error::{CleanupError, HatchResult};
 
 pub struct Clean {
   name: &'static str
@@ -14,31 +12,6 @@ impl<'clean> Clean {
     Clean {
       name: "clean"
     }
-  }
-
-  fn print_errors(&self, results: &Vec<HatchResult<()>>) {
-    for result in results {
-      match result.as_ref() {
-        Ok(_) => {},
-        Err(ref e) => {
-          println!("{}", e);
-        }
-      }
-    }
-  }
-
-  // determine if the collection of results contains an error
-  fn contains_errors(&self, results: &Vec<HatchResult<()>>) -> bool {
-    for result in results {
-      match result.as_ref() {
-        Ok(_) => {},
-        Err(_) => {
-          return true;
-        }
-      }
-    }
-
-    return false;
   }
 
   pub fn clean(&self, args: &ArgMatches<'clean>) -> HatchResult<()> {

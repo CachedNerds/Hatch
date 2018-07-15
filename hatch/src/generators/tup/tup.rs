@@ -7,7 +7,6 @@ use project::Project;
 use std::path::PathBuf;
 use generators::project_asset::ProjectAsset;
 use generators::tup::janitor;
-use hatch_error::CleanupError;
 
 pub struct Tup;
 
