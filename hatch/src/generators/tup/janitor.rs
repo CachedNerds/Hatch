@@ -50,7 +50,7 @@ mod tests {
       file_path.push(file);
       let _ = File::create(file_path.as_path());
       let asset = ProjectAsset::new(
-        file_path,
+        dir_path.clone(),
         file.to_string(),
         "".to_string());
       asset
@@ -62,8 +62,8 @@ mod tests {
     let foo_file = temp.child("foo.txt");
     foo_file.touch().unwrap();
     let foo_asset = ProjectAsset::new(
-      foo_file.path().to_path_buf(),
-      "foo".to_string(),
+      temp_dir.clone(),
+      "foo.txt".to_string(),
       "foo stuff".to_string());
     // a nested file
     let bar_asset = make_sub_dir_asset(temp_dir.to_path_buf(), "bar", "bar.txt");
@@ -74,8 +74,7 @@ mod tests {
     let result = remove_assets(&assets);
     assert_eq!(result.len(), 2);
     assert!(!foo_file.path().exists(), "Foo asset was not deleted");
-    assert!(!bar_asset.path().exists(), "Bar asset was not deleted");
-    assert!(baz_asset.path().exists(), "Baz asset was incorrectly deleted");
+    assert!(!bar_asset.path().join(bar_asset.name()).exists(), "Bar asset was not deleted");
+    assert!(baz_asset.path().join(baz_asset.name()).exists(), "Baz asset was incorrectly deleted");
   }
 }
-
