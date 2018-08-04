@@ -5,6 +5,8 @@ use hatch_error::HatchError;
 use platform::os;
 use project::Project;
 use std::path::PathBuf;
+use generators::project_asset::ProjectAsset;
+use generators::tup::janitor;
 
 pub struct Tup;
 
@@ -14,8 +16,8 @@ impl Tup {
     }
 }
 
-impl Generator for Tup {
-    fn generate_assets(&self, project_path: PathBuf, project: &Project) -> Result<(), HatchError> {
+impl Tup {
+    fn assets(&self, project_path: PathBuf, project: &Project) -> Vec<ProjectAsset> {
         let mut builder = Builder::new(project_path, project);
         builder.add_tup_config();
         builder.add_test_tupfile();
@@ -33,6 +35,13 @@ impl Generator for Tup {
         let catch_definition = builder.add_catch_definition();
         builder.add_asset(catch_definition);
         let assets = builder.assets();
+        assets
+    }
+}
+
+impl Generator for Tup {
+    fn generate_assets(&self, project_path: PathBuf, project: &Project) -> Result<(), HatchError> {
+        let assets = self.assets(project_path, project);
 
         for asset in assets {
             asset.write().with_context(|e| {
@@ -44,5 +53,12 @@ impl Generator for Tup {
             })?;
         }
         Ok(())
+    }
+
+    fn clear_assets(&self, project_path: PathBuf, project: &Project) -> Vec<Result<(), HatchError>> {
+        let assets = self.assets(project_path.clone(), project);
+        let mut results = janitor::remove_assets(&assets);
+        results.extend(janitor::remove_targets(&project_path));
+        results
     }
 }

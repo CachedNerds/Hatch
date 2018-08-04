@@ -3,6 +3,7 @@ pub mod new;
 pub mod run;
 pub mod test;
 pub mod update;
+pub mod clean;
 
 use clap::ArgMatches;
 use constants::{ARGS, HATCH_FILE_NAME, INCLUDE, PROJECT_NAME, PROJECT_PATH, TYPE, VERSION};

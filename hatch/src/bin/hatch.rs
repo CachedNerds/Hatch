@@ -10,10 +10,11 @@ use hatch::cli::commands::new::New;
 use hatch::cli::commands::run::Run;
 use hatch::cli::commands::test::Test;
 use hatch::cli::commands::update::Update;
-use hatch::cli::commands::Command;
+use hatch::cli::commands::clean::Clean;
+use yaml_rust::YamlLoader;
 use hatch::constants;
 use hatch::hatch_error::{HatchResult, MissingParameterError};
-use yaml_rust::YamlLoader;
+use hatch::cli::commands::Command;
 
 fn do_me_a_hatch() -> HatchResult<()> {
     let cli = include_str!("cli.yml");
@@ -41,11 +42,15 @@ fn do_me_a_hatch() -> HatchResult<()> {
     let test_command = Box::new(Test::new());
     subcommands.insert(constants::TEST_NAME, test_command);
 
+    let clean_command = Box::new(Clean::new());
+    subcommands.insert(constants::CLEAN_NAME, clean_command);
+
     let subcommand = subcommands.get(name).ok_or_else(|| MissingParameterError)?;
 
     subcommand.execute(args.unwrap())?;
     Ok(())
 }
+
 
 fn main() {
     println!("running hatch...");

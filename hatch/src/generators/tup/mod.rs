@@ -16,6 +16,7 @@ pub mod tup_kind;
 pub mod tupfile;
 pub mod tupfile_ini;
 pub mod tuprules;
+mod janitor;
 
 #[cfg(test)]
 mod tests;

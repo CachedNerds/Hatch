@@ -52,3 +52,5 @@ subcommands:
                 min_values: 0
                 value_delimiter: " "
                 required: false
+    - clean:
+        about: Removes volatile project artifacts

@@ -23,6 +23,7 @@ impl<'builder> Builder<'builder> {
             project,
             assets: Vec::new(),
         }
+
     }
 
     pub fn assets(self) -> Vec<ProjectAsset> { self.assets }
